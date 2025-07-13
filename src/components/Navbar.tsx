@@ -1,6 +1,6 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Image from "next/image";
 import Link from 'next/link';
@@ -14,6 +14,7 @@ const navItems = {
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
 
   const isActive = (slug: string) => {
     if (slug === 'home') return pathname === '/';
@@ -63,6 +64,7 @@ export default function Navbar() {
                   <Link
                     key={slug}
                     href={slug === 'home' ? '/' : `/${slug}`}
+                    onMouseEnter={() => router.prefetch(slug === 'home' ? '/' : `/${slug}`)}
                     className={`transition-colors duration-200 font-medium ${
                       isActive(slug)
                         ? 'text-white'
