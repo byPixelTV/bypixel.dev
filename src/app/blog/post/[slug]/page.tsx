@@ -23,7 +23,10 @@ async function getPostBySlug(slug: string): Promise<Posts | null> {
     const response = await serverDatabases.listDocuments<Posts>(
       "685a9e8a0021f75d1389",
       "685a9ec7002f9eb12d08",
-      [Query.equal("post-slug", slug)]
+      [
+        Query.equal("post-slug", slug),
+        Query.equal("draft", false), // Only get published posts
+      ]
     );
 
     if (response.documents.length === 0) {
@@ -37,6 +40,29 @@ async function getPostBySlug(slug: string): Promise<Posts | null> {
   }
 }
 
+async function incrementPostViews(postId: string) {
+  try {
+    // Hole den aktuellen Post
+    const post = await serverDatabases.getDocument<Posts>(
+      "685a9e8a0021f75d1389",
+      "685a9ec7002f9eb12d08",
+      postId
+    );
+
+    // Erhöhe die Views um 1
+    await serverDatabases.updateDocument(
+      "685a9e8a0021f75d1389",
+      "685a9ec7002f9eb12d08",
+      postId,
+      {
+        views: (post.views || 0) + 1,
+      }
+    );
+  } catch (error) {
+    console.error("Error incrementing views:", error);
+  }
+}
+
 export default async function BlogPostPage({ params }: PageProps) {
   const { slug } = await params;
   const post = await getPostBySlug(slug);
@@ -45,12 +71,14 @@ export default async function BlogPostPage({ params }: PageProps) {
     notFound();
   }
 
+  await incrementPostViews(post.$id);
+
   const html = await marked.parse(post.content || "");
   const titleHtml = await marked.parseInline(post.title || "");
 
   return (
     <>
-    <ScrollToTop />
+      <ScrollToTop />
       <Navbar />
       <BackgroundLayout>
         <div className="container mx-auto px-4 py-16 mt-20">
@@ -97,6 +125,8 @@ export default async function BlogPostPage({ params }: PageProps) {
                 <span>
                   Written by {(await serverUsers.get(post["user-id"])).name}
                 </span>
+                <span>•</span>
+                <span>{post.views || 0} views</span>
                 <span>•</span>
                 <time>{new Date(post.$createdAt).toLocaleDateString()}</time>
                 {post["update-date"] && (

@@ -3,12 +3,17 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "dev": "cross-env NODE_ENV=development next dev --turbopack",
+    "build": "cross-env NODE_ENV=production next build",
+    "start": "cross-env NODE_ENV=production next start",
+    "lint": "cross-env NODE_ENV=production next lint"
   },
   "dependencies": {
+    "@radix-ui/react-dialog": "^1.1.14",
+    "@radix-ui/react-dropdown-menu": "^2.1.15",
+    "@radix-ui/react-label": "^2.1.7",
+    "@radix-ui/react-select": "^2.2.5",
+    "@radix-ui/react-separator": "^1.1.7",
     "@radix-ui/react-slot": "^1.2.3",
     "@sentry/nextjs": "^9.38.0",
     "@tailwindcss/aspect-ratio": "^0.4.2",
@@ -22,7 +27,7 @@
     "jsdom": "^26.1.0",
     "lucide-react": "^0.525.0",
     "marked": "^16.0.0",
-    "motion": "^12.23.0",
+    "motion": "^12.23.3",
     "next": "15.3.5",
     "node-appwrite": "^17.0.0",
     "react": "^19.0.0",
@@ -40,6 +45,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "cross-env": "^7.0.3",
     "eslint": "^9",
     "eslint-config-next": "15.3.5",
     "tailwindcss": "^4",

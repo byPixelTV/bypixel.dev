@@ -1,4 +1,4 @@
-import { Client, Account, Databases } from "appwrite";
+import { Client, Account, Databases, OAuthProvider } from "appwrite";
 
 const PUBLIC_APPWRITE_ENDPOINT = process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT || "";
 const PUBLIC_APPWRITE_PROJECT_ID = process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID || "";
@@ -25,4 +25,4 @@ const databases: Databases = new Databases(client);
 //     'https://bypixel.dev/auth/failed'
 // );
 
-export { client, account, databases };
+export { client, account, databases, OAuthProvider };

@@ -4,6 +4,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Image from "next/image";
 import Link from 'next/link';
+import { Icon } from "@iconify/react";
 
 const navItems = {
   home: 'Home',
@@ -78,14 +79,23 @@ export default function Navbar() {
                 ))}
               </div>
 
-              {/* Desktop Contact */}
-              <a
-                href="mailto:contact@bypixel.dev"
-                className="hidden md:inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg border border-white/20 transition-all duration-200 font-medium"
-                aria-label="Contact"
-              >
-                📧 Contact
-              </a>
+              <div className="flex items-center gap-3">
+                <a
+                  href="mailto:contact@bypixel.dev"
+                  className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg border border-white/20 transition-all duration-200 font-medium"
+                  aria-label="Contact"
+                >
+                  📧 Contact
+                </a>
+
+                <a
+                  href="https://dsc.gg/bypixeltv"
+                  className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg border border-white/20 transition-all duration-200 font-medium"
+                  aria-label="Contact"
+                >
+                  <Icon icon="ic:baseline-discord" height="25" width="25" />
+                </a>
+              </div>
 
               {/* Mobile Menu Button */}
               <button

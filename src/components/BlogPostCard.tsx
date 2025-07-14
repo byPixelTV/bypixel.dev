@@ -42,7 +42,12 @@ export default function BlogPostCard({ post, authorName }: PostCardProps) {
         )}
       </CardContent>
       <CardFooter className="flex justify-between items-center px-5 pb-5">
-        <span className="text-sm text-gray-400">Written by {authorName}</span>
+        <div className="flex flex-col">
+          <span className="text-sm text-gray-400">Written by {authorName}</span>
+          <span className="text-xs text-gray-500">
+            {post.views || 0} {post.views === 1 ? 'view' : 'views'}
+          </span>
+        </div>
         <Button asChild variant="default">
           <Link href={`/blog/post/${post["post-slug"] || post.$id}`}>Read More</Link>
         </Button>

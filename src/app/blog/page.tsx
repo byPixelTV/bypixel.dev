@@ -3,12 +3,14 @@ import Navbar from "@/components/Navbar";
 import BackgroundLayout from "@/components/BackgroundLayout";
 import { Posts } from "../../../types/appwrite";
 import BlogPostCard from "@/components/BlogPostCard";
+import { Query } from "node-appwrite";
 
 async function getPosts(): Promise<{ posts: Posts[]; error: string | null }> {
   try {
     const response = await serverDatabases.listDocuments(
       "685a9e8a0021f75d1389",
-      "685a9ec7002f9eb12d08"
+      "685a9ec7002f9eb12d08",
+      [Query.equal("draft", false)]
     );
 
     return {
