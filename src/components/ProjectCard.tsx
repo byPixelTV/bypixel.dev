@@ -1,4 +1,5 @@
 import { Icon } from '@iconify/react';
+import Image from 'next/image';
 
 export type Project = {
   title: string;
@@ -13,8 +14,20 @@ export default function ProjectCard({ project }: { project: Project }) {
   return (
     <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 hover:bg-white/15 group transition-all duration-300 flex flex-col h-full">
       {/* Image */}
-      <div className="relative mb-6 overflow-hidden rounded-xl bg-white/5 flex items-center justify-center min-h-[120px]">
-        <img src={project.image} alt={project.title} className="max-w-full max-h-[120px] object-contain" />
+      <div className="mb-4 flex justify-center items-center h-32 bg-white/5 rounded-xl">
+        <Image
+          src={project.image}
+          alt={project.title}
+          width={300}
+          height={120}
+          className="max-w-full max-h-[120px] object-contain"
+          style={{ 
+            width: 'auto',
+            height: 'auto',
+            maxWidth: '100%',
+            maxHeight: '120px'
+          }}
+        />
       </div>
 
       {/* Header */}
@@ -47,7 +60,7 @@ export default function ProjectCard({ project }: { project: Project }) {
         href={project.link}
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:from-blue-600 hover:to-purple-700 transition-all duration-200 hover:scale-105"
+        className="inline-flex items-center gap-2 text-white hover:text-blue-400 transition-colors duration-200"
       >
         <Icon icon="mdi:external-link" width="20" height="20" />
         View Project

@@ -92,7 +92,7 @@ export default function Page() {
                 className="w-full h-full object-cover"
                 width={384}
                 height={384}
-                unoptimized
+                unoptimized={true}
                 style={{
                   maxWidth: "100%",
                   height: "auto"
