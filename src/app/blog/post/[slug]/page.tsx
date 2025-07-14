@@ -10,6 +10,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import ScrollToTop from "@/components/ScrollToTop";
+import { Metadata } from "next";
 
 interface PageProps {
   params: Promise<{
@@ -61,6 +62,86 @@ async function incrementPostViews(postId: string) {
   } catch (error) {
     console.error("Error incrementing views:", error);
   }
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const post = await getPostBySlug(slug);
+
+  // Default values
+  const defaultTitle = "byPixelTV – Software Developer";
+  const defaultDescription = "Software Developer with passion for code. Check out my projects and socials.";
+  const defaultImage = "https://cdn.bypixel.dev/raw/A9FXHb.png";
+  const siteUrl = "https://bypixel.dev";
+
+  if (!post) {
+    return {
+      title: "Post Not Found | byPixelTV",
+      description: "The requested blog post could not be found.",
+      openGraph: {
+        title: "Post Not Found | byPixelTV",
+        description: "The requested blog post could not be found.",
+        url: `${siteUrl}/blog/post/${slug}`,
+        images: [defaultImage],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: "Post Not Found | byPixelTV",
+        description: "The requested blog post could not be found.",
+        images: [defaultImage],
+      },
+    };
+  }
+
+  // Use post data with fallbacks
+  const title = post.title || defaultTitle;
+  const description = post["short-description"] || defaultDescription;
+  const image = post.thumbnail || defaultImage;
+  const postUrl = `${siteUrl}/blog/post/${slug}`;
+
+  return {
+    title: `${title} | byPixelTV`,
+    description: description,
+    keywords: [
+      "bypixeltv",
+      "bypixel",
+      "software developer",
+      "web developer",
+      "blog",
+      "programming",
+      "coding",
+      post.title,
+    ].filter(Boolean),
+    authors: [{ name: "byPixelTV" }],
+    openGraph: {
+      type: "article",
+      url: postUrl,
+      title: `${title} | byPixelTV`,
+      description: description,
+      images: [
+        {
+          url: image,
+          width: 1200,
+          height: 630,
+          alt: title,
+        },
+      ],
+      siteName: "byPixelTV — Software Developer",
+      publishedTime: post.$createdAt,
+      modifiedTime: post["update-date"] || post.$updatedAt,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${title} | byPixelTV`,
+      description: description,
+      images: [image],
+      creator: "@byPixelTV", // Add your Twitter handle if you have one
+    },
+    robots: {
+      index: true,
+      follow: true,
+    },
+  };
 }
 
 export default async function BlogPostPage({ params }: PageProps) {
@@ -148,21 +229,4 @@ export default async function BlogPostPage({ params }: PageProps) {
       </BackgroundLayout>
     </>
   );
-}
-
-// Generate metadata for SEO
-export async function generateMetadata({ params }: PageProps) {
-  const { slug } = await params;
-  const post = await getPostBySlug(slug);
-
-  if (!post) {
-    return {
-      title: "Post Not Found",
-    };
-  }
-
-  return {
-    title: post.postId,
-    description: post.shortDescription,
-  };
 }

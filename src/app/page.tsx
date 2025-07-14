@@ -2,6 +2,53 @@ import BackgroundLayout from "@/components/BackgroundLayout";
 import Navbar from "@/components/Navbar";
 import { Icon } from "@iconify/react";
 import Image from "next/image";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Home | byPixelTV – Software Developer",
+  description: "My personal website used as a portfolio and blog.",
+  keywords: [
+    "bypixeltv",
+    "bypixel",
+    "software developer",
+    "web developer",
+    "blog",
+    "programming",
+    "coding",
+    "tutorials",
+    "technology",
+    "development",
+    "nextjs",
+    "bypixel.dev"
+  ],
+  authors: [{ name: "byPixelTV" }],
+  openGraph: {
+    type: "website",
+    url: "https://bypixel.dev/",
+    title: "Home | byPixelTV – Software Developer",
+    description: "Software Developer with passion for code. Check out my projects and socials.",
+    images: [
+      {
+        url: "https://cdn.bypixel.dev/raw/A9FXHb.png",
+        width: 1200,
+        height: 630,
+        alt: "bypixel.dev Home",
+      },
+    ],
+    siteName: "byPixelTV — Software Developer",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Home | byPixelTV – Software Developer",
+    description: "Software Developer with passion for code. Check out my projects and socials.",
+    images: ["https://cdn.bypixel.dev/raw/A9FXHb.png"],
+    creator: "@byPixelTV", // Add your Twitter handle if you have one
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+};
 
 export default function Page() {
   return (

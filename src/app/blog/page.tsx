@@ -4,6 +4,7 @@ import BackgroundLayout from "@/components/BackgroundLayout";
 import { Posts } from "../../../types/appwrite";
 import BlogPostCard from "@/components/BlogPostCard";
 import { Query } from "node-appwrite";
+import { Metadata } from "next";
 
 async function getPosts(): Promise<{ posts: Posts[]; error: string | null }> {
   try {
@@ -33,6 +34,52 @@ async function getAuthorName(userId: string) {
     return "Unknown";
   }
 }
+
+export const metadata: Metadata = {
+  title: "Blog | byPixelTV – Software Developer",
+  description: "Thoughts, tutorials, and insights about development and technology from byPixelTV.",
+  keywords: [
+    "bypixeltv",
+    "bypixel",
+    "software developer",
+    "web developer",
+    "blog",
+    "programming",
+    "coding",
+    "tutorials",
+    "technology",
+    "development",
+    "nextjs",
+    "bypixel.dev"
+  ],
+  authors: [{ name: "byPixelTV" }],
+  openGraph: {
+    type: "website",
+    url: "https://bypixel.dev/blog",
+    title: "Blog | byPixelTV – Software Developer",
+    description: "Thoughts, tutorials, and insights about development and technology from byPixelTV.",
+    images: [
+      {
+        url: "https://cdn.bypixel.dev/raw/A9FXHb.png",
+        width: 1200,
+        height: 630,
+        alt: "bypixel.dev Blog",
+      },
+    ],
+    siteName: "byPixelTV — Software Developer",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Blog | byPixelTV – Software Developer",
+    description: "Thoughts, tutorials, and insights about development and technology from byPixelTV.",
+    images: ["https://cdn.bypixel.dev/raw/A9FXHb.png"],
+    creator: "@byPixelTV", // Add your Twitter handle if you have one
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+};
 
 export default async function BlogPage() {
   const { posts, error } = await getPosts();

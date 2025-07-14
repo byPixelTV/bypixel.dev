@@ -1,6 +1,7 @@
 import BackgroundLayout from '@/components/BackgroundLayout';
 import Navbar from '@/components/Navbar';
 import ProjectCard, { Project } from '@/components/ProjectCard';
+import { Metadata } from 'next';
 
 const projects: Record<string, Project> = {
   eramc: {
@@ -63,6 +64,52 @@ const projects: Record<string, Project> = {
       redis: { icon: 'devicon-plain:redis', name: 'Redis' },
       minecraft: { icon: 'mdi:minecraft', name: 'Minecraft' },
     },
+  },
+};
+
+export const metadata: Metadata = {
+  title: "Projects | byPixelTV – Software Developer",
+  description: "My personal website used as a portfolio and blog.",
+  keywords: [
+    "bypixeltv",
+    "bypixel",
+    "software developer",
+    "web developer",
+    "blog",
+    "programming",
+    "coding",
+    "tutorials",
+    "technology",
+    "development",
+    "nextjs",
+    "bypixel.dev"
+  ],
+  authors: [{ name: "byPixelTV" }],
+  openGraph: {
+    type: "website",
+    url: "https://bypixel.dev/",
+    title: "Projects | byPixelTV – Software Developer",
+    description: "Showcasing my projects and contributions.",
+    images: [
+      {
+        url: "https://cdn.bypixel.dev/raw/A9FXHb.png",
+        width: 1200,
+        height: 630,
+        alt: "bypixel.dev Projects",
+      },
+    ],
+    siteName: "byPixelTV — Software Developer",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Projects | byPixelTV – Software Developer",
+    description: "Showcasing my projects and contributions.",
+    images: ["https://cdn.bypixel.dev/raw/A9FXHb.png"],
+    creator: "@byPixelTV", // Add your Twitter handle if you have one
+  },
+  robots: {
+    index: true,
+    follow: true,
   },
 };
 
