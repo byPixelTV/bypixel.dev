@@ -17,6 +17,11 @@ import Navbar from "@/components/Navbar";
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { AlertCircle } from "lucide-react";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Login | byPixelTV – Software Developer",
+};
 
 export default function LoginPage() {
   return (
@@ -56,7 +61,7 @@ function LoginContent() {
         : "https://bypixel.dev")
     );
   };
-  
+
   const loginWith = (provider: OAuthProvider) => {
     const baseUrl = getBaseUrl();
     account.createOAuth2Session(

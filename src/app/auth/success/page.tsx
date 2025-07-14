@@ -4,6 +4,11 @@ import { useEffect } from "react";
 import { account } from "@/lib/appwrite/client";
 import { useRouter } from "next/navigation"; // Note: next/navigation, not next/router
 import { deleteUserIfNotAdmin } from "@/lib/actions/auth";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Auth Success | byPixelTV – Software Developer",
+};
 
 export default function AuthSuccessPage() {
   const router = useRouter();

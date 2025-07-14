@@ -6,6 +6,11 @@ import { Button } from "@/components/ui/button";
 import { account } from "@/lib/appwrite/client";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Admin Dashboard | byPixelTV – Software Developer",
+};
 
 export default function Page() {
   const router = useRouter();

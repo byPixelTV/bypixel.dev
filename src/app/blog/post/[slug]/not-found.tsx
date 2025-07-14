@@ -4,6 +4,11 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Home, AlertCircle } from "lucide-react";
 import ScrollToTop from "@/components/ScrollToTop";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Post Not Found | byPixelTV – Software Developer",
+};
 
 export default function NotFound() {
   return (
