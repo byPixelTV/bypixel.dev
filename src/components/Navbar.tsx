@@ -48,7 +48,7 @@ export default function Navbar() {
                   <Image
                     src="/profile.gif"
                     alt="byPixelTV"
-                    unoptimized
+                    unoptimized={true}
                     width={40}
                     height={40}
                     className="object-cover"
