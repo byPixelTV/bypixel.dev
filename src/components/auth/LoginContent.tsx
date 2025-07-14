@@ -32,21 +32,11 @@ export default function LoginContent() {
     if (notLoggedIn === "true") setShowNotLoggedIn(true);
   }, [searchParams]);
 
-  const getBaseUrl = () => {
-    if (typeof window !== "undefined") {
-      return window.location.origin;
-    }
-    return process.env.NODE_ENV === "production"
-      ? "https://bypixel.dev"
-      : "http://localhost:3000";
-  };
-
   const loginWith = (provider: OAuthProvider) => {
-    const baseUrl = getBaseUrl();
     account.createOAuth2Session(
       provider,
-      `${baseUrl}/auth/success`,
-      `${baseUrl}/auth/failed`
+      `${process.env.NEXT_PUBLIC_BASE_URL}/auth/success`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}/auth/failed`
     );
   };
 
