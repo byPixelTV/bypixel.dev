@@ -6,8 +6,15 @@ import BlogPostCard from "@/components/BlogPostCard";
 import { Query } from "node-appwrite";
 import { Metadata } from "next";
 
+export const dynamic = 'force-dynamic';
+
+// Add error logging to see what's happening
 async function getPosts(): Promise<{ posts: Posts[]; error: string | null }> {
   try {
+    // Add logging to check if environment variables exist
+    console.log('Appwrite endpoint:', process.env.APPWRITE_ENDPOINT);
+    console.log('Appwrite project ID:', process.env.APPWRITE_PROJECT_ID);
+    
     const response = await serverDatabases.listDocuments(
       "685a9e8a0021f75d1389",
       "685a9ec7002f9eb12d08",
@@ -19,6 +26,7 @@ async function getPosts(): Promise<{ posts: Posts[]; error: string | null }> {
       error: null,
     };
   } catch (error) {
+    console.error('Error fetching posts:', error);
     return {
       posts: [],
       error: error instanceof Error ? error.message : "Failed to load posts",
