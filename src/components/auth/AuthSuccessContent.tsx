@@ -2,40 +2,32 @@
 
 import { useEffect } from "react";
 import { account } from "@/lib/appwrite/client";
-import { useRouter } from "next/navigation"; // Note: next/navigation, not next/router
+import { useRouter } from "next/navigation";
 import { deleteUserIfNotAdmin } from "@/lib/actions/auth";
 
 export default function AuthSuccessContent() {
   const router = useRouter();
 
   useEffect(() => {
-    // Handle successful authentication
     const handleSuccess = async () => {
       try {
-        // Get user session
         const session = await account.get();
-        console.log('Authentication successful:', session);
 
-        // Check if the user is an admin
-        if (!(await account.get()).labels.includes('admin')) {
-          // logout user
-            deleteUserIfNotAdmin(session.$id)
+        if (!(await account.get()).labels.includes("admin")) {
+          deleteUserIfNotAdmin(session.$id)
             .then(() => {
-              router.push('/auth/login?disabled=true');
+              router.push("/auth/login?disabled=true");
             })
             .catch((error) => {
-              console.error('Error deleting user:', error);
-              router.push('/auth/login?error=true');
+              console.error("Error deleting user:", error);
+              router.push("/auth/login?error=true");
             });
         } else {
-          
-        // Redirect to admin page
-        router.push('/admin'); // or wherever you want to redirect
+          router.push("/admin");
         }
       } catch (error) {
-        console.error('Error getting session:', error);
-        // Redirect to login on error
-        router.push('/auth/login?error=true');
+        console.error("Error getting session:", error);
+        router.push("/auth/login?error=true");
       }
     };
 
