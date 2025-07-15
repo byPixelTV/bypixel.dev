@@ -13,11 +13,7 @@ services:
       - NEXT_PUBLIC_APPWRITE_ENDPOINT=${NEXT_PUBLIC_APPWRITE_ENDPOINT}
       - NEXT_PUBLIC_APPWRITE_PROJECT_ID=${NEXT_PUBLIC_APPWRITE_PROJECT_ID}
       - NEXT_PUBLIC_BASE_URL=${NEXT_PUBLIC_BASE_URL}
-    env_file:
-      - .env
-    networks:
-      - bypixel-network
-
+      
 networks:
   bypixel-network:
     driver: bridge
