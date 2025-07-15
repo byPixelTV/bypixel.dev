@@ -1,6 +1,6 @@
 {
   "buildCommand": "npm run build",
-  "installCommand": "npm ci",
+  "installCommand": "npm install",
   "outputDirectory": ".next",
   "cleanUrls": true,
   "trailingSlash": false,
