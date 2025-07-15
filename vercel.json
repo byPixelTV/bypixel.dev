@@ -1,0 +1,17 @@
+{
+  "buildCommand": "npm run build",
+  "installCommand": "npm ci",
+  "outputDirectory": ".next",
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "rewrites": [],
+  "redirects": [],
+  "headers": [],
+  "functions": {
+    "memory": 512,
+    "maxDuration": 10
+  },
+  "env": {
+    "VERCEL_FORCE_NO_BUILD_CACHE": "1"
+  }
+}
