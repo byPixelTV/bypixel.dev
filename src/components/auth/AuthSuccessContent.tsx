@@ -2,45 +2,40 @@
 
 import { useEffect } from "react";
 import { account } from "@/lib/appwrite/client";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation"; // Note: next/navigation, not next/router
 import { deleteUserIfNotAdmin } from "@/lib/actions/auth";
-import { Models } from "appwrite";
 
 export default function AuthSuccessContent() {
   const router = useRouter();
 
-  // Retry function for getSession with proper typing
-  async function getSessionWithRetry(retries = 5, delay = 300): Promise<Models.Session> {
-    for (let i = 0; i < retries; i++) {
-      try {
-        const session = await account.getSession("current");
-        return session;
-      } catch (e) {
-        if (i === retries - 1) throw e;
-        await new Promise((res) => setTimeout(res, delay));
-      }
-    }
-    // This should never be reached due to the throw in the loop, but TypeScript needs it
-    throw new Error("Failed to get session after retries");
-  }
-
   useEffect(() => {
+    // Handle successful authentication
     const handleSuccess = async () => {
       try {
-        const session = await getSessionWithRetry();
-        console.log("Authentication successful:", session);
+        // Get user session
+        const session = await account.get();
+        console.log('Authentication successful:', session);
 
-        const user = await account.get();
-
-        if (!user.labels?.includes("admin")) {
-          await deleteUserIfNotAdmin(session.userId);
-          router.push("/auth/login?disabled=true");
+        // Check if the user is an admin
+        if (!(await account.get()).labels.includes('admin')) {
+          // logout user
+            deleteUserIfNotAdmin(session.$id)
+            .then(() => {
+              router.push('/auth/login?disabled=true');
+            })
+            .catch((error) => {
+              console.error('Error deleting user:', error);
+              router.push('/auth/login?error=true');
+            });
         } else {
-          router.push("/admin");
+          
+        // Redirect to admin page
+        router.push('/admin'); // or wherever you want to redirect
         }
       } catch (error) {
-        console.error("Error during auth handling:", error);
-        router.push("/auth/login?error=true");
+        console.error('Error getting session:', error);
+        // Redirect to login on error
+        router.push('/auth/login?error=true');
       }
     };
 
