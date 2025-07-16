@@ -33,7 +33,7 @@ export default function LoginContent() {
   }, [searchParams]);
 
   const loginWith = (provider: OAuthProvider) => {
-    account.createOAuth2Session(
+    account.createOAuth2Token(
       provider,
       `${process.env.NEXT_PUBLIC_BASE_URL}/auth/callback`,
       `${process.env.NEXT_PUBLIC_BASE_URL}/auth/failed`

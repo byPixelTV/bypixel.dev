@@ -1,54 +1,43 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { account } from "@/lib/appwrite/client";
-import { useRouter } from "next/navigation";
 import { deleteUserIfNotAdmin } from "@/lib/actions/auth";
-
-// const handleCallback = async (userId, secret) => {
-//   try {
-//     // Create a session using the OAuth2 token
-//     await account.createSession(userId, secret)
-
-//     // Get the user data
-//     const user = await account.get()
-
-//     // User is now authenticated!
-//     return user
-//   } catch (error) {
-//     console.error('Authentication failed:', error)
-//     throw error
-//   }
-// }
 
 export default function AuthCallback() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const [ran, setRan] = useState(false); // schützt vor mehrfachem Aufruf
 
   useEffect(() => {
-    const handleSuccess = async () => {
-      try {
-        const session = await account.get();
+    if (ran) return;
 
-        if (!(await account.get()).labels.includes("admin")) {
-          deleteUserIfNotAdmin(session.$id)
-            .then(() => {
-              router.push("/auth/login?disabled=true");
-            })
-            .catch((error) => {
-              console.error("Error deleting user:", error);
-              router.push("/auth/login?error=true");
-            });
-        } else {
-          router.push("/admin");
+    const userId = searchParams.get("userId");
+    const secret = searchParams.get("secret");
+
+    if (!userId || !secret) return;
+
+    const handleCallback = async () => {
+      try {
+        await account.createSession(userId, secret);
+        const user = await account.get();
+
+        if (!user.labels.includes("admin")) {
+          await deleteUserIfNotAdmin(user.$id);
+          return router.push("/auth/login?disabled=true");
         }
-      } catch (error) {
-        console.error("Error getting session:", error);
+
+        router.push("/admin");
+      } catch (err) {
+        console.error("OAuth error:", err);
         router.push("/auth/login?error=true");
       }
     };
 
-    handleSuccess();
-  }, [router]);
+    handleCallback();
+    setRan(true);
+  }, [searchParams, router, ran]);
 
   return (
     <div className="flex flex-col gap-4 items-center justify-center h-screen text-white">
