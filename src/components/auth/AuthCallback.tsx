@@ -5,7 +5,23 @@ import { account } from "@/lib/appwrite/client";
 import { useRouter } from "next/navigation";
 import { deleteUserIfNotAdmin } from "@/lib/actions/auth";
 
-export default function AuthSuccessContent() {
+// const handleCallback = async (userId, secret) => {
+//   try {
+//     // Create a session using the OAuth2 token
+//     await account.createSession(userId, secret)
+
+//     // Get the user data
+//     const user = await account.get()
+
+//     // User is now authenticated!
+//     return user
+//   } catch (error) {
+//     console.error('Authentication failed:', error)
+//     throw error
+//   }
+// }
+
+export default function AuthCallback() {
   const router = useRouter();
 
   useEffect(() => {

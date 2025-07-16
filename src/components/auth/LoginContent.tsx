@@ -35,7 +35,7 @@ export default function LoginContent() {
   const loginWith = (provider: OAuthProvider) => {
     account.createOAuth2Session(
       provider,
-      `${process.env.NEXT_PUBLIC_BASE_URL}/auth/success`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}/auth/callback`,
       `${process.env.NEXT_PUBLIC_BASE_URL}/auth/failed`
     );
   };

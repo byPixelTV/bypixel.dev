@@ -1,6 +1,6 @@
 import BackgroundLayout from "@/components/BackgroundLayout";
 import { Metadata } from "next";
-import AuthSuccessContent from "@/components/auth/AuthSuccessContent";
+import AuthCallback from "@/components/auth/AuthCallback";
 
 export const metadata: Metadata = {
   title: "Auth Success | byPixelTV – Software Developer",
@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 export default function AuthSuccessPage() {
   return (
     <BackgroundLayout>
-      <AuthSuccessContent />
+      <AuthCallback />
     </BackgroundLayout>
   );
 }
