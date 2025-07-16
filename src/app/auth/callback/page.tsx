@@ -1,15 +1,19 @@
-import BackgroundLayout from "@/components/BackgroundLayout";
-import { Metadata } from "next";
-import AuthCallback from "@/components/auth/AuthCallback";
+import { Suspense } from 'react';
+import AuthCallback from '@/components/auth/AuthCallback';
 
-export const metadata: Metadata = {
-  title: "Auth Success | byPixelTV – Software Developer",
-};
-
-export default function AuthSuccessPage() {
+function AuthCallbackFallback() {
   return (
-    <BackgroundLayout>
+    <div className="flex flex-col items-center justify-center h-screen">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-4"></div>
+      <p>Loading...</p>
+    </div>
+  );
+}
+
+export default function CallbackPage() {
+  return (
+    <Suspense fallback={<AuthCallbackFallback />}>
       <AuthCallback />
-    </BackgroundLayout>
+    </Suspense>
   );
 }
