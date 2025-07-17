@@ -90,21 +90,14 @@ export const metadata: Metadata = {
     url: "https://bypixel.dev/",
     title: "Projects",
     description: "Showcasing my projects and contributions.",
-    images: [
-      {
-        url: "https://cdn.bypixel.dev/raw/A9FXHb.png",
-        width: 256,
-        height: 256,
-        alt: "bypixel.dev Projects",
-      },
-    ],
+    images: ["https://cdn.bypixel.dev/raw/1JQ6U4.png"],
     siteName: "byPixelTV — Software Developer",
   },
   twitter: {
     card: "summary_large_image",
     title: "Projects",
     description: "Showcasing my projects and contributions.",
-    images: ["https://cdn.bypixel.dev/raw/A9FXHb.png"],
+    images: ["https://cdn.bypixel.dev/raw/1JQ6U4.png"],
     creator: "@byPixelTV", // Add your Twitter handle if you have one
   },
   robots: {

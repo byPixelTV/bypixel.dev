@@ -116,13 +116,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     openGraph: {
       type: "article",
       url: postUrl,
-      title: `${title}`,
+      title: title,
       description: description,
       images: [
         {
           url: image,
-          width: 256,
-          height: 256,
+          width: 1200,
+          height: 630,
           alt: title,
         },
       ],
@@ -132,7 +132,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     },
     twitter: {
       card: "summary_large_image",
-      title: `${title} | byPixelTV`,
+      title: title,
       description: description,
       images: [image],
       creator: "@byPixelTV", // Add your Twitter handle if you have one

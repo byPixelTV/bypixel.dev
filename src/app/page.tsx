@@ -27,21 +27,14 @@ export const metadata: Metadata = {
     url: "https://bypixel.dev/",
     title: "Home",
     description: "Software Developer with passion for code. Check out my projects and socials.",
-    images: [
-      {
-        url: "https://cdn.bypixel.dev/raw/A9FXHb.png",
-        width: 256,
-        height: 256,
-        alt: "bypixel.dev Home",
-      },
-    ],
+    images: ["https://cdn.bypixel.dev/raw/1JQ6U4.png"],
     siteName: "byPixelTV — Software Developer",
   },
   twitter: {
     card: "summary_large_image",
     title: "Home",
     description: "Software Developer with passion for code. Check out my projects and socials.",
-    images: ["https://cdn.bypixel.dev/raw/A9FXHb.png"],
+    images: ["https://cdn.bypixel.dev/raw/1JQ6U4.png"],
     creator: "@byPixelTV", // Add your Twitter handle if you have one
   },
   robots: {

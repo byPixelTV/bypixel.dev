@@ -66,21 +66,14 @@ export const metadata: Metadata = {
     url: "https://bypixel.dev/blog",
     title: "Blog",
     description: "Thoughts, tutorials, and insights about development and technology from byPixelTV.",
-    images: [
-      {
-        url: "https://cdn.bypixel.dev/raw/A9FXHb.png",
-        width: 256,
-        height: 256,
-        alt: "bypixel.dev Blog",
-      },
-    ],
+    images: ["https://cdn.bypixel.dev/raw/1JQ6U4.png"],
     siteName: "byPixelTV — Software Developer",
   },
   twitter: {
     card: "summary_large_image",
     title: "Blog",
     description: "Thoughts, tutorials, and insights about development and technology from byPixelTV.",
-    images: ["https://cdn.bypixel.dev/raw/A9FXHb.png"],
+    images: ["https://cdn.bypixel.dev/raw/1JQ6U4.png"],
     creator: "@byPixelTV", // Add your Twitter handle if you have one
   },
   robots: {
