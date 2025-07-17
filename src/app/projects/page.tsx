@@ -86,11 +86,11 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "byPixelTV" }],
   openGraph: {
-    url: "https://bypixel.dev/",
-    title: "Projects",
-    description: "Showcasing my projects and contributions.",
-    images: ["/assets/logo/256x.png"],
     siteName: "byPixelTV — Software Developer",
+    images: ["/assets/logo/256x.png"],
+    title: "Home",
+    description: 
+    "Showcase of my projects and contributions.",
   },
   robots: {
     index: true,
