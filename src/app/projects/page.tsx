@@ -69,7 +69,7 @@ const projects: Record<string, Project> = {
 
 export const metadata: Metadata = {
   title: "Projects | byPixelTV – Software Developer",
-  description: "My personal website used as a portfolio and blog.",
+  description: "Showcasing my projects and contributions.",
   keywords: [
     "bypixeltv",
     "bypixel",
@@ -88,13 +88,13 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     url: "https://bypixel.dev/",
-    title: "Projects | byPixelTV – Software Developer",
+    title: "Projects",
     description: "Showcasing my projects and contributions.",
     images: [
       {
         url: "https://cdn.bypixel.dev/raw/A9FXHb.png",
-        width: 1200,
-        height: 630,
+        width: 256,
+        height: 256,
         alt: "bypixel.dev Projects",
       },
     ],
@@ -102,7 +102,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Projects | byPixelTV – Software Developer",
+    title: "Projects",
     description: "Showcasing my projects and contributions.",
     images: ["https://cdn.bypixel.dev/raw/A9FXHb.png"],
     creator: "@byPixelTV", // Add your Twitter handle if you have one

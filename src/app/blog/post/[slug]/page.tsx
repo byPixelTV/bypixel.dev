@@ -116,13 +116,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     openGraph: {
       type: "article",
       url: postUrl,
-      title: `${title} | byPixelTV`,
+      title: `${title}`,
       description: description,
       images: [
         {
           url: image,
-          width: 1200,
-          height: 630,
+          width: 256,
+          height: 256,
           alt: title,
         },
       ],

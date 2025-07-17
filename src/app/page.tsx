@@ -25,13 +25,13 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     url: "https://bypixel.dev/",
-    title: "Home | byPixelTV – Software Developer",
+    title: "Home",
     description: "Software Developer with passion for code. Check out my projects and socials.",
     images: [
       {
         url: "https://cdn.bypixel.dev/raw/A9FXHb.png",
-        width: 1200,
-        height: 630,
+        width: 256,
+        height: 256,
         alt: "bypixel.dev Home",
       },
     ],
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Home | byPixelTV – Software Developer",
+    title: "Home",
     description: "Software Developer with passion for code. Check out my projects and socials.",
     images: ["https://cdn.bypixel.dev/raw/A9FXHb.png"],
     creator: "@byPixelTV", // Add your Twitter handle if you have one
