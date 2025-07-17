@@ -45,10 +45,10 @@ async function getAuthorName(userId: string) {
 
 export const metadata: Metadata = {
   title: "Blog | byPixelTV – Software Developer",
-  description: "Thoughts, tutorials, and insights about development and technology from byPixelTV.",
+  description: "Welcome to my personal blog, where I delve into the realms of software development, engineering, system administration and the captivating world of DevOps.",
   keywords: [
     "bypixeltv",
-    "bypixel",
+    "bypixel", 
     "software developer",
     "web developer",
     "blog",
@@ -58,30 +58,29 @@ export const metadata: Metadata = {
     "technology",
     "development",
     "nextjs",
-    "bypixel.dev"
+    "bypixel.dev",
+    "blog"
   ],
   authors: [{ name: "byPixelTV" }],
   openGraph: {
-    type: "website",
-    url: "https://bypixel.dev/blog",
-    title: "Blog | byPixelTV – Software Developer",
-    description: "Thoughts, tutorials, and insights about development and technology from byPixelTV.",
+    siteName: "byPixelTV — Software Developer",
     images: [
       {
-        url: "https://cdn.bypixel.dev/raw/A9FXHb.png",
-        width: 1200,
-        height: 630,
-        alt: "bypixel.dev Blog",
-      },
+        url: "/assets/logo/256x.png",
+        width: 256,
+        height: 256,
+        alt: "byPixelTV Logo"
+      }
     ],
-    siteName: "byPixelTV — Software Developer",
+    title: "Blog",
+    description: "Welcome to my personal blog, where I delve into the realms of software development, engineering, system administration and the captivating world of DevOps.",
+    type: "website",
   },
   twitter: {
-    card: "summary_large_image",
+    card: "summary",
     title: "Blog | byPixelTV – Software Developer",
-    description: "Thoughts, tutorials, and insights about development and technology from byPixelTV.",
-    images: ["https://cdn.bypixel.dev/raw/A9FXHb.png"],
-    creator: "@byPixelTV", // Add your Twitter handle if you have one
+    description: "Welcome to my personal blog, where I delve into the realms of software development, engineering, system administration and the captivating world of DevOps.",
+    images: ["/assets/logo/256x.png"],
   },
   robots: {
     index: true,

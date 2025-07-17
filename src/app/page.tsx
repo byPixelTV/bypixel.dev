@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   description: "My personal website used as a portfolio and blog.",
   keywords: [
     "bypixeltv",
-    "bypixel",
+    "bypixel", 
     "software developer",
     "web developer",
     "blog",
@@ -23,26 +23,24 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "byPixelTV" }],
   openGraph: {
-    type: "website",
-    url: "https://bypixel.dev/",
-    title: "Home | byPixelTV – Software Developer",
-    description: "Software Developer with passion for code. Check out my projects and socials.",
+    siteName: "byPixelTV — Software Developer",
     images: [
       {
-        url: "https://cdn.bypixel.dev/raw/A9FXHb.png",
-        width: 1200,
-        height: 630,
-        alt: "bypixel.dev Home",
-      },
+        url: "/assets/logo/256x.png",
+        width: 256,
+        height: 256,
+        alt: "byPixelTV Logo"
+      }
     ],
-    siteName: "byPixelTV — Software Developer",
+    title: "Home",
+    description: "Welcome to my personal website, a portfolio and blog showcasing my work as a software developer. Explore my projects, tutorials, and insights into the world of programming. Join me on this journey of coding and creativity!",
+    type: "website",
   },
   twitter: {
-    card: "summary_large_image",
+    card: "summary",
     title: "Home | byPixelTV – Software Developer",
-    description: "Software Developer with passion for code. Check out my projects and socials.",
-    images: ["https://cdn.bypixel.dev/raw/A9FXHb.png"],
-    creator: "@byPixelTV", // Add your Twitter handle if you have one
+    description: "My personal website used as a portfolio and blog.",
+    images: ["/assets/logo/256x.png"],
   },
   robots: {
     index: true,

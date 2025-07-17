@@ -69,10 +69,10 @@ const projects: Record<string, Project> = {
 
 export const metadata: Metadata = {
   title: "Projects | byPixelTV – Software Developer",
-  description: "My personal website used as a portfolio and blog.",
+  description: "Showcasing my projects and contributions.",
   keywords: [
     "bypixeltv",
-    "bypixel",
+    "bypixel", 
     "software developer",
     "web developer",
     "blog",
@@ -86,26 +86,24 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "byPixelTV" }],
   openGraph: {
-    type: "website",
-    url: "https://bypixel.dev/",
-    title: "Projects | byPixelTV – Software Developer",
-    description: "Showcasing my projects and contributions.",
+    siteName: "byPixelTV — Software Developer",
     images: [
       {
-        url: "https://cdn.bypixel.dev/raw/A9FXHb.png",
-        width: 1200,
-        height: 630,
-        alt: "bypixel.dev Projects",
-      },
+        url: "/assets/logo/256x.png",
+        width: 256,
+        height: 256,
+        alt: "byPixelTV Logo"
+      }
     ],
-    siteName: "byPixelTV — Software Developer",
+    title: "Projects",
+    description: "Here you can find a collection of my projects, ranging from Minecraft servers to plugins and tools I have developed. Explore my work and see what I have been up to!",
+    type: "website",
   },
   twitter: {
-    card: "summary_large_image",
+    card: "summary",
     title: "Projects | byPixelTV – Software Developer",
     description: "Showcasing my projects and contributions.",
-    images: ["https://cdn.bypixel.dev/raw/A9FXHb.png"],
-    creator: "@byPixelTV", // Add your Twitter handle if you have one
+    images: ["/assets/logo/256x.png"],
   },
   robots: {
     index: true,

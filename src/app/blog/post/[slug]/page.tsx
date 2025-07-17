@@ -114,9 +114,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     ].filter(Boolean),
     authors: [{ name: "byPixelTV" }],
     openGraph: {
-      type: "article",
       url: postUrl,
-      title: `${title} | byPixelTV`,
+      title: title,
       description: description,
       images: [
         {
@@ -129,13 +128,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       siteName: "byPixelTV — Software Developer",
       publishedTime: post.$createdAt,
       modifiedTime: post["update-date"] || post.$updatedAt,
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: `${title} | byPixelTV`,
-      description: description,
-      images: [image],
-      creator: "@byPixelTV", // Add your Twitter handle if you have one
     },
     robots: {
       index: true,
