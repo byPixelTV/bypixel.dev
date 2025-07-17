@@ -90,7 +90,7 @@ export const metadata: Metadata = {
     images: ["/assets/logo/256x.png"],
     title: "Home",
     description: 
-    "Showcase of my projects and contributions.",
+    "Here you can find a collection of my projects, ranging from Minecraft servers to plugins and tools I have developed. Explore my work and see what I have been up to!",
   },
   robots: {
     index: true,

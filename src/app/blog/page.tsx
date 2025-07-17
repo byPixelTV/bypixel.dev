@@ -45,7 +45,7 @@ async function getAuthorName(userId: string) {
 
 export const metadata: Metadata = {
   title: "Blog | byPixelTV – Software Developer",
-  description: "Thoughts, tutorials, and insights about development and technology from byPixelTV.",
+  description: "Welcome to my personal blog, where I delve into the realms of software development, engineering, system administration and the captivating world of DevOps.",
   keywords: [
     "bypixeltv",
     "bypixel",

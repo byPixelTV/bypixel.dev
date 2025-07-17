@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     images: ["/assets/logo/256x.png"],
     title: "Home",
     description: 
-    "Software Developer with passion for code. Check out my projects and socials.",
+    "Welcome to my personal website, a portfolio and blog showcasing my work as a software developer. Explore my projects, tutorials, and insights into the world of programming. Join me on this journey of coding and creativity!",
   },
   robots: {
     index: true,
