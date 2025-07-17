@@ -30,13 +30,6 @@ export const metadata: Metadata = {
     images: ["https://cdn.bypixel.dev/raw/1JQ6U4.png"],
     siteName: "byPixelTV — Software Developer",
   },
-  twitter: {
-    card: "summary",
-    title: "Home",
-    description: "Software Developer with passion for code. Check out my projects and socials.",
-    images: ["https://cdn.bypixel.dev/raw/1JQ6U4.png"],
-    creator: "@byPixelTV", // Add your Twitter handle if you have one
-  },
   robots: {
     index: true,
     follow: true,
