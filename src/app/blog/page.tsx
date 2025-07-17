@@ -62,7 +62,6 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "byPixelTV" }],
   openGraph: {
-    type: "website",
     url: "https://bypixel.dev/blog",
     title: "Blog",
     description: "Thoughts, tutorials, and insights about development and technology from byPixelTV.",

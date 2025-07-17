@@ -114,7 +114,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     ].filter(Boolean),
     authors: [{ name: "byPixelTV" }],
     openGraph: {
-      type: "article",
       url: postUrl,
       title: title,
       description: description,
