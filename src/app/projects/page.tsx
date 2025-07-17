@@ -94,7 +94,7 @@ export const metadata: Metadata = {
     siteName: "byPixelTV — Software Developer",
   },
   twitter: {
-    card: "summary_large_image",
+    card: "summary",
     title: "Projects",
     description: "Showcasing my projects and contributions.",
     images: ["https://cdn.bypixel.dev/raw/1JQ6U4.png"],
