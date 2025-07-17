@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     url: "https://bypixel.dev/",
     title: "Home",
     description: "Software Developer with passion for code. Check out my projects and socials.",
-    images: ["https://cdn.bypixel.dev/raw/1JQ6U4.png"],
+    images: ["/assets/logo/256x.png"],
     siteName: "byPixelTV — Software Developer",
   },
   robots: {

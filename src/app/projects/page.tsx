@@ -90,7 +90,7 @@ export const metadata: Metadata = {
     url: "https://bypixel.dev/",
     title: "Projects",
     description: "Showcasing my projects and contributions.",
-    images: ["https://cdn.bypixel.dev/raw/1JQ6U4.png"],
+    images: ["/assets/logo/256x.png"],
     siteName: "byPixelTV — Software Developer",
   },
   robots: {

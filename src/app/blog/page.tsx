@@ -66,7 +66,7 @@ export const metadata: Metadata = {
     url: "https://bypixel.dev/blog",
     title: "Blog",
     description: "Thoughts, tutorials, and insights about development and technology from byPixelTV.",
-    images: ["https://cdn.bypixel.dev/raw/1JQ6U4.png"],
+    images: ["/assets/logo/256x.png"],
     siteName: "byPixelTV — Software Developer",
   },
   robots: {
