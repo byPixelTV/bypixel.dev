@@ -72,7 +72,7 @@ export const metadata: Metadata = {
   description: "Showcasing my projects and contributions.",
   keywords: [
     "bypixeltv",
-    "bypixel",
+    "bypixel", 
     "software developer",
     "web developer",
     "blog",
@@ -87,10 +87,23 @@ export const metadata: Metadata = {
   authors: [{ name: "byPixelTV" }],
   openGraph: {
     siteName: "byPixelTV — Software Developer",
+    images: [
+      {
+        url: "/assets/logo/256x.png",
+        width: 256,
+        height: 256,
+        alt: "byPixelTV Logo"
+      }
+    ],
+    title: "Projects",
+    description: "Here you can find a collection of my projects, ranging from Minecraft servers to plugins and tools I have developed. Explore my work and see what I have been up to!",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Projects | byPixelTV – Software Developer",
+    description: "Showcasing my projects and contributions.",
     images: ["/assets/logo/256x.png"],
-    title: "Home",
-    description: 
-    "Here you can find a collection of my projects, ranging from Minecraft servers to plugins and tools I have developed. Explore my work and see what I have been up to!",
   },
   robots: {
     index: true,

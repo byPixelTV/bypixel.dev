@@ -48,7 +48,7 @@ export const metadata: Metadata = {
   description: "Welcome to my personal blog, where I delve into the realms of software development, engineering, system administration and the captivating world of DevOps.",
   keywords: [
     "bypixeltv",
-    "bypixel",
+    "bypixel", 
     "software developer",
     "web developer",
     "blog",
@@ -58,15 +58,29 @@ export const metadata: Metadata = {
     "technology",
     "development",
     "nextjs",
-    "bypixel.dev"
+    "bypixel.dev",
+    "blog"
   ],
   authors: [{ name: "byPixelTV" }],
   openGraph: {
     siteName: "byPixelTV — Software Developer",
+    images: [
+      {
+        url: "/assets/logo/256x.png",
+        width: 256,
+        height: 256,
+        alt: "byPixelTV Logo"
+      }
+    ],
+    title: "Blog",
+    description: "Welcome to my personal blog, where I delve into the realms of software development, engineering, system administration and the captivating world of DevOps.",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Blog | byPixelTV – Software Developer",
+    description: "Welcome to my personal blog, where I delve into the realms of software development, engineering, system administration and the captivating world of DevOps.",
     images: ["/assets/logo/256x.png"],
-    title: "Home",
-    description: 
-    "Thoughts, tutorials, and insights about development and technology from byPixelTV.",
   },
   robots: {
     index: true,
