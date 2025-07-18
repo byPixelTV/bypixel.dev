@@ -80,7 +80,7 @@ export default function Navbar() {
                 ))}
               </div>
 
-              <div className="flex items-center gap-3">
+              <div className="hidden md:flex items-center gap-3">
                 <a
                   href="mailto:contact@bypixel.dev"
                   className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg border border-white/20 transition-all duration-200 font-medium"
@@ -166,6 +166,15 @@ export default function Navbar() {
                 onClick={() => setMobileMenuOpen(false)}
               >
                 📧 Contact
+              </a>
+              <a
+                href="https://dsc.gg/bypixeltv"
+                className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg border border-white/20 transition-all duration-200 font-medium"
+                aria-label="Discord"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <Icon icon="ic:baseline-discord" height="25" width="25" />
+                Discord
               </a>
             </div>
           </div>
