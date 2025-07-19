@@ -86,7 +86,8 @@ export default function Navbar() {
                   className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg border border-white/20 transition-all duration-200 font-medium"
                   aria-label="Contact"
                 >
-                  📧 Contact
+                  <Icon icon="material-symbols:mail-outline" height="25" width="25" />
+                  Contact
                 </a>
 
                 <a
@@ -95,6 +96,7 @@ export default function Navbar() {
                   aria-label="Contact"
                 >
                   <Icon icon="ic:baseline-discord" height="25" width="25" />
+                  Discord
                 </a>
               </div>
 
@@ -165,7 +167,8 @@ export default function Navbar() {
                 aria-label="Contact"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                📧 Contact
+                <Icon icon="material-symbols:mail-outline" height="25" width="25" />
+                Contact
               </a>
               <a
                 href="https://dsc.gg/bypixeltv"
