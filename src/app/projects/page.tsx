@@ -10,7 +10,7 @@ const projects: Record<string, Project> = {
       'The next era Minecraft server ⚡. We are a community‑driven Minecraft server that focuses on providing a unique and engaging experience for players. Our server features custom plugins, a friendly community, and regular events to keep the gameplay fresh and exciting. We focus on smp, pvp and minigames.',
     link: 'https://discord.gg/eramc',
     image: '/projects/eramc.png',
-    date: '2025 – present',
+    date: '2025',
     tech: {
       kotlin: { icon: 'simple-icons:kotlin', name: 'Kotlin' },
       velocity: { icon: 'simple-icons:velocity', name: 'Velocity' },
