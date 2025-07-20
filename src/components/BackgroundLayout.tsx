@@ -6,7 +6,7 @@ export default function BackgroundLayout({ children }: { children: React.ReactNo
   return (
     <>
       {/* Fixed Background Layer */}
-      <div className="fixed inset-0 bg-gradient-to-br from-slate-950 to-slate-900 -z-10">
+      <div className="fixed inset-0 bg-black -z-10">
         {/* Animated Gradient Blobs */}
         <div className="gradient-blob blob-1"></div>
         <div className="gradient-blob blob-2"></div>

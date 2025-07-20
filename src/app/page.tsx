@@ -1,8 +1,9 @@
 import BackgroundLayout from "@/components/BackgroundLayout";
 import Navbar from "@/components/Navbar";
 import { Icon } from "@iconify/react";
-import Image from "next/image";
 import { Metadata } from "next";
+import * as motion from "motion/react-client"
+import SkillsScrollDownButton from "@/components/extra/SkillsScrollDownButton";
 
 export const metadata: Metadata = {
   title: "Home | byPixelTV – Software Developer",
@@ -48,59 +49,211 @@ export const metadata: Metadata = {
   },
 };
 
+const skillCategories = [
+  {
+    title: "Frontend",
+    skills: [
+      { name: "HTML", icon: "vscode-icons:file-type-html" },
+      { name: "CSS", icon: "vscode-icons:file-type-css" },
+      { name: "JavaScript", icon: "vscode-icons:file-type-js-official" },
+      { name: "TypeScript", icon: "vscode-icons:file-type-typescript-official" },
+      { name: "Next.js", icon: "vscode-icons:file-type-next" },
+      { name: "Vue", icon: "vscode-icons:file-type-vue" },
+      { name: "Nuxt", icon: "vscode-icons:file-type-nuxt" },
+      { name: "Tailwind", icon: "vscode-icons:file-type-tailwind" }
+    ]
+  },
+  {
+    title: "Backend",
+    skills: [
+      { name: "Java", icon: "vscode-icons:file-type-java" },
+      { name: "Kotlin", icon: "vscode-icons:file-type-kotlin" },
+      { name: "Spring", icon: "devicon:spring" },
+      { name: "Gradle", icon: "vscode-icons:file-type-gradle" },
+      { name: "Maven", icon: "vscode-icons:file-type-maven" },
+      { name: "Appwrite", icon: "devicon:appwrite" }
+    ]
+  },
+  {
+    title: "Database",
+    skills: [
+      { name: "MySQL", icon: "vscode-icons:file-type-mysql" },
+      { name: "PostgreSQL", icon: "vscode-icons:file-type-pgsql" },
+      { name: "MongoDB", icon: "vscode-icons:file-type-mongo" },
+      { name: "Redis", icon: "devicon:redis" }
+    ]
+  },
+  {
+    title: "DevOps & Systems",
+    skills: [
+      { name: "Linux", icon: "flat-color-icons:linux" },
+      { name: "Debian", icon: "logos:debian" },
+      { name: "Windows", icon: "devicon:windows11" },
+      { name: "Docker", icon: "vscode-icons:file-type-docker2" },
+      { name: "Nginx", icon: "vscode-icons:file-type-nginx" },
+      { name: "Nginx Proxy Manager", icon: "simple-icons:nginxproxymanager" }
+    ]
+  },
+  {
+    title: "Tools & Platforms",
+    skills: [
+      { name: "VS Code", icon: "vscode-icons:file-type-vscode" },
+      { name: "IntelliJ", icon: "devicon:intellij" },
+    ]
+  }
+];
+
 export default function Page() {
   return (
     <BackgroundLayout>
       <Navbar />
-      <div className="overflow-hidden">
-        <div className="relative z-10 max-w-7xl mx-auto px-6 pt-32 pb-20 mt-[125px] md:mt-[175px]">
-          <div className="flex flex-col lg:flex-row items-start gap-16">
-            <div className="flex-1 space-y-8">
-            <div className="space-y-4">
-              <h1 className="text-5xl lg:text-7xl font-bold text-white leading-tight">
-                Software Developer with
-              </h1>
-              <h2 className="text-5xl lg:text-7xl font-bold text-white leading-tight">
-                <span className="relative inline-block text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-500
-                  after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-1 after:w-full
-                  after:bg-gradient-to-r after:from-purple-500 after:to-pink-500">
-                  passion for code.
-                </span>
-              </h2>
-            </div>
+      
+      {/* Hero Section */}
+      <div className="min-h-screen flex flex-col">
+        <div className="flex-1 flex flex-col items-center justify-center px-6 text-center space-y-12">
+          {/* Main Title */}
+          <h1 className="text-6xl md:text-8xl lg:text-9xl font-bold text-white leading-tight">
+            byPixelTV
+          </h1>
+          
+          {/* Subtitle */}
+          <p className="text-xl md:text-2xl text-white/80 max-w-2xl">
+            Software Developer with 
+            <span className="relative inline-block text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-500 ml-2">
+              passion for code.
+            </span>
+          </p>
 
-              <div>
-                <span className="text-base-content/70 font-bold text-2xl block mb-2 text-white">SOCIALS</span>
-                <div className="flex justify-start gap-2">
-                  <a href="https://github.com/byPixelTV" target="_blank" rel="noopener noreferrer" className="btn btn-ghost btn-square text-white hover:text-blue-600 transition" aria-label="GitHub">
-                    <Icon icon="mdi:github" height="50" width="45" />
-                  </a>
-                  <a href="https://discord.gg/yVp7Qvhj9k" target="_blank" rel="noopener noreferrer" className="btn btn-ghost btn-square text-white hover:text-blue-600 transition" aria-label="Discord">
-                    <Icon icon="ic:baseline-discord" height="50" width="45" />
-                  </a>
-                  <a href="https://bsky.app/profile/bypixel.dev" target="_blank" rel="noopener noreferrer" className="btn btn-ghost btn-square text-white hover:text-blue-600 transition" aria-label="Bluesky">
-                    <Icon icon="bi:bluesky" height="50" width="45" />
-                  </a>
-                </div>
-              </div>
-            </div>
-
-            <div className="relative lg:flex-shrink-0 hidden md:block">
-              <div className="w-80 h-80 lg:w-96 lg:h-96 rounded-full overflow-hidden shadow-2xl backdrop-blur-sm">
-                <Image
-                  src="/profile.gif"
-                  alt="byPixelTV Profile"
-                  className="w-full h-full object-cover"
-                  width={384}
-                  height={384}
-                  unoptimized={true}
-                  style={{
-                    maxWidth: "100%",
-                    height: "auto"
-                  }} />
-              </div>
+          {/* Social Buttons */}
+          <div className="flex flex-col items-center space-y-6">
+            <span className="text-white/70 font-medium text-lg uppercase tracking-wider">Connect</span>
+            <div className="flex justify-center gap-4">
+              <a 
+                href="https://github.com/byPixelTV" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="group p-4 bg-white/10 hover:bg-white/20 rounded-full border border-white/20 transition-all duration-300 hover:scale-110 hover:border-purple-500/50"
+                aria-label="GitHub"
+              >
+                <Icon 
+                  icon="mdi:github" 
+                  className="w-8 h-8 text-white group-hover:text-purple-400 transition-colors duration-300" 
+                />
+              </a>
+              <a 
+                href="https://discord.gg/yVp7Qvhj9k" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="group p-4 bg-white/10 hover:bg-white/20 rounded-full border border-white/20 transition-all duration-300 hover:scale-110 hover:border-purple-500/50"
+                aria-label="Discord"
+              >
+                <Icon 
+                  icon="ic:baseline-discord" 
+                  className="w-8 h-8 text-white group-hover:text-purple-400 transition-colors duration-300" 
+                />
+              </a>
+              <a 
+                href="https://bsky.app/profile/bypixel.dev" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="group p-4 bg-white/10 hover:bg-white/20 rounded-full border border-white/20 transition-all duration-300 hover:scale-110 hover:border-purple-500/50"
+                aria-label="Bluesky"
+              >
+                <Icon 
+                  icon="bi:bluesky" 
+                  className="w-8 h-8 text-white group-hover:text-purple-400 transition-colors duration-300" 
+                />
+              </a>
             </div>
           </div>
+        </div>
+
+        {/* Animated Scroll Indicator */}
+        <SkillsScrollDownButton />
+      </div>
+      
+      {/* Skills Section */}
+      <div className="min-h-screen flex flex-col items-center justify-center px-6 py-20" id="skills">
+        <div className="w-full max-w-6xl">
+          {/* Section Title */}
+          <div className="text-center mb-16 pt-24">
+            <h2 className="text-5xl md:text-6xl font-bold text-white mb-4">
+              Skills & Technologies
+            </h2>
+            <div className="w-24 h-1 bg-gradient-to-r from-purple-500 to-pink-500 mx-auto"></div>
+          </div>
+
+          {/* Skills Grid - Wrapped in a single motion.div for synchronized animation */}
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            viewport={{ once: false, amount: 0.1 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+          >
+            {skillCategories.map((category, categoryIndex) => (
+              <motion.div
+                key={category.title}
+                className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all duration-300"
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -50 }}
+                transition={{ 
+                  duration: 0.6, 
+                  delay: categoryIndex * 0.1,
+                  ease: "easeOut" 
+                }}
+              >
+                <h3 className="text-xl font-semibold text-white mb-4 text-center">
+                  {category.title}
+                </h3>
+                <div className="grid grid-cols-2 gap-3">
+                  {category.skills.map((skill) => (
+                    <div
+                      key={skill.name}
+                      className="flex flex-col items-center p-3 bg-white/5 rounded-xl border border-white/10 hover:border-purple-500/30 hover:bg-white/10 transition-all duration-300 group"
+                    >
+                      <Icon 
+                        icon={skill.icon} 
+                        className="w-8 h-8 mb-2 group-hover:scale-110 transition-transform duration-300" 
+                      />
+                      <span className="text-white/80 text-sm text-center group-hover:text-white transition-colors duration-300">
+                        {skill.name}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+
+          {/* Source Code Link */}
+          <motion.div 
+            className="text-center"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -30 }}
+            viewport={{ once: false, amount: 0.5 }}
+            transition={{ duration: 0.6, delay: 0.3, ease: "easeOut" }}
+          >
+            <a
+              href="https://github.com/byPixelTV/bypixel.dev"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-purple-500/20 to-pink-500/20 hover:from-purple-500/30 hover:to-pink-500/30 border border-purple-500/30 rounded-full text-white hover:text-purple-300 transition-all duration-300 group"
+            >
+              <Icon 
+                icon="mdi:code-braces" 
+                className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" 
+              />
+              <span className="font-medium">View Source Code</span>
+              <Icon 
+                icon="mdi:external-link" 
+                className="w-4 h-4 group-hover:scale-110 transition-transform duration-300" 
+              />
+            </a>
+          </motion.div>
         </div>
       </div>
     </BackgroundLayout>

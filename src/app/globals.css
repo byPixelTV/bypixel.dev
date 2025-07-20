@@ -122,3 +122,17 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  .font-ndot {
+    font-family: 'ndot', sans-serif;
+  }
+}
+
+@font-face {
+  font-family: 'ndot';
+  src: url('/fonts/n-dot.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
