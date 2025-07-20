@@ -68,6 +68,8 @@ const skillCategories = [
     skills: [
       { name: "Java", icon: "vscode-icons:file-type-java" },
       { name: "Kotlin", icon: "vscode-icons:file-type-kotlin" },
+      { name: "Node.js", icon: "vscode-icons:file-type-node" },
+      { name: "Python", icon: "vscode-icons:file-type-python" },
       { name: "Spring", icon: "devicon:spring" },
       { name: "Gradle", icon: "vscode-icons:file-type-gradle" },
       { name: "Maven", icon: "vscode-icons:file-type-maven" },
@@ -87,8 +89,6 @@ const skillCategories = [
     title: "DevOps & Systems",
     skills: [
       { name: "Linux", icon: "flat-color-icons:linux" },
-      { name: "Debian", icon: "logos:debian" },
-      { name: "Windows", icon: "devicon:windows11" },
       { name: "Docker", icon: "vscode-icons:file-type-docker2" },
       { name: "Nginx", icon: "vscode-icons:file-type-nginx" },
       { name: "Nginx Proxy Manager", icon: "simple-icons:nginxproxymanager" }
@@ -99,6 +99,9 @@ const skillCategories = [
     skills: [
       { name: "VS Code", icon: "vscode-icons:file-type-vscode" },
       { name: "IntelliJ", icon: "devicon:intellij" },
+      { name: "WebStorm", icon: "devicon:webstorm" },
+      { name: "PyCharm", icon: "devicon:pycharm" },
+      { name: "DataGrip", icon: "devicon:datagrip" },
     ]
   }
 ];
@@ -177,10 +180,22 @@ export default function Page() {
         <div className="w-full max-w-6xl">
           {/* Section Title */}
           <div className="text-center mb-16 pt-24">
-            <h2 className="text-5xl md:text-6xl font-bold text-white mb-4">
+            <motion.h2 
+              className="text-5xl md:text-6xl font-bold text-white mb-2 inline-block relative"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: false, amount: 0.5 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+            >
               Skills & Technologies
-            </h2>
-            <div className="w-24 h-1 bg-gradient-to-r from-purple-500 to-pink-500 mx-auto"></div>
+              <motion.span
+                className="absolute left-0 -bottom-1 h-1 bg-gradient-to-r from-purple-500 to-pink-500"
+                initial={{ width: 0 }}
+                whileInView={{ width: "100%" }}
+                viewport={{ once: false, amount: 0.5 }}
+                transition={{ duration: 1.3, ease: "easeOut" }}
+              />
+            </motion.h2>
           </div>
 
           {/* Skills Grid - Wrapped in a single motion.div for synchronized animation */}
