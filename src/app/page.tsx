@@ -80,6 +80,8 @@ const skillCategories = [
     title: "Database",
     skills: [
       { name: "MySQL", icon: "vscode-icons:file-type-mysql" },
+      { name: "MariaDB", icon: "vscode-icons:file-type-mariadb" },
+      { name: "SQLite", icon: "vscode-icons:file-type-sqlite" },
       { name: "PostgreSQL", icon: "vscode-icons:file-type-pgsql" },
       { name: "MongoDB", icon: "vscode-icons:file-type-mongo" },
       { name: "Redis", icon: "devicon:redis" }
@@ -102,6 +104,9 @@ const skillCategories = [
       { name: "WebStorm", icon: "devicon:webstorm" },
       { name: "PyCharm", icon: "devicon:pycharm" },
       { name: "DataGrip", icon: "devicon:datagrip" },
+      { name: "Grafana", icon: "devicon:grafana" },
+      { name: "Prometheus", icon: "devicon:prometheus" },
+      { name: "Postman", icon: "devicon:postman" }
     ]
   }
 ];
