@@ -3,7 +3,7 @@ import Navbar from "@/components/Navbar";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Metadata } from "next";
-import LoginContent from "@/components/auth/LoginContent";
+import LoginContent from "@/app/auth/login/LoginClient";
 
 export const metadata: Metadata = {
   title: "Login | byPixelTV – Software Developer",

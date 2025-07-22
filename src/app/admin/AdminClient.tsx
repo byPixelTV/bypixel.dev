@@ -1,13 +1,13 @@
 "use client";
 
-import { PostsPage } from "@/components/admin/posts-page";
+import { PostsPage } from "@/app/admin/PostClient";
 import BackgroundLayout from "@/components/BackgroundLayout";
 import { Button } from "@/components/ui/button";
 import { account } from "@/lib/appwrite/client";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export default function AdminContent() {
+export default function AdminClient() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -51,7 +51,7 @@ export default function AdminContent() {
   }
 
   if (!isAuthenticated) {
-    return null; // Router push handles redirect
+    return null; 
   }
 
   if (!isAdmin) {

@@ -1,4 +1,4 @@
-import AuthFailed from "@/components/auth/AuthFailed";
+import AuthFailed from "@/app/auth/failed/FailedClient";
 import BackgroundLayout from "@/components/BackgroundLayout";
 import { Metadata } from "next";
 import { Suspense } from "react";
