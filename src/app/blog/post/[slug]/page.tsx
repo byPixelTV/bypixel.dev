@@ -34,7 +34,7 @@ async function getPostBySlug(slug: string): Promise<Posts | null> {
       return null;
     }
 
-    return response.documents[0] as Posts;
+    return response.documents[0];
   } catch (error) {
     console.error("Error fetching post:", error);
     return null;
@@ -95,7 +95,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   // Use post data with fallbacks
   const title = post.title || defaultTitle;
-  const description = post["short-description"] || defaultDescription;
+  const description = post.shortDescription || defaultDescription;
   const image = post.thumbnail || defaultImage;
   const postUrl = `${siteUrl}/blog/post/${slug}`;
 
@@ -127,7 +127,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       ],
       siteName: "byPixelTV — Software Developer",
       publishedTime: post.$createdAt,
-      modifiedTime: post["update-date"] || post.$updatedAt,
+      modifiedTime: post.updateDate || post.$updatedAt,
     },
     robots: {
       index: true,
@@ -196,18 +196,18 @@ export default async function BlogPostPage({ params }: PageProps) {
               </p>
               <div className="flex items-center gap-4 text-gray-400 justify-center">
                 <span>
-                  Written by {(await serverUsers.get(post["user-id"])).name}
+                  Written by {(await serverUsers.get(post.userId)).name}
                 </span>
                 <span>•</span>
                 <span>{post.views || 0} views</span>
                 <span>•</span>
                 <time>{new Date(post.$createdAt).toLocaleDateString()}</time>
-                {post["update-date"] && (
+                {post.updateDate && (
                   <>
                     <span>•</span>
                     <time>
                       Updated on{" "}
-                      {new Date(post["update-date"]).toLocaleDateString()}
+                      {new Date(post.updateDate).toLocaleDateString()}
                     </time>
                   </>
                 )}

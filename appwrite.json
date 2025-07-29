@@ -49,28 +49,73 @@
     "collections": [
         {
             "$id": "685a9ec7002f9eb12d08",
-            "$permissions": [
-                "read(\"any\")"
-            ],
+            "$permissions": [],
             "databaseId": "685a9e8a0021f75d1389",
             "name": "posts",
             "enabled": true,
             "documentSecurity": false,
             "attributes": [
                 {
+                    "key": "user-id",
+                    "type": "string",
+                    "required": true,
+                    "array": false,
+                    "size": 1000,
+                    "default": null
+                },
+                {
                     "key": "content",
                     "type": "string",
                     "required": true,
                     "array": false,
-                    "size": 100000,
+                    "size": 1000000000,
                     "default": null
                 },
                 {
-                    "key": "post-id",
+                    "key": "draft",
+                    "type": "boolean",
+                    "required": false,
+                    "array": false,
+                    "default": true
+                },
+                {
+                    "key": "short-description",
                     "type": "string",
                     "required": true,
                     "array": false,
-                    "size": 6,
+                    "size": 256,
+                    "default": null
+                },
+                {
+                    "key": "title",
+                    "type": "string",
+                    "required": true,
+                    "array": false,
+                    "size": 256,
+                    "default": null
+                },
+                {
+                    "key": "thumbnail",
+                    "type": "string",
+                    "required": false,
+                    "array": false,
+                    "format": "url",
+                    "default": null
+                },
+                {
+                    "key": "creation-date",
+                    "type": "datetime",
+                    "required": true,
+                    "array": false,
+                    "format": "",
+                    "default": null
+                },
+                {
+                    "key": "update-date",
+                    "type": "datetime",
+                    "required": false,
+                    "array": false,
+                    "format": "",
                     "default": null
                 },
                 {
@@ -82,34 +127,13 @@
                     "default": null
                 },
                 {
-                    "key": "removed",
-                    "type": "boolean",
+                    "key": "views",
+                    "type": "integer",
                     "required": false,
                     "array": false,
-                    "default": false
-                },
-                {
-                    "key": "user-id",
-                    "type": "string",
-                    "required": true,
-                    "array": false,
-                    "size": 10000000,
-                    "default": null
-                },
-                {
-                    "key": "short-description",
-                    "type": "string",
-                    "required": true,
-                    "array": false,
-                    "size": 256,
-                    "default": null
-                },
-                {
-                    "key": "is-draft",
-                    "type": "boolean",
-                    "required": false,
-                    "array": false,
-                    "default": true
+                    "min": -9223372036854775808,
+                    "max": 9223372036854775807,
+                    "default": 0
                 }
             ],
             "indexes": []

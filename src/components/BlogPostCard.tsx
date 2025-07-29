@@ -29,15 +29,15 @@ export default function BlogPostCard({ post, authorName }: PostCardProps) {
         <div className="flex justify-between items-center">
           <h2 className="text-xl font-semibold text-white">{post.title}</h2>
           <Badge variant="secondary">
-            {dayjs(post["creation-date"]).format("MMM D, YYYY")}
+            {dayjs(post.creationDate).format("MMM D, YYYY")}
           </Badge>
         </div>
         <p className="text-gray-300 text-sm">
-          {post["short-description"] || "No description available."}
+          {post.shortDescription || "No description available."}
         </p>
-        {post["update-date"] && (
+        {post.updateDate && (
           <div className="text-xs text-gray-400">
-            Updated {dayjs(post["update-date"]).format("MMM D, YYYY")}
+            Updated {dayjs(post.updateDate).format("MMM D, YYYY")}
           </div>
         )}
       </CardContent>
@@ -49,7 +49,7 @@ export default function BlogPostCard({ post, authorName }: PostCardProps) {
           </span>
         </div>
         <Button asChild variant="default">
-          <Link href={`/blog/post/${post["post-slug"] || post.$id}`}>Read More</Link>
+          <Link href={`/blog/post/${post.postSlug || post.$id}`}>Read More</Link>
         </Button>
       </CardFooter>
     </Card>

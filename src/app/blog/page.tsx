@@ -22,7 +22,7 @@ async function getPosts(): Promise<{ posts: Posts[]; error: string | null }> {
     );
 
     return {
-      posts: response.documents as Posts[],
+      posts: response.documents as unknown as Posts[],
       error: null,
     };
   } catch (error) {
@@ -116,7 +116,7 @@ export default async function BlogPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
                 {await Promise.all(
                     posts.map(async (post) => {
-                    const authorName = await getAuthorName(post["user-id"]);
+                    const authorName = await getAuthorName(post.userId);
                     return <BlogPostCard key={post.$id} post={post} authorName={authorName} />;
                     })
                 )}

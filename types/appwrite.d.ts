@@ -6,13 +6,16 @@ import { type Models } from 'node-appwrite';
  */
 
 export type Posts = Models.Document & {
-  content: string;
-  postId: string;
-  postSlug: string;
-  removed: boolean;
   userId: string;
+  content: string;
+  draft: boolean;
   shortDescription: string;
-  isDraft: boolean;
+  title: string;
+  thumbnail: string | null;
+  creationDate: string;
+  updateDate: string | null;
+  postSlug: string;
+  views: number;
 }
 
 export type Users = Models.Document & {

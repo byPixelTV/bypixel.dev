@@ -67,7 +67,7 @@ export async function getPosts(): Promise<{
     );
 
     return {
-      posts: response.documents as Posts[],
+      posts: response.documents as unknown as Posts[],
       error: null,
     };
   } catch (error) {

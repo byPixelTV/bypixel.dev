@@ -76,8 +76,8 @@ export function PostsPage() {
 
       // Fetch author names for all posts
       const authorPromises = postsData.map(async (post) => {
-        const name = await getAuthorName(post["user-id"]);
-        return { userId: post["user-id"], name };
+        const name = await getAuthorName(post.userId);
+        return { userId: post.userId, name };
       });
 
       const authorResults = await Promise.all(authorPromises);
@@ -101,7 +101,7 @@ export function PostsPage() {
   const filteredPosts = posts.filter(
     (post) =>
       post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      authors[post["user-id"]]?.toLowerCase().includes(searchTerm.toLowerCase())
+      authors[post.userId]?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   // Calculate stats
@@ -317,12 +317,12 @@ export function PostsPage() {
                     <TableCell>
                       <div className="flex items-center gap-2">
                         <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center text-sm font-medium">
-                          {(authors[post["user-id"]] || "U")
+                          {(authors[post.userId] || "U")
                             .split(" ")
                             .map((n) => n[0])
                             .join("")}
                         </div>
-                        {authors[post["user-id"]] || "Unknown"}
+                        {authors[post.userId] || "Unknown"}
                       </div>
                     </TableCell>
                     <TableCell>{getStatusBadge(post.draft)}</TableCell>
@@ -333,10 +333,10 @@ export function PostsPage() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      {post["update-date"] ? (
+                      {post.updateDate ? (
                         <div className="flex items-center gap-2">
                           <Calendar className="h-4 w-4 text-muted-foreground" />
-                          {formatDate(post["update-date"])}
+                          {formatDate(post.updateDate)}
                         </div>
                       ) : (
                         "N/A"

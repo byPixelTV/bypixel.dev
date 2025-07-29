@@ -58,9 +58,9 @@ export function PostDialog({
     if (post) {
       setFormData({
         title: post.title || "",
-        shortDescription: post["short-description"] || "",
-        thumbnail: post.thumbnail || "", // Das ist eigentlich ok
-        slug: post["post-slug"] || "",
+        shortDescription: post.shortDescription || "",
+        thumbnail: post.thumbnail || "",
+        slug: post.postSlug || "",
         draft: post.draft ?? true,
         content: post.content || "",
       });
