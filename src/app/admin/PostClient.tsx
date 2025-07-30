@@ -123,12 +123,6 @@ export function PostsPage() {
   const handleEditPost = async (postData: PostFormData) => {
     if (!editingPost) return;
 
-    // Convert thumbnail null to undefined for type compatibility
-    const originalPost = {
-      ...editingPost,
-      thumbnail: editingPost.thumbnail === null ? undefined : editingPost.thumbnail,
-    };
-
     const result = await updatePost(editingPost.$id, postData, editingPost);
     if (result.success) {
       await fetchPosts(); // Refresh the list
