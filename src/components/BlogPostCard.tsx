@@ -49,7 +49,7 @@ export default function BlogPostCard({ post, authorName }: PostCardProps) {
           </span>
         </div>
         <Button asChild variant="default">
-          <Link href={`/blog/post/${post.postSlug || post.$id}`}>Read More</Link>
+          <Link href={`/blog/post/${post.slug || post.$id}`}>Read More</Link>
         </Button>
       </CardFooter>
     </Card>

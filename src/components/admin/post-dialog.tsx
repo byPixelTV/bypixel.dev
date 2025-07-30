@@ -60,7 +60,7 @@ export function PostDialog({
         title: post.title || "",
         shortDescription: post.shortDescription || "",
         thumbnail: post.thumbnail || "",
-        slug: post.postSlug || "",
+        slug: post.slug || "",
         draft: post.draft ?? true,
         content: post.content || "",
       });

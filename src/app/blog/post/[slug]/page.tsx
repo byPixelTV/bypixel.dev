@@ -20,12 +20,12 @@ interface PageProps {
 
 async function getPostBySlug(slug: string): Promise<Posts | null> {
   try {
-    // Query by postSlug field
+    // Query by slug field
     const response = await serverDatabases.listDocuments<Posts>(
       "685a9e8a0021f75d1389",
       "685a9ec7002f9eb12d08",
       [
-        Query.equal("post-slug", slug),
+        Query.equal("slug", slug),
         Query.equal("draft", false), // Only get published posts
       ]
     );

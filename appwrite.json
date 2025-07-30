@@ -56,7 +56,7 @@
             "documentSecurity": false,
             "attributes": [
                 {
-                    "key": "user-id",
+                    "key": "userId",
                     "type": "string",
                     "required": true,
                     "array": false,
@@ -79,7 +79,7 @@
                     "default": true
                 },
                 {
-                    "key": "short-description",
+                    "key": "shortDescription",
                     "type": "string",
                     "required": true,
                     "array": false,
@@ -103,7 +103,7 @@
                     "default": null
                 },
                 {
-                    "key": "creation-date",
+                    "key": "creationDate",
                     "type": "datetime",
                     "required": true,
                     "array": false,
@@ -111,7 +111,7 @@
                     "default": null
                 },
                 {
-                    "key": "update-date",
+                    "key": "updateDate",
                     "type": "datetime",
                     "required": false,
                     "array": false,
@@ -119,7 +119,7 @@
                     "default": null
                 },
                 {
-                    "key": "post-slug",
+                    "key": "slug",
                     "type": "string",
                     "required": true,
                     "array": false,

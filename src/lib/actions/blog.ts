@@ -15,14 +15,14 @@ interface PostFormData {
 // Define the database document structure
 interface PostDocumentData {
   title: string;
-  "short-description": string;
-  "post-slug": string;
+  shortDescription: string;
+  slug: string;
   draft: boolean;
   content: string;
-  "user-id": string;
-  "creation-date": string;
+  userId: string;
+  creationDate: string;
   thumbnail?: string; // Optional field
-  "update-date"?: string; // Optional field for updates
+  updateDate?: string; // Optional field for updates
 }
 
 // Helper function to validate and sanitize thumbnail URL
@@ -95,12 +95,12 @@ export async function createPost(postData: PostFormData, userId: string) {
     // Map camelCase form data to hyphenated database field names
     const documentData: PostDocumentData = {
       title: postData.title,
-      "short-description": postData.shortDescription,
-      "post-slug": postData.slug,
+      shortDescription: postData.shortDescription,
+      slug: postData.slug,
       draft: postData.draft,
       content: postData.content,
-      "user-id": userId,
-      "creation-date": new Date().toISOString(),
+      userId: userId,
+      creationDate: new Date().toISOString(),
     };
 
     // Only add thumbnail if it's a valid URL
@@ -124,25 +124,39 @@ export async function createPost(postData: PostFormData, userId: string) {
   }
 }
 
-export async function updatePost(postId: string, postData: PostFormData) {
+export async function updatePost(postId: string, postData: PostFormData, originalPost?: Posts) {
   try {
     // Validate and sanitize thumbnail URL
     const thumbnailUrl = validateThumbnailUrl(postData.thumbnail);
 
-    // Map camelCase form data to hyphenated database field names
-    // For updates, we use Partial to allow optional fields
+    // Check if only the draft status is being changed
+    // If originalPost is not provided, always set updateDate for safety
+    let onlyDraftChanged = false;
+    if (originalPost) {
+      const fieldsToCheck = ["title", "shortDescription", "slug", "content", "thumbnail"];
+      onlyDraftChanged =
+        fieldsToCheck.every(
+          (field) => postData[field as keyof PostFormData] === originalPost[field as keyof PostDocumentData]
+        ) && postData.draft !== originalPost.draft;
+    }
+
+    // Build document data
     const documentData: Partial<PostDocumentData> & {
       thumbnail?: string | null;
     } = {
       title: postData.title,
-      "short-description": postData.shortDescription,
-      "post-slug": postData.slug,
+      shortDescription: postData.shortDescription,
+      slug: postData.slug,
       draft: postData.draft,
       content: postData.content,
       // @ts-expect-error thumbnail can be null, because undefined just ignores it and does not remove it
       thumbnail: thumbnailUrl || null,
-      "update-date": new Date().toISOString(),
     };
+
+    // Only set updateDate if more than just draft is being changed
+    if (!onlyDraftChanged) {
+      documentData.updateDate = new Date().toISOString();
+    }
 
     const result = await serverDatabases.updateDocument(
       "685a9e8a0021f75d1389",
@@ -169,6 +183,7 @@ export async function deletePost(postId: string) {
     );
     return { success: true };
   } catch (error) {
+    
     console.error("Error deleting post:", error);
     return {
       success: false,

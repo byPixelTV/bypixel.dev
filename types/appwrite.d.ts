@@ -14,7 +14,7 @@ export type Posts = Models.Document & {
   thumbnail: string | null;
   creationDate: string;
   updateDate: string | null;
-  postSlug: string;
+  slug: string;
   views: number;
 }
 
