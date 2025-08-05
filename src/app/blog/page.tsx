@@ -11,9 +11,6 @@ export const dynamic = 'force-dynamic';
 // Add error logging to see what's happening
 async function getPosts(): Promise<{ posts: Posts[]; error: string | null }> {
   try {
-    // Add logging to check if environment variables exist
-    console.log('Appwrite endpoint:', process.env.APPWRITE_ENDPOINT);
-    console.log('Appwrite project ID:', process.env.APPWRITE_PROJECT_ID);
     
     const response = await serverDatabases.listDocuments(
       "685a9e8a0021f75d1389",
@@ -34,13 +31,16 @@ async function getPosts(): Promise<{ posts: Posts[]; error: string | null }> {
   }
 }
 
-async function getAuthorName(userId: string) {
-  try {
-    const user = await serverUsers.get(userId);
-    return user.name || "Unknown";
-  } catch {
-    return "Unknown";
-  }
+async function getAuthorsNames(userIds: string[]) {
+  const uniqueIds = Array.from(new Set(userIds));
+  const promises = uniqueIds.map((id) =>
+    serverUsers.get(id).then(user => ({ id, name: user.name || "Unknown" })).catch(() => ({ id, name: "Unknown" }))
+  );
+  const users = await Promise.all(promises);
+  return users.reduce<Record<string, string>>((acc, cur) => {
+    acc[cur.id] = cur.name;
+    return acc;
+  }, {});
 }
 
 export const metadata: Metadata = {
@@ -91,6 +91,9 @@ export const metadata: Metadata = {
 export default async function BlogPage() {
   const { posts, error } = await getPosts();
 
+  const userIds = posts.map(p => p.userId);
+  const authorsMap = await getAuthorsNames(userIds);
+
   return (
     <>
       <Navbar />
@@ -116,8 +119,7 @@ export default async function BlogPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
                 {await Promise.all(
                     posts.map(async (post) => {
-                    const authorName = await getAuthorName(post.userId);
-                    return <BlogPostCard key={post.$id} post={post} authorName={authorName} />;
+                    return <BlogPostCard key={post.$id} post={post} authorName={authorsMap[post.userId] || "Unknown"} />;
                     })
                 )}
                 </div>

@@ -1,188 +1,288 @@
-'use client';
+// This file includes code copied and adapted from:
+// https://github.com/AbhiVarde/abhivarde.in/blob/main/app/components/common/Navbar.jsx
+// Original work by Abhi Varde, licensed under the MIT License:
+// https://github.com/AbhiVarde/abhivarde.in/blob/main/LICENSE
+//
+// Changes have been made to fit this project’s design and functionality.
 
-import { usePathname, useRouter } from 'next/navigation';
-import { useState } from 'react';
-import Image from "next/image";
-import Link from 'next/link';
-import { Icon } from "@iconify/react";
+"use client";
 
-const navItems = {
-  home: 'Home',
-  projects: 'Projects',
-  blog: 'Blog',
-};
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import {
+  motion,
+  AnimatePresence,
+  useScroll,
+  useMotionValueEvent,
+} from "framer-motion";
+import { LuEqual, LuBook, LuUser } from "react-icons/lu";
+import type { Variants } from "framer-motion";
 
-export default function Navbar() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+const headerNavLinks = [
+  { title: "About", url: "/", icon: <LuUser color="#FFFFFF" /> },
+  { title: "Blog", url: "/blog", icon: <LuBook color="#FFFFFF" /> }
+];
+
+const Navbar = () => {
   const pathname = usePathname();
   const router = useRouter();
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [selected, setSelected] = useState(pathname);
+  const { scrollY } = useScroll();
 
-  const isActive = (slug: string) => {
-    if (slug === 'home') return pathname === '/';
-    return pathname.startsWith(`/${slug}`);
+  // Prefetch all pages on mount
+  useEffect(() => {
+    headerNavLinks.forEach(({ url }) => {
+      // Prefetch only if different from current path to save bandwidth
+      if (url !== pathname) {
+        router.prefetch(url);
+      }
+    });
+  }, [pathname, router]);
+
+  // Scroll listener for navbar styling
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    setIsScrolled(latest > 20);
+  });
+
+  useEffect(() => {
+    setSelected(pathname);
+  }, [pathname]);
+
+  const navVariants: Variants = {
+    top: {
+      backgroundColor: "rgba(0, 0, 0, 0.2)",
+      backdropFilter: "blur(8px)",
+      margin: "20px 12px",
+      transition: {
+        type: "spring",
+        stiffness: 300,
+        damping: 30,
+      },
+    },
+    scroll: {
+      backgroundColor: "rgba(0, 0, 0, 0.8)",
+      backdropFilter: "blur(12px)",
+      margin: "8px 12px",
+      transition: {
+        type: "spring",
+        stiffness: 300,
+        damping: 30,
+      },
+    },
   };
 
-  const handleBackdropKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      setMobileMenuOpen(false);
-    }
+  const mobileMenuVariants: Variants = {
+    closed: {
+      x: -100,
+      transition: {
+        type: "spring",
+        stiffness: 400,
+        damping: 40,
+      },
+    },
+    open: {
+      x: 0,
+      transition: {
+        type: "spring",
+        stiffness: 400,
+        damping: 40,
+        staggerChildren: 0.07,
+        delayChildren: 0.2,
+      },
+    },
   };
 
-  const handleMenuKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      event.stopPropagation();
-    }
+  const mobileMenuItemVariants: Variants = {
+    closed: { x: -40, opacity: 0 },
+    open: {
+      x: 0,
+      opacity: 1,
+      transition: {
+        type: "spring",
+        stiffness: 100,
+        damping: 15,
+      },
+    },
   };
 
   return (
     <>
-      <nav className="fixed top-0 left-0 right-0 z-50 p-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 shadow-xl px-6 py-4">
-            <div className="flex items-center justify-between">
-              {/* Logo */}
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-purple-300/30">
-                  <Image
-                    src="/profile.gif"
-                    alt="byPixelTV"
-                    unoptimized={true}
-                    width={40}
-                    height={40}
-                    className="object-cover"
-                    style={{
-                      maxWidth: "100%",
-                      height: "auto"
-                    }} />
-                </div>
-                <span className="text-white font-bold text-lg">byPixelTV</span>
-              </div>
-
-              {/* Desktop Nav */}
-              <div className="hidden md:flex items-center space-x-8">
-                {Object.entries(navItems).map(([slug, label]) => (
-                  <Link
-                    key={slug}
-                    href={slug === 'home' ? '/' : `/${slug}`}
-                    onMouseEnter={() => router.prefetch(slug === 'home' ? '/' : `/${slug}`)}
-                    className={`transition-colors duration-200 font-medium ${
-                      isActive(slug)
-                        ? 'text-white'
-                        : 'text-white/80 hover:text-white'
-                    }`}
-                    aria-label={label}
-                    aria-current={isActive(slug) ? 'page' : undefined}
-                  >
-                    {label}
-                  </Link>
-                ))}
-              </div>
-
-              <div className="hidden md:flex items-center gap-3">
-                <a
-                  href="mailto:contact@bypixel.dev"
-                  className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg border border-white/20 transition-all duration-200 font-medium"
-                  aria-label="Contact"
-                >
-                  <Icon icon="material-symbols:mail-outline" height="25" width="25" />
-                  Contact
-                </a>
-
-                <a
-                  href="https://dsc.gg/bypixeltv"
-                  className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg border border-white/20 transition-all duration-200 font-medium"
-                  aria-label="Contact"
-                >
-                  <Icon icon="ic:baseline-discord" height="25" width="25" />
-                  Discord
-                </a>
-              </div>
-
-              {/* Mobile Menu Button */}
-              <button
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="md:hidden text-white"
-                aria-label="Menu"
-                type="button"
+      <motion.header
+        className="fixed mx-auto w-full max-w-5xl top-0 left-0 right-0 z-40 transition-all duration-500 ease-in-out flex justify-center"
+        initial="hidden"
+        animate="visible"
+      >
+        <motion.nav
+          className="px-4 py-3 w-full shadow-lg border border-[#333] rounded-3xl mt-3 mx-3 md:mt-4 md:mx-4 lg:mt-5 lg:mx-5"
+          variants={navVariants}
+          initial="top"
+          animate={isScrolled ? "scroll" : "top"}
+        >
+          <div className="flex justify-between items-center">
+            <motion.div className="flex space-x-1 sm:space-x-2" custom={0}>
+              <Link
+                href="/"
+                className="md:text-lg tracking-wide text-[#F4F0E6] cursor-pointer font-normal"
               >
-                <svg
-                  className="w-6 h-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
+                ~
+                {pathname === "/" && (
+                  <span className="ml-1 md:text-lg tracking-wide">byPixelTV</span>
+                )}
+              </Link>
+              {pathname !== "/" && (
+                <Link
+                  href={pathname}
+                  className="md:text-lg tracking-wide text-[#F4F0E6] cursor-pointer font-normal"
                 >
-                  <path
+                  <span className="text-[#F4F0E6]">/</span>&nbsp;
+                  {pathname.charAt(1).toUpperCase() + pathname.slice(2)}
+                </Link>
+              )}
+            </motion.div>
+
+            <div className="flex items-center justify-center md:hidden">
+              <motion.button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="text-[#F4F0E6] focus:outline-none"
+              >
+                <LuEqual size={24} />
+              </motion.button>
+            </div>
+
+            <ul className="hidden md:flex gap-3 sm:gap-4 relative">
+              {headerNavLinks.map((navLink, index) => (
+                <motion.li key={index} custom={index + 1}>
+                  <Link href={navLink.url}>
+                    <motion.button
+                      onClick={() => setSelected(navLink.url)}
+                      className={`relative px-2 sm:px-3 py-1 sm:py-2 rounded-lg overflow-hidden group tracking-wider font-normal`}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <span
+                        className={`relative z-10 ${
+                          selected === navLink.url ? "text-black" : "text-white"
+                        }`}
+                      >
+                        {navLink.title}
+                      </span>
+                      {selected === navLink.url && (
+                        <motion.span
+                          layoutId="navbar-pill"
+                          className="absolute inset-0 bg-[#F4F0E6] rounded-lg"
+                          initial={false}
+                          transition={{
+                            type: "spring",
+                            stiffness: 350,
+                            damping: 30,
+                          }}
+                        />
+                      )}
+                      <motion.span
+                        className="absolute inset-0 bg-white/10 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                        initial={false}
+                        transition={{
+                          type: "spring",
+                          stiffness: 350,
+                          damping: 30,
+                        }}
+                      />
+                    </motion.button>
+                  </Link>
+                </motion.li>
+              ))}
+            </ul>
+          </div>
+        </motion.nav>
+      </motion.header>
+
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            className="fixed inset-y-0 left-0 z-50 w-full sm:w-72 bg-[#111111] shadow-2xl overflow-hidden"
+            variants={mobileMenuVariants}
+            initial="closed"
+            animate="open"
+            exit="closed"
+          >
+            <div className="flex flex-col h-full">
+              <div className="flex justify-between items-center p-4 border-b border-[#333]">
+                <motion.div
+                  className="md:text-lg font-medium tracking-wide text-white"
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 }}
+                >
+                  Menu
+                </motion.div>
+                <motion.button
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="text-white focus:outline-none"
+                  whileTap={{ scale: 0.9 }}
+                >
+                  <svg
+                    className="w-6 h-6 sm:w-7 sm:h-7"
+                    fill="none"
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 6h16M4 12h16M4 18h16"
-                  />
-                </svg>
-              </button>
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path d="M6 18L18 6M6 6l12 12"></path>
+                  </svg>
+                </motion.button>
+              </div>
+              <nav className="flex-grow overflow-y-auto">
+                <ul className="flex flex-col space-y-1 p-4">
+                  {headerNavLinks.map((item, index) => (
+                    <motion.li
+                      key={index}
+                      variants={mobileMenuItemVariants}
+                      custom={index}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <Link
+                        href={item.url}
+                        className={`block py-2 px-3 rounded-lg transition duration-300 ease-in-out ${
+                          pathname === item.url
+                            ? "text-white bg-white/10"
+                            : "text-white hover:bg-white/5"
+                        }`}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        <div className="flex items-center space-x-3">
+                          <div className="p-2 rounded-lg">{item.icon}</div>
+                          <span className="text-sm tracking-wider">{item.title}</span>
+                        </div>
+                      </Link>
+                    </motion.li>
+                  ))}
+                </ul>
+              </nav>
             </div>
-          </div>
-        </div>
-      </nav>
-      {/* Mobile Menu */}
-      {mobileMenuOpen && (
-        <div className="fixed inset-0 z-50">
-          <div
-            className="md:hidden absolute inset-0 bg-black/20 backdrop-blur-sm"
-            role="button"
-            tabIndex={0}
-            aria-label="Close menu"
-            onClick={() => setMobileMenuOpen(false)}
-            onKeyDown={handleBackdropKeyDown}
-          ></div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-          <div
-            className="md:hidden absolute top-20 left-4 right-4 z-50 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 shadow-xl p-4"
-            role="menu"
-            tabIndex={0}
-            onClick={(e) => e.stopPropagation()}
-            onKeyDown={handleMenuKeyDown}
-          >
-            <div className="flex flex-col space-y-4">
-              {Object.entries(navItems).map(([slug, label]) => (
-                <Link
-                  key={slug}
-                  href={slug === 'home' ? '/' : `/${slug}`}
-                  className={`transition-colors duration-200 font-medium ${
-                    isActive(slug)
-                      ? 'text-white'
-                      : 'text-white/80 hover:text-white'
-                  }`}
-                  aria-label={label}
-                  aria-current={isActive(slug) ? 'page' : undefined}
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  {label}
-                </Link>
-              ))}
-              <a
-                href="mailto:contact@bypixel.dev"
-                className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg border border-white/20 transition-all duration-200 font-medium"
-                aria-label="Contact"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <Icon icon="material-symbols:mail-outline" height="25" width="25" />
-                Contact
-              </a>
-              <a
-                href="https://dsc.gg/bypixeltv"
-                className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg border border-white/20 transition-all duration-200 font-medium"
-                aria-label="Discord"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <Icon icon="ic:baseline-discord" height="25" width="25" />
-                Discord
-              </a>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Overlay */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
+        )}
+      </AnimatePresence>
     </>
   );
-}
+};
+
+export default Navbar;

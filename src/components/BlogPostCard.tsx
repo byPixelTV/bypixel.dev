@@ -1,3 +1,5 @@
+"use client";
+
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -5,7 +7,6 @@ import Image from "next/image";
 import Link from "next/link";
 import dayjs from "dayjs";
 import { Posts } from "../../types/appwrite";
-
 interface PostCardProps {
   post: Posts;
   authorName: string;
@@ -45,11 +46,11 @@ export default function BlogPostCard({ post, authorName }: PostCardProps) {
         <div className="flex flex-col">
           <span className="text-sm text-gray-400">Written by {authorName}</span>
           <span className="text-xs text-gray-500">
-            {post.views || 0} {post.views === 1 ? 'view' : 'views'}
+            {post.views || 0} {post.views === 1 ? "view" : "views"}
           </span>
         </div>
-        <Button asChild variant="default">
-          <Link href={`/blog/post/${post.slug || post.$id}`}>Read More</Link>
+        <Button asChild variant="secondary">
+          <Link href={`/blog/post/${post.slug || post.$id}`} prefetch={true}>Read More</Link>
         </Button>
       </CardFooter>
     </Card>

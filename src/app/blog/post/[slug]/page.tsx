@@ -1,3 +1,5 @@
+// app/blog/post/[slug]/page.tsx
+
 import { serverDatabases, serverUsers } from "@/lib/appwrite/server";
 import { Query } from "node-appwrite";
 import Navbar from "@/components/Navbar";
@@ -12,51 +14,55 @@ import { ArrowLeft } from "lucide-react";
 import ScrollToTop from "@/components/ScrollToTop";
 import { Metadata } from "next";
 
+// ISR: Revalidate page every 60 seconds
+export const revalidate = 60;
+
 interface PageProps {
   params: Promise<{
     slug: string;
   }>;
 }
 
-async function getPostBySlug(slug: string): Promise<Posts | null> {
+async function getPostWithAuthor(slug: string): Promise<(Posts & { authorName: string }) | null> {
   try {
-    // Query by slug field
     const response = await serverDatabases.listDocuments<Posts>(
       "685a9e8a0021f75d1389",
       "685a9ec7002f9eb12d08",
       [
         Query.equal("slug", slug),
-        Query.equal("draft", false), // Only get published posts
+        Query.equal("draft", false),
       ]
     );
 
-    if (response.documents.length === 0) {
-      return null;
+    if (response.documents.length === 0) return null;
+
+    const post = response.documents[0];
+    let authorName = "Unknown";
+    try {
+      const user = await serverUsers.get(post.userId);
+      authorName = user.name ?? "Unknown";
+    } catch (e) {
+      console.error("Author not found", e);
     }
 
-    return response.documents[0];
+    return {
+      ...post,
+      authorName,
+    };
   } catch (error) {
     console.error("Error fetching post:", error);
     return null;
   }
 }
 
-async function incrementPostViews(postId: string) {
+async function incrementPostViews(postId: string, currentViews: number) {
   try {
-    // Hole den aktuellen Post
-    const post = await serverDatabases.getDocument<Posts>(
-      "685a9e8a0021f75d1389",
-      "685a9ec7002f9eb12d08",
-      postId
-    );
-
-    // Erhöhe die Views um 1
     await serverDatabases.updateDocument(
       "685a9e8a0021f75d1389",
       "685a9ec7002f9eb12d08",
       postId,
       {
-        views: (post.views || 0) + 1,
+        views: currentViews + 1,
       }
     );
   } catch (error) {
@@ -66,9 +72,8 @@ async function incrementPostViews(postId: string) {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const post = await getPostBySlug(slug);
+  const post = await getPostWithAuthor(slug);
 
-  // Default values
   const defaultTitle = "byPixelTV – Software Developer";
   const defaultDescription = "Software Developer with passion for code. Check out my projects and socials.";
   const defaultImage = "https://cdn.bypixel.dev/raw/A9FXHb.png";
@@ -93,7 +98,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
   }
 
-  // Use post data with fallbacks
   const title = post.title || defaultTitle;
   const description = post.shortDescription || defaultDescription;
   const image = post.thumbnail || defaultImage;
@@ -101,7 +105,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   return {
     title: `${title} | byPixelTV`,
-    description: description,
+    description,
     keywords: [
       "bypixeltv",
       "bypixel",
@@ -115,8 +119,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     authors: [{ name: "byPixelTV" }],
     openGraph: {
       url: postUrl,
-      title: title,
-      description: description,
+      title,
+      description,
       images: [
         {
           url: image,
@@ -138,13 +142,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function BlogPostPage({ params }: PageProps) {
   const { slug } = await params;
-  const post = await getPostBySlug(slug);
+  const post = await getPostWithAuthor(slug);
 
-  if (!post) {
-    notFound();
-  }
+  if (!post) notFound();
 
-  await incrementPostViews(post.$id);
+  await incrementPostViews(post.$id, post.views || 0);
 
   const html = await marked.parse(post.content || "");
   const titleHtml = await marked.parseInline(post.title || "");
@@ -155,7 +157,6 @@ export default async function BlogPostPage({ params }: PageProps) {
       <Navbar />
       <BackgroundLayout>
         <div className="container mx-auto px-4 py-16 mt-20">
-          {/* Back Button */}
           <div className="max-w-4xl mx-auto mb-8">
             <Button
               variant="ghost"
@@ -171,13 +172,11 @@ export default async function BlogPostPage({ params }: PageProps) {
 
           <article className="max-w-4xl mx-auto">
             <header className="mb-8 text-center max-w-3xl mx-auto">
-              {/* Title mit Markdown support */}
               <h1
                 className="text-5xl font-bold text-white mb-6"
                 dangerouslySetInnerHTML={{ __html: titleHtml }}
               />
 
-              {/* Thumbnail - Responsive aspect ratio */}
               {post.thumbnail && (
                 <div className="relative mx-auto w-full aspect-[16/9] rounded-lg overflow-hidden max-w-4xl">
                   <Image
@@ -190,14 +189,11 @@ export default async function BlogPostPage({ params }: PageProps) {
                 </div>
               )}
 
-              {/* Short Description & Meta */}
               <p className="text-xl text-gray-300 my-6">
                 {post.shortDescription}
               </p>
               <div className="flex items-center gap-4 text-gray-400 justify-center">
-                <span>
-                  Written by {(await serverUsers.get(post.userId)).name}
-                </span>
+                <span>Written by {post.authorName}</span>
                 <span>•</span>
                 <span>{post.views || 0} views</span>
                 <span>•</span>
@@ -206,8 +202,7 @@ export default async function BlogPostPage({ params }: PageProps) {
                   <>
                     <span>•</span>
                     <time>
-                      Updated on{" "}
-                      {new Date(post.updateDate).toLocaleDateString()}
+                      Updated on {new Date(post.updateDate).toLocaleDateString()}
                     </time>
                   </>
                 )}
