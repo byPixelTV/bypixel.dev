@@ -3,12 +3,11 @@
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { account } from "@/lib/appwrite/client";
-import { deleteUserIfNotAdmin } from "@/lib/actions/auth";
 
 export default function AuthCallback() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [ran, setRan] = useState(false); // schützt vor mehrfachem Aufruf
+  const [ran, setRan] = useState(false);
 
   useEffect(() => {
     if (ran) return;
@@ -21,12 +20,6 @@ export default function AuthCallback() {
     const handleCallback = async () => {
       try {
         await account.createSession(userId, secret);
-        const user = await account.get();
-
-        if (!user.labels.includes("admin")) {
-          await deleteUserIfNotAdmin(user.$id);
-          return router.push("/auth/login?disabled=true");
-        }
 
         router.push("/admin");
       } catch (err) {
