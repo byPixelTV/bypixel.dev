@@ -21,7 +21,7 @@ import type { Variants } from "framer-motion";
 
 const headerNavLinks = [
   { title: "About", url: "/", icon: <LuUser color="#FFFFFF" /> },
-  { title: "Blog", url: "/blog", icon: <LuBook color="#FFFFFF" /> }
+  { title: "Blog", url: "/blog", icon: <LuBook color="#FFFFFF" /> },
 ];
 
 const Navbar = () => {
@@ -129,16 +129,21 @@ const Navbar = () => {
               >
                 ~
                 {pathname === "/" && (
-                  <span className="ml-1 md:text-lg tracking-wide">byPixelTV</span>
+                  <span className="ml-1 md:text-lg tracking-wide">
+                    byPixelTV
+                  </span>
                 )}
               </Link>
               {pathname !== "/" && (
                 <Link
-                  href={pathname}
+                  href={`/${pathname.split("/")[1]}`}
                   className="md:text-lg tracking-wide text-[#F4F0E6] cursor-pointer font-normal"
                 >
                   <span className="text-[#F4F0E6]">/</span>&nbsp;
-                  {pathname.charAt(1).toUpperCase() + pathname.slice(2)}
+                  {pathname.split("/")[1]
+                    ? pathname.split("/")[1].charAt(0).toUpperCase() +
+                      pathname.split("/")[1].slice(1)
+                    : ""}
                 </Link>
               )}
             </motion.div>
@@ -257,7 +262,9 @@ const Navbar = () => {
                       >
                         <div className="flex items-center space-x-3">
                           <div className="p-2 rounded-lg">{item.icon}</div>
-                          <span className="text-sm tracking-wider">{item.title}</span>
+                          <span className="text-sm tracking-wider">
+                            {item.title}
+                          </span>
                         </div>
                       </Link>
                     </motion.li>

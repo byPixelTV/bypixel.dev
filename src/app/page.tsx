@@ -63,7 +63,7 @@ const projects: Project[] = [
     imagePath: "/projects/eramc.png",
     role : "Founder & Developer",
     startAt: "May 2025",
-    endAt: "July 2025 (abandoned)",
+    endAt: "July 2025",
   },
   {
     name: "Skydinse",
