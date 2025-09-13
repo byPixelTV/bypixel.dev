@@ -51,6 +51,14 @@ export const metadata: Metadata = {
 
 const projects: Project[] = [
   {
+    name: "OxyMC.net",
+    imagePath: "/projects/oxymc.png",
+    role : "Lead Developer",
+    startAt: "September 2025",
+    endAt: "now",
+    url: "https://oxymc.net",
+  },
+  {
     name: "Dat Bot",
     imagePath: "/projects/datbot.png",
     role : "Developer",
