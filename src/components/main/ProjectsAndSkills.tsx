@@ -48,7 +48,7 @@ const ProjectsAndSkills = ({
                 className="h-16 w-16 object-cover rounded-md bg-[#333] border border-[#333]"
               />
               <div className="flex w-full flex-col">
-                <p className="hidden sm:block font-medium text-white">
+                <p className="font-medium text-white">
                   {project.name}
                 </p>
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
