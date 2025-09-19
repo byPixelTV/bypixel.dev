@@ -103,7 +103,7 @@ const ProjectsAndSkills = ({
             {(() => {
               if (!skills?.length) return null;
 
-              const numRows = 3;
+              const numRows = 5;
               const skillsPerRow = Math.ceil(skills.length / numRows);
 
               return Array.from({ length: numRows }, (_, rowIndex) => {
