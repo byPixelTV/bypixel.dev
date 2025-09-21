@@ -91,7 +91,11 @@ export const metadata: Metadata = {
 export default async function BlogPage() {
   const { posts, error } = await getPosts();
 
-  const userIds = posts.map(p => p.userId);
+  const sortedPosts = posts.slice().sort((a, b) =>
+    new Date(b.creationDate).getTime() - new Date(a.creationDate).getTime()
+  );
+
+  const userIds = sortedPosts.map(p => p.userId);
   const authorsMap = await getAuthorsNames(userIds);
 
   return (
@@ -107,22 +111,26 @@ export default async function BlogPage() {
               Thoughts, tutorials, and insights about development and technology.
             </p>
             <div className="text-sm text-gray-400 mt-4">
-              Posts found: {posts.length}
+              Posts found: {sortedPosts.length}
             </div>
           </div>
 
           {error ? (
             <div className="text-center text-red-400">Error loading posts: {error}</div>
-          ) : posts.length === 0 ? (
+          ) : sortedPosts.length === 0 ? (
             <div className="text-center text-gray-300">No posts found.</div>
           ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
-                {await Promise.all(
-                    posts.map(async (post) => {
-                    return <BlogPostCard key={post.$id} post={post} authorName={authorsMap[post.userId] || "Unknown"} />;
-                    })
-                )}
-                </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+              {await Promise.all(
+                sortedPosts.map(async (post) => (
+                  <BlogPostCard
+                    key={post.$id}
+                    post={post}
+                    authorName={authorsMap[post.userId] || "Unknown"}
+                  />
+                ))
+              )}
+            </div>
           )}
         </div>
       </BackgroundLayout>
