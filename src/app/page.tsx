@@ -51,27 +51,11 @@ export const metadata: Metadata = {
 
 const projects: Project[] = [
   {
-    name: "OxyMC.net",
-    imagePath: "/projects/oxymc.png",
-    role : "Lead Developer",
-    startAt: "September 2025",
-    endAt: "now",
-    url: "https://oxymc.net",
-  },
-  {
     name: "EraMC",
     imagePath: "/projects/eramc.png",
     role : "Founder & Developer",
     startAt: "May 2025",
-    endAt: "July 2025",
-  },
-  {
-    name: "DaniSMP",
-    imagePath: "/projects/danismp.png",
-    role : "Sys Admin, Developer & Administrator",
-    startAt: "February 2025",
-    endAt: "May 2025",
-    url: "https://discord.gg/danismp",
+    endAt: "now",
   },
   {
     name: "Dat Bot",
@@ -80,6 +64,14 @@ const projects: Project[] = [
     startAt: "October 2024",
     endAt: "now",
     url: "https://datbot.xyz",
+  },
+  {
+    name: "DaniSMP",
+    imagePath: "/projects/danismp.png",
+    role : "Sys Admin, Developer & Administrator",
+    startAt: "February 2025",
+    endAt: "May 2025",
+    url: "https://discord.gg/danismp",
   },
   {
     name: "Skydinse",

@@ -33,7 +33,7 @@ const ProjectsAndSkills = ({
             Projects
           </div>
           <p className="sm:text-lg mt-4 text-white">
-            Projects I have worked on
+            Projects I have worked on / am working on.
           </p>
           {projects?.map((project, i) => (
             <div
