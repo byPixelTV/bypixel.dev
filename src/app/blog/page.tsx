@@ -8,7 +8,6 @@ import { Metadata } from "next";
 
 export const dynamic = 'force-dynamic';
 
-// Add error logging to see what's happening
 async function getPosts(): Promise<{ posts: Posts[]; error: string | null }> {
   try {
     
