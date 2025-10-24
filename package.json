@@ -29,7 +29,6 @@
     "marked": "^16.0.0",
     "motion": "^12.23.6",
     "next": "16.0.0",
-    "next-plausible": "^3.12.4",
     "node-appwrite": "^20.0.0",
     "node-fetch": "^3.3.2",
     "react": "^19.1.0",
