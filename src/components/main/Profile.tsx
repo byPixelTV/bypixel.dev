@@ -142,6 +142,22 @@ const Profile = () => {
               <Icon icon="mdi:twitter" className="w-5 h-5 text-white" />
             </motion.a>
             <motion.a
+              href="https://streame.gg/@bypixelttv"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-white/10 backdrop-blur-md p-2 sm:p-2 rounded-full hover:bg-white/20 transition-colors duration-200 cursor-pointer"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Image
+                src="/streame.png"
+                alt="Streame.gg"
+                width={20}
+                height={20}
+                className="w-5 h-5 rounded-full"
+              />
+            </motion.a>
+            <motion.a
               href="mailto:contact@bypixel.dev"
               target="_blank"
               rel="noopener noreferrer"
