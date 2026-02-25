@@ -5,6 +5,8 @@ import { Metadata } from "next";
 import ProjectsAndSkills from "@/components/main/ProjectsAndSkills";
 import CodingJourney from "@/components/main/CodingJourney";
 import EraMCShowcase from "@/components/main/EraMCShowcase";
+import GithubStatsCard from "@/components/main/GithubStatsCard";
+import { fetchGithubContributions } from "@/lib/github/contributions";
 import { Project } from "@/lib/schema/project";
 
 export const metadata: Metadata = {
@@ -144,7 +146,9 @@ const skills = [
   { name: "Postman", icon: "devicon:postman" },
 ];
 
-export default function About() {
+export default async function About() {
+  const githubContributions = await fetchGithubContributions();
+
   return (
     <BackgroundLayout>
       <Navbar />
@@ -157,6 +161,7 @@ export default function About() {
         <div className="mt-6">
           <CodingJourney />
         </div>
+        <GithubStatsCard data={githubContributions} />
       </main>
     </BackgroundLayout>
   );
