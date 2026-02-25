@@ -67,7 +67,7 @@ export async function getPosts(): Promise<{
     );
 
     return {
-      posts: response.documents as unknown as Posts[],
+      posts: response.documents.map((doc) => ({ ...doc })) as unknown as Posts[],
       error: null,
     };
   } catch (error) {
@@ -114,7 +114,7 @@ export async function createPost(postData: PostFormData, userId: string) {
       "unique()",
       documentData
     );
-    return { success: true, data: result };
+    return { success: true, data: { ...result } };
   } catch (error) {
     console.error("Error creating post:", error);
     return {
@@ -164,7 +164,7 @@ export async function updatePost(postId: string, postData: PostFormData, origina
       postId,
       documentData
     );
-    return { success: true, data: result };
+    return { success: true, data: { ...result } };
   } catch (error) {
     console.error("Error updating post:", error);
     return {

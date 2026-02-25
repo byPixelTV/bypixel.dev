@@ -3,6 +3,8 @@ import Profile from "@/components/main/Profile";
 import Navbar from "@/components/Navbar";
 import { Metadata } from "next";
 import ProjectsAndSkills from "@/components/main/ProjectsAndSkills";
+import CodingJourney from "@/components/main/CodingJourney";
+import EraMCShowcase from "@/components/main/EraMCShowcase";
 import { Project } from "@/lib/schema/project";
 
 export const metadata: Metadata = {
@@ -56,13 +58,22 @@ const projects: Project[] = [
     role : "Founder & Developer",
     startAt: "May 2025",
     endAt: "now",
+    url: "https://dc.eramc.net",
+  },
+  {
+    name: "BetterAttack",
+    imagePath: "/projects/betterattack.webp",
+    role : "Developer & Administrator",
+    startAt: "October 2025",
+    endAt: "now",
+    url: "https://discord.gg/betterattack",
   },
   {
     name: "Dat Bot",
     imagePath: "/projects/datbot.png",
     role : "Developer",
     startAt: "October 2024",
-    endAt: "now",
+    endAt: "January 2026",
     url: "https://datbot.xyz",
   },
   {
@@ -140,6 +151,12 @@ export default function About() {
       <main className="max-w-5xl mx-auto px-5 pt-16 md:pt-18 lg:pt-20 mb-10">
         <Profile />
         <ProjectsAndSkills projects={projects} skills={skills} />
+        <div className="mt-6">
+          <EraMCShowcase />
+        </div>
+        <div className="mt-6">
+          <CodingJourney />
+        </div>
       </main>
     </BackgroundLayout>
   );

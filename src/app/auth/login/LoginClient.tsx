@@ -33,11 +33,11 @@ export default function LoginContent() {
   }, [searchParams]);
 
   const loginWith = (provider: OAuthProvider) => {
-    account.createOAuth2Token(
+    account.createOAuth2Token({
       provider,
-      `${process.env.NEXT_PUBLIC_BASE_URL}/auth/callback`,
-      `${process.env.NEXT_PUBLIC_BASE_URL}/auth/failed`
-    );
+      success: `${process.env.NEXT_PUBLIC_BASE_URL}/auth/callback`,
+      failure: `${process.env.NEXT_PUBLIC_BASE_URL}/auth/failed`,
+    });
   };
 
   return (

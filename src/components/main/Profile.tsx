@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { LuGlobe, LuRocket } from "react-icons/lu";
 import HeroImage from "../../../public/hero.png";
 import { Icon } from "@iconify/react";
+import SpotifyNowPlaying from "@/components/SpotifyNowPlaying";
 
 const Profile = () => {
   return (
@@ -20,7 +21,7 @@ const Profile = () => {
             quality={100}
             priority
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black/50"></div>
+          <div className="absolute inset-0 bg-linear-to-b from-black/50 via-black/30 to-black/50"></div>
         </div>
 
         <div className="relative z-10 flex flex-col p-6 sm:p-8">
@@ -99,6 +100,8 @@ const Profile = () => {
                 enjoyable user experience.
               </motion.p>
             </motion.div>
+
+            <SpotifyNowPlaying />
           </div>
 
           {/* Social Icons - moved inside flex container and responsive positioning */}

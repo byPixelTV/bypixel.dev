@@ -21,7 +21,6 @@ import type { Variants } from "framer-motion";
 
 const headerNavLinks = [
   { title: "About", url: "/", icon: <LuUser color="#FFFFFF" /> },
-  { title: "Projects", url: "/projects", icon: <LuTerminal color="#FFFFFF" /> },
   { title: "Blog", url: "/blog", icon: <LuBook color="#FFFFFF" /> },
 ];
 
@@ -242,7 +241,7 @@ const Navbar = () => {
                   </svg>
                 </motion.button>
               </div>
-              <nav className="flex-grow overflow-y-auto">
+              <nav className="grow overflow-y-auto">
                 <ul className="flex flex-col space-y-1 p-4">
                   {headerNavLinks.map((item, index) => (
                     <motion.li

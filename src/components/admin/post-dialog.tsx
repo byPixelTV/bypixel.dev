@@ -90,7 +90,7 @@ export function PostDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px] bg-black text-white border border-neutral-800">
+      <DialogContent className="sm:max-w-[600px] bg-black text-white border border-neutral-800 max-h-[90vh] flex flex-col">
         <DialogHeader>
           <DialogTitle className="text-white">
             {post ? "Edit Post" : "Create New Post"}
@@ -101,8 +101,8 @@ export function PostDialog({
               : "Fill in the details to create a new post."}
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit}>
-          <div className="grid gap-4 py-4">
+        <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden">
+          <div className="grid gap-4 py-4 overflow-y-auto flex-1 pr-1 scrollbar-thin scrollbar-thumb-neutral-700 scrollbar-track-transparent scrollbar-thumb-rounded-full">
             <div className="grid gap-2">
               <Label htmlFor="title" className="text-white">
                 Title

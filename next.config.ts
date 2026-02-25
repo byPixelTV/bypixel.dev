@@ -8,7 +8,11 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'cdn.bypixel.dev',
         pathname: '/raw/**',
-      }
+      },
+      {
+        protocol: 'https',
+        hostname: 'i.scdn.co',
+      },
     ],
   },
 };

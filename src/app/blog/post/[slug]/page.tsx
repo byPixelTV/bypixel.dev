@@ -178,7 +178,7 @@ export default async function BlogPostPage({ params }: PageProps) {
               />
 
               {post.thumbnail && (
-                <div className="relative mx-auto w-full aspect-[16/9] rounded-lg overflow-hidden max-w-4xl">
+                <div className="relative mx-auto w-full aspect-16/9 rounded-lg overflow-hidden max-w-4xl">
                   <Image
                     src={post.thumbnail}
                     alt="Post thumbnail"

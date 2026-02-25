@@ -124,7 +124,7 @@ export default async function BlogPage() {
                 sortedPosts.map(async (post) => (
                   <BlogPostCard
                     key={post.$id}
-                    post={post}
+                    post={{ ...post } as Posts}
                     authorName={authorsMap[post.userId] || "Unknown"}
                   />
                 ))
