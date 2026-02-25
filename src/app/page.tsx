@@ -163,6 +163,17 @@ export default async function About() {
         </div>
         <GithubStatsCard data={githubContributions} />
       </main>
+      <footer className="max-w-5xl mx-auto px-5 pb-8 text-center text-sm text-muted-foreground">
+        <p className="text-white">powered by 100% ai code</p>
+        <a
+          href="https://github.com/byPixelTV/bypixel.dev"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline"
+        >
+          source on github
+        </a>
+      </footer>
     </BackgroundLayout>
   );
 }
