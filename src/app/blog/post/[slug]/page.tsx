@@ -13,6 +13,8 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import ScrollToTop from "@/components/ScrollToTop";
 import { Metadata } from "next";
+import { fetchOGData, OGData } from "@/lib/og-fetcher";
+import OGPreviewCard from "@/components/OGPreviewCard";
 
 // ISR: Revalidate page every 60 seconds
 export const revalidate = 60;
@@ -140,6 +142,39 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
+type ContentSegment =
+  | { type: "html"; html: string }
+  | { type: "og"; url: string; data: OGData };
+
+async function buildContentSegments(raw: string): Promise<ContentSegment[]> {
+  const segments: ContentSegment[] = [];
+  const regex = /<og\s+url=["']([^"']+)["']\s*\/?>/gi;
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
+
+  while ((match = regex.exec(raw)) !== null) {
+    if (match.index > lastIndex) {
+      segments.push({
+        type: "html",
+        html: await marked.parse(raw.slice(lastIndex, match.index)),
+      });
+    }
+    const url = match[1];
+    const data = await fetchOGData(url);
+    segments.push({ type: "og", url, data });
+    lastIndex = match.index + match[0].length;
+  }
+
+  if (lastIndex < raw.length) {
+    segments.push({
+      type: "html",
+      html: await marked.parse(raw.slice(lastIndex)),
+    });
+  }
+
+  return segments;
+}
+
 export default async function BlogPostPage({ params }: PageProps) {
   const { slug } = await params;
   const post = await getPostWithAuthor(slug);
@@ -148,7 +183,7 @@ export default async function BlogPostPage({ params }: PageProps) {
 
   await incrementPostViews(post.$id, post.views || 0);
 
-  const html = await marked.parse(post.content || "");
+  const segments = await buildContentSegments(post.content || "");
   const titleHtml = await marked.parseInline(post.title || "");
 
   return (
@@ -209,7 +244,13 @@ export default async function BlogPostPage({ params }: PageProps) {
               </div>
             </header>
             <div className="prose prose-invert max-w-none">
-              <div dangerouslySetInnerHTML={{ __html: html }} />
+              {segments.map((seg, i) =>
+                seg.type === "html" ? (
+                  <div key={i} dangerouslySetInnerHTML={{ __html: seg.html }} />
+                ) : (
+                  <OGPreviewCard key={i} data={seg.data} href={seg.url} />
+                )
+              )}
             </div>
           </article>
         </div>
