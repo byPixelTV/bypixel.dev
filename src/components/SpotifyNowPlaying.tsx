@@ -136,6 +136,9 @@ const SpotifyNowPlaying = () => {
                   {data!.title}
                 </p>
                 <p className="text-xs text-white/50 truncate">{data!.artist}</p>
+                {data!.album && (
+                  <p className="text-xs text-white/30 truncate italic">{data!.album}</p>
+                )}
               </div>
 
               {/* Equalizer bars */}

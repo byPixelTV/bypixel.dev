@@ -1,10 +1,9 @@
 "use client";
 
-import React from "react";
-import Image from "next/image";
-import { motion } from "framer-motion";
-import { Icon } from "@iconify/react";
 import { Button } from "@/components/ui/button";
+import { Icon } from "@iconify/react";
+import { motion } from "framer-motion";
+import Image from "next/image";
 
 const techStack = [
   { name: "Kotlin",          icon: "vscode-icons:file-type-kotlin" },

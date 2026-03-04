@@ -9,6 +9,7 @@ export interface NowPlayingResult {
   trackId?: string;
   title?: string;
   artist?: string;
+  album?: string;
   albumImageUrl?: string;
   songUrl?: string;
   progressMs?: number;
@@ -65,6 +66,7 @@ export async function getNowPlaying(): Promise<NowPlayingResult> {
       artist: song.item.artists
         .map((a: { name: string }) => a.name)
         .join(", "),
+      album: song.item.album.name as string,
       albumImageUrl: (song.item.album.images[0]?.url ?? null) as string,
       songUrl: song.item.external_urls.spotify as string,
       progressMs: (song.progress_ms ?? 0) as number,

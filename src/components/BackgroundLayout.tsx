@@ -6,14 +6,18 @@ export default function BackgroundLayout({ children }: { children: React.ReactNo
   return (
     <>
       {/* Fixed Background Layer */}
-      <div className="fixed inset-0 bg-black -z-10">
+      <div
+        className="fixed inset-0 -z-10"
+        style={{ background: 'radial-gradient(ellipse at 50% 0%, #1a0533 0%, #0c0018 45%, #000000 100%)' }}
+      >
         {/* Animated Gradient Blobs */}
         <div className="gradient-blob blob-1"></div>
         <div className="gradient-blob blob-2"></div>
         <div className="gradient-blob blob-3"></div>
+        <div className="gradient-blob blob-4"></div>
 
         {/* Grid Pattern Overlay */}
-        <div className="absolute inset-0 opacity-5">
+        <div className="absolute inset-0">
           <div className="grid-pattern"></div>
         </div>
       </div>
@@ -27,67 +31,78 @@ export default function BackgroundLayout({ children }: { children: React.ReactNo
         .gradient-blob {
           position: absolute;
           border-radius: 50%;
-          filter: blur(60px);
-          opacity: 0.6;
+          filter: blur(100px);
+          opacity: 0.28;
           mix-blend-mode: screen;
         }
         .blob-1 {
-          width: 400px;
-          height: 400px;
-          background: radial-gradient(circle, #4f46e5, #3b82f6, transparent);
-          top: 20%;
-          right: 10%;
-          animation: float1 12s ease-in-out infinite, pulse1 8s ease-in-out infinite;
+          width: 500px;
+          height: 500px;
+          background: radial-gradient(circle, #7c3aed, #9333ea, transparent);
+          top: 8%;
+          right: 8%;
+          animation: float1 18s ease-in-out infinite, pulse1 10s ease-in-out infinite;
         }
         .blob-2 {
-          width: 350px;
-          height: 350px;
-          background: radial-gradient(circle, #6366f1, #8b5cf6, transparent);
+          width: 420px;
+          height: 420px;
+          background: radial-gradient(circle, #a855f7, #c026d3, transparent);
           bottom: 20%;
-          left: 15%;
-          animation: float2 16s ease-in-out infinite reverse, pulse2 10s ease-in-out infinite;
+          left: 10%;
+          animation: float2 22s ease-in-out infinite reverse, pulse2 13s ease-in-out infinite;
         }
         .blob-3 {
-          width: 320px;
-          height: 320px;
-          background: radial-gradient(circle, #3b82f6, #6366f1, transparent);
-          top: 45%;
-          left: 60%;
-          animation: float3 14s ease-in-out infinite, pulse3 12s ease-in-out infinite;
+          width: 340px;
+          height: 340px;
+          background: radial-gradient(circle, #6d28d9, #7c3aed, transparent);
+          top: 48%;
+          left: 58%;
+          animation: float3 20s ease-in-out infinite, pulse3 15s ease-in-out infinite;
+        }
+        .blob-4 {
+          width: 300px;
+          height: 300px;
+          background: radial-gradient(circle, #4c1d95, #9333ea, transparent);
+          top: 72%;
+          right: 28%;
+          animation: float2 28s ease-in-out 5s infinite, pulse2 18s ease-in-out infinite reverse;
         }
 
         @keyframes float1 {
           0%, 100% { transform: translate(0, 0) rotate(0deg); }
-          25% { transform: translate(-80px, -100px) rotate(90deg); }
-          50% { transform: translate(70px, -80px) rotate(180deg); }
-          75% { transform: translate(-40px, 90px) rotate(270deg); }
+          20% { transform: translate(-160px, -130px) rotate(72deg); }
+          45% { transform: translate(180px, -100px) rotate(162deg); }
+          70% { transform: translate(-120px, 160px) rotate(252deg); }
+          85% { transform: translate(100px, 80px) rotate(315deg); }
         }
         @keyframes float2 {
           0%, 100% { transform: translate(0, 0) rotate(0deg); }
-          33% { transform: translate(100px, -60px) rotate(120deg); }
-          66% { transform: translate(-80px, 80px) rotate(240deg); }
+          25% { transform: translate(180px, -120px) rotate(90deg); }
+          50% { transform: translate(-150px, 140px) rotate(180deg); }
+          75% { transform: translate(120px, 100px) rotate(270deg); }
         }
         @keyframes float3 {
           0%, 100% { transform: translate(0, 0) rotate(0deg); }
-          30% { transform: translate(-90px, -70px) rotate(108deg); }
-          70% { transform: translate(85px, -90px) rotate(252deg); }
+          30% { transform: translate(-170px, -140px) rotate(108deg); }
+          60% { transform: translate(160px, -100px) rotate(216deg); }
+          80% { transform: translate(-80px, 150px) rotate(288deg); }
         }
 
         @keyframes pulse1 {
-          0%, 100% { opacity: 0.6; transform: scale(1); }
-          50% { opacity: 0.8; transform: scale(1.1); }
+          0%, 100% { opacity: 0.28; transform: scale(1); }
+          50% { opacity: 0.38; transform: scale(1.1); }
         }
         @keyframes pulse2 {
-          0%, 100% { opacity: 0.5; transform: scale(1); }
-          50% { opacity: 0.7; transform: scale(1.15); }
+          0%, 100% { opacity: 0.22; transform: scale(1); }
+          50% { opacity: 0.32; transform: scale(1.14); }
         }
         @keyframes pulse3 {
-          0%, 100% { opacity: 0.7; transform: scale(1); }
-          50% { opacity: 0.4; transform: scale(0.9); }
+          0%, 100% { opacity: 0.28; transform: scale(1); }
+          50% { opacity: 0.16; transform: scale(0.9); }
         }
 
         .grid-pattern {
-          background-image: radial-gradient(circle at 1px 1px, rgba(99, 102, 241, 0.08) 1px, transparent 0);
+          background-image: radial-gradient(circle at 1px 1px, rgba(168, 85, 247, 0.11) 1px, transparent 0);
           background-size: 30px 30px;
           width: 100%;
           height: 100%;

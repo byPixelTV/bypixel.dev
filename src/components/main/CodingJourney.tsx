@@ -28,24 +28,27 @@ const milestones = [
     year: "2024",
     title: "Kotlin & the JVM",
     description:
-      "Jumped into Kotlin and JVM-based development — writing plugins, learning OOP deeply, and building more complex backend systems.",
-    tags: ["Kotlin", "Java", "JVM"],
+      "Dove into Kotlin and the JVM ecosystem, building more complex projects and learning about backend development, databases, and server management.",
+    tags: ["Kotlin", "Java", "JVM", "Dev Ops"],
     link: null,
   },
   {
     year: "2025",
     title: "Massive Growth",
     description:
-      "My most intense learning year yet. Picked up TypeScript, React, Next.js, databases, Docker, Linux systems and much more — shipping real projects along the way.",
-    tags: ["TypeScript", "Next.js", "Docker", "Linux", "Databases"],
-    link: null,
-  },
+      "My most intense learning year yet. Picked up TypeScript, React, Next.js, databases, Docker, Linux systems and much more — shipping real projects along the way. A year of leveling up in every way. The biggest project in 2025 was EraMC, a Minecraft server network I founded and built from the ground up, which has been an incredible learning experience in software development, systems administration, and community building. There was also DaniSMP, one of the biggest sword smp servers in Germany at the time, where I learned to fix issues under pressure and manage a large player base. Each project pushed me to learn new technologies and solve complex problems, making 2025 a year of massive growth and achievement.",
+    tags: ["TypeScript", "Next.js", "Docker", "Linux", "Databases", "Dev Ops", "Kotlin", "Minecraft", "Community Building"],
+    link: {
+        label: "EraMC Network",
+        url: "https://dc.eramc.net",
+      },
+    },
   {
     year: "2026",
     title: "What's Next",
     description:
-      "The journey continues — exploring exciting new technologies and taking on bigger, more ambitious projects. The best is yet to come.",
-    tags: ["???"],
+      "The journey continues — exploring exciting new technologies and taking on bigger, more ambitious projects. The best is yet to come. I'm currently focused on expanding EraMC, diving deeper into infrastructure and exploring AI and machine learning. The goal is to keep pushing the boundaries of what I can build and learn.",
+    tags: ["Infrastructure", "AI", "Machine Learning", "Kotlin", "???"],
     link: null,
     isCurrent: true,
   },

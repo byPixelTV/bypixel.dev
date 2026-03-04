@@ -53,7 +53,7 @@ const Navbar = () => {
 
   const navVariants: Variants = {
     top: {
-      backgroundColor: "rgba(0, 0, 0, 0.2)",
+      backgroundColor: "rgba(20, 4, 48, 0.22)",
       backdropFilter: "blur(8px)",
       margin: "20px 12px",
       transition: {
@@ -63,8 +63,8 @@ const Navbar = () => {
       },
     },
     scroll: {
-      backgroundColor: "rgba(0, 0, 0, 0.8)",
-      backdropFilter: "blur(12px)",
+      backgroundColor: "rgba(8, 2, 22, 0.90)",
+      backdropFilter: "blur(14px)",
       margin: "8px 12px",
       transition: {
         type: "spring",
@@ -116,7 +116,7 @@ const Navbar = () => {
         animate="visible"
       >
         <motion.nav
-          className="px-4 py-3 w-full shadow-lg border border-[#333] rounded-3xl mt-3 mx-3 md:mt-4 md:mx-4 lg:mt-5 lg:mx-5"
+          className="px-4 py-3 w-full shadow-lg border border-purple-900/50 rounded-3xl mt-3 mx-3 md:mt-4 md:mx-4 lg:mt-5 lg:mx-5"
           variants={navVariants}
           initial="top"
           animate={isScrolled ? "scroll" : "top"}
@@ -207,7 +207,7 @@ const Navbar = () => {
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
-            className="fixed inset-y-0 left-0 z-50 w-full sm:w-72 bg-[#111111] shadow-2xl overflow-hidden"
+            className="fixed inset-y-0 left-0 z-50 w-full sm:w-72 bg-[#0c0618] shadow-2xl overflow-hidden"
             variants={mobileMenuVariants}
             initial="closed"
             animate="open"
