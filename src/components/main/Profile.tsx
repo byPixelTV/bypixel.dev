@@ -11,7 +11,11 @@ import SpotifyNowPlaying from "@/components/SpotifyNowPlaying";
 const Profile = () => {
   return (
     <div className="mt-8 md:mt-10">
-      <div className="relative overflow-hidden rounded-3xl shadow-2xl">
+      <motion.div
+        layout
+        className="relative overflow-hidden rounded-3xl shadow-2xl"
+        transition={{ layout: { duration: 0.4, ease: "easeInOut" } }}
+      >
         <div className="absolute inset-0 z-0">
           <Image
             src={HeroImage}
@@ -169,7 +173,7 @@ const Profile = () => {
             </motion.a>
           </motion.div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };
