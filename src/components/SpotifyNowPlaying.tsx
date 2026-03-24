@@ -37,12 +37,130 @@ function formatMs(ms: number): string {
 
 const POLL_INTERVAL = 5_000;
 
-const SpotifyNowPlaying = () => {
+const FALLBACK_CARD_COLORS = ["#1DB954", "#4FD1C5", "#A78BFA"];
+const CARD_TRANSITION_MS = 650;
+
+type RGB = [number, number, number];
+
+function parseColor(color: string): RGB {
+  const hex = color.trim();
+  if (hex.startsWith("#")) {
+    const value = hex.slice(1);
+    if (value.length === 3) {
+      return [
+        Number.parseInt(value[0] + value[0], 16),
+        Number.parseInt(value[1] + value[1], 16),
+        Number.parseInt(value[2] + value[2], 16),
+      ];
+    }
+    if (value.length === 6) {
+      return [
+        Number.parseInt(value.slice(0, 2), 16),
+        Number.parseInt(value.slice(2, 4), 16),
+        Number.parseInt(value.slice(4, 6), 16),
+      ];
+    }
+  }
+
+  const values = color.match(/\d+/g)?.map(Number) ?? [255, 255, 255];
+  return [values[0] ?? 255, values[1] ?? 255, values[2] ?? 255];
+}
+
+function mixColor(from: string, to: string, t: number): string {
+  const a = parseColor(from);
+  const b = parseColor(to);
+  const x = Math.max(0, Math.min(1, t));
+  const r = Math.round(a[0] + (b[0] - a[0]) * x);
+  const g = Math.round(a[1] + (b[1] - a[1]) * x);
+  const bCh = Math.round(a[2] + (b[2] - a[2]) * x);
+  return `rgb(${r} ${g} ${bCh})`;
+}
+
+function easeInOutCubic(t: number): number {
+  return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+}
+
+function getRegionAverage(
+  pixels: Uint8ClampedArray,
+  width: number,
+  xStart: number,
+  xEnd: number,
+  yStart: number,
+  yEnd: number
+): string {
+  let r = 0;
+  let g = 0;
+  let b = 0;
+  let count = 0;
+
+  for (let y = yStart; y < yEnd; y += 2) {
+    for (let x = xStart; x < xEnd; x += 2) {
+      const i = (y * width + x) * 4;
+      r += pixels[i];
+      g += pixels[i + 1];
+      b += pixels[i + 2];
+      count++;
+    }
+  }
+
+  if (!count) return FALLBACK_CARD_COLORS[0];
+
+  return `rgb(${Math.round(r / count)} ${Math.round(g / count)} ${Math.round(b / count)})`;
+}
+
+function getAlbumCardColors(imageUrl: string): Promise<string[]> {
+  return new Promise((resolve) => {
+    const img = new window.Image();
+    img.crossOrigin = "anonymous";
+
+    img.onload = () => {
+      try {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d", { willReadFrequently: true });
+        if (!ctx) {
+          resolve(FALLBACK_CARD_COLORS);
+          return;
+        }
+
+        const size = 30;
+        canvas.width = size;
+        canvas.height = size;
+        ctx.drawImage(img, 0, 0, size, size);
+
+        const { data } = ctx.getImageData(0, 0, size, size);
+        resolve([
+          getRegionAverage(data, size, 0, 10, 0, size),
+          getRegionAverage(data, size, 10, 20, 0, size),
+          getRegionAverage(data, size, 20, size, 0, size),
+        ]);
+      } catch {
+        resolve(FALLBACK_CARD_COLORS);
+      }
+    };
+
+    img.onerror = () => resolve(FALLBACK_CARD_COLORS);
+    img.src = imageUrl;
+  });
+}
+
+interface SpotifyNowPlayingProps {
+  onNowPlayingChange?: (result: NowPlayingResult | null) => void;
+}
+
+const SpotifyNowPlaying = ({ onNowPlayingChange }: SpotifyNowPlayingProps) => {
   const [data, setData] = useState<NowPlayingResult | null>(null);
   const [direction, setDirection] = useState<1 | -1>(1);
   const [progressMs, setProgressMs] = useState(0);
+  const [targetCardColors, setTargetCardColors] = useState<string[]>(FALLBACK_CARD_COLORS);
+  const [cardColors, setCardColors] = useState<string[]>(FALLBACK_CARD_COLORS);
   const prevTrackId = useRef<string | null>(null);
   const tickRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const cardColorsRef = useRef<string[]>(FALLBACK_CARD_COLORS);
+  const rafRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    cardColorsRef.current = cardColors;
+  }, [cardColors]);
 
   const fetchNowPlaying = async () => {
     try {
@@ -61,11 +179,13 @@ const SpotifyNowPlaying = () => {
       }
 
       setData(result);
+      onNowPlayingChange?.(result);
       if (result.isPlaying && result.progressMs !== undefined) {
         setProgressMs(result.progressMs);
       }
     } catch {
       setData(null);
+      onNowPlayingChange?.(null);
     }
   };
 
@@ -90,6 +210,54 @@ const SpotifyNowPlaying = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data?.isPlaying, data?.trackId, data?.durationMs]);
 
+  useEffect(() => {
+    let disposed = false;
+
+    if (!data?.isPlaying || !data.albumImageUrl) {
+      setTargetCardColors(FALLBACK_CARD_COLORS);
+      return;
+    }
+
+    getAlbumCardColors(data.albumImageUrl).then((colors) => {
+      if (!disposed) setTargetCardColors(colors);
+    });
+
+    return () => {
+      disposed = true;
+    };
+  }, [data?.isPlaying, data?.albumImageUrl, data?.trackId]);
+
+  useEffect(() => {
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+
+    const fromPalette = cardColorsRef.current;
+    const toPalette = targetCardColors;
+    const start = performance.now();
+
+    const animate = (now: number) => {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / CARD_TRANSITION_MS, 1);
+      const eased = easeInOutCubic(progress);
+
+      const next = fromPalette.map((fromColor, index) =>
+        mixColor(fromColor, toPalette[index] ?? fromColor, eased)
+      );
+
+      cardColorsRef.current = next;
+      setCardColors(next);
+
+      if (progress < 1) {
+        rafRef.current = requestAnimationFrame(animate);
+      }
+    };
+
+    rafRef.current = requestAnimationFrame(animate);
+
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, [targetCardColors]);
+
   const show = data?.isPlaying && data.title;
   const progressPercent = data?.durationMs
     ? Math.min((progressMs / data.durationMs) * 100, 100)
@@ -109,16 +277,41 @@ const SpotifyNowPlaying = () => {
           href={data!.songUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="relative overflow-hidden flex flex-col bg-white/10 backdrop-blur-md border border-white/10 rounded-2xl mt-4 hover:bg-white/15 transition-colors duration-200 group"
+          className="group relative mt-4 flex flex-col overflow-hidden rounded-2xl border border-white/20 bg-white/10 backdrop-blur-md transition-colors duration-200 hover:bg-white/14"
+          style={{
+            boxShadow: `0 0 42px color-mix(in srgb, ${cardColors[0]} 40%, transparent), 0 0 72px color-mix(in srgb, ${cardColors[2]} 26%, transparent)`,
+          }}
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -8, scale: 0.98 }}
           transition={{ duration: 0.35, ease: "easeOut" }}
         >
+          <motion.div
+            aria-hidden="true"
+            className="pointer-events-none absolute -left-10 -top-10 h-40 w-40 rounded-full blur-3xl"
+            style={{ background: `radial-gradient(circle, ${cardColors[0]} 0%, transparent 68%)` }}
+            animate={{ x: [0, 12, -10, 0], y: [0, -8, 10, 0], scale: [1, 1.14, 1] }}
+            transition={{ duration: 7.5, ease: "easeInOut", repeat: Infinity }}
+          />
+          <motion.div
+            aria-hidden="true"
+            className="pointer-events-none absolute -right-12 bottom-[-2.5rem] h-44 w-44 rounded-full blur-3xl"
+            style={{ background: `radial-gradient(circle, ${cardColors[1]} 0%, transparent 70%)` }}
+            animate={{ x: [0, -10, 8, 0], y: [0, 10, -8, 0], scale: [1, 1.12, 1] }}
+            transition={{ duration: 8.2, ease: "easeInOut", repeat: Infinity }}
+          />
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0"
+            style={{
+              background: `linear-gradient(110deg, color-mix(in srgb, ${cardColors[0]} 24%, transparent), color-mix(in srgb, ${cardColors[1]} 18%, transparent) 48%, color-mix(in srgb, ${cardColors[2]} 22%, transparent))`,
+            }}
+          />
+
           <AnimatePresence mode="wait" custom={direction}>
             <motion.div
               key={data!.trackId ?? data!.title}
-              className="w-full"
+              className="relative z-10 w-full"
               custom={direction}
               variants={contentVariants}
               initial="enter"

@@ -24,13 +24,12 @@ const techStack = [
 const EraMCShowcase = () => {
   return (
     <motion.div
-      className="rounded-3xl border border-[#333] bg-[#111111] overflow-hidden"
+      className="overflow-hidden rounded-2xl border border-white/12 bg-[#0b0c14]/80"
       initial={{ y: 20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ delay: 0.65, duration: 0.5 }}
     >
-      {/* Banner */}
-      <div className="relative h-44 sm:h-52 w-full overflow-hidden">
+      <div className="relative aspect-16/6 overflow-hidden border-b border-white/10">
         <Image
           src="/projects/banners/eramc.png"
           alt="EraMC Banner"
@@ -38,23 +37,22 @@ const EraMCShowcase = () => {
           className="object-cover"
           quality={90}
         />
-        {/* Darken overlay */}
-        <div className="absolute inset-0 bg-black/60" />
-        {/* Bottom fade into card */}
-        <div className="absolute inset-x-0 bottom-0 h-20 bg-linear-to-t from-[#111111] to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-t from-[#0b0c14] via-[#0b0c14]/40 to-transparent" />
 
-        {/* Icon + title inside banner */}
-        <div className="absolute bottom-0 left-0 p-5 sm:p-6 flex items-end gap-4">
+        <div className="absolute bottom-0 left-0 flex items-end gap-4 px-5 pb-4 sm:px-6 sm:pb-5">
           <div className="relative shrink-0">
             <Image
               src="/projects/eramc.png"
               alt="EraMC Icon"
-              width={64}
-              height={64}
-              className="rounded-xl object-cover border border-white/10 shadow-lg"
+              width={56}
+              height={56}
+              className="rounded-xl object-cover border border-white/10"
             />
           </div>
           <div>
+            <span className="mb-1 inline-flex text-[10px] font-semibold uppercase tracking-widest text-purple-200">
+              Main Project
+            </span>
             <h3
               className="text-2xl sm:text-3xl font-extrabold tracking-tight"
               style={{
@@ -73,8 +71,7 @@ const EraMCShowcase = () => {
         </div>
       </div>
 
-      {/* Body */}
-      <div className="p-5 sm:p-6 pt-3">
+      <div className="p-5 sm:p-6">
         <p className="text-sm sm:text-base text-[#aaa] leading-relaxed">
           EraMC is a high-performance Minecraft network with a fully custom
           backend written in <span className="text-white/80">Kotlin</span>.
@@ -91,7 +88,7 @@ const EraMCShowcase = () => {
           <span className="text-white/80">Docker</span> containers tied
           together via a private{" "}
           <span className="text-white/80">Tailscale</span> mesh. All web-based frontend components are built with <span className="text-white/80">Next.js</span>.
-          We use <span className="text-white/80">GitHub Actions</span> for <span className="text-blue-400/80">CI/CD</span>, with automated testing and deployment pipelines that keep our development process smooth and efficient. The result is a responsive, scalable Minecraft network that delivers a seamless gaming experience to players around the world.
+          We use <span className="text-white/80">GitHub Actions</span> for <span className="text-purple-300/85">CI/CD</span>, with automated testing and deployment pipelines that keep our development process smooth and efficient. The result is a responsive, scalable Minecraft network that delivers a seamless gaming experience to players around the world.
         </p>
 
         {/* Tech Stack */}
@@ -103,7 +100,7 @@ const EraMCShowcase = () => {
             {techStack.map((tech) => (
               <div
                 key={tech.name}
-                className="flex items-center gap-1.5 bg-[#1a1a1a] border border-[#2a2a2a] rounded-lg px-2.5 py-1.5 text-xs text-[#ccc] hover:border-[#444] transition-colors"
+                className="flex items-center gap-1.5 rounded-full border border-white/12 px-2.5 py-1 text-xs text-[#ccc]"
               >
                 <Icon icon={tech.icon} className="text-base shrink-0" />
                 <span>{tech.name}</span>

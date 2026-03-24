@@ -5,8 +5,6 @@ import { Metadata } from "next";
 import ProjectsAndSkills from "@/components/main/ProjectsAndSkills";
 import CodingJourney from "@/components/main/CodingJourney";
 import EraMCShowcase from "@/components/main/EraMCShowcase";
-import GithubStatsCard from "@/components/main/GithubStatsCard";
-import { fetchGithubContributions } from "@/lib/github/contributions";
 import { Project } from "@/lib/schema/project";
 
 export const metadata: Metadata = {
@@ -162,32 +160,39 @@ const skills = [
 ];
 
 export default async function About() {
-  const githubContributions = await fetchGithubContributions();
-
   return (
     <BackgroundLayout>
       <Navbar />
-      <main className="max-w-5xl mx-auto px-5 pt-16 md:pt-18 lg:pt-20 mb-10">
-        <Profile />
-        <ProjectsAndSkills projects={projects} skills={skills} />
-        <div className="mt-6">
-          <EraMCShowcase />
+      <main className="relative z-10 w-full pb-14 pt-22 md:pt-26">
+        <div className="mx-auto w-full max-w-[1580px] space-y-16 px-4 sm:px-7 md:space-y-20 lg:px-12">
+          <section className="py-2">
+            <Profile />
+          </section>
+
+          <section className="border-t border-white/10 pt-12">
+            <EraMCShowcase />
+          </section>
+
+          <section className="border-t border-white/10 pt-12">
+            <div className="space-y-12 md:space-y-14">
+              <ProjectsAndSkills projects={projects} skills={skills} />
+              <CodingJourney />
+            </div>
+          </section>
         </div>
-        <div className="mt-6">
-          <CodingJourney />
-        </div>
-        <GithubStatsCard data={githubContributions} />
       </main>
-      <footer className="max-w-5xl mx-auto px-5 pb-8 text-center text-sm text-muted-foreground">
-        <p className="text-white">powered by 100% ai code</p>
-        <a
-          href="https://github.com/byPixelTV/bypixel.dev"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="underline"
-        >
-          source on github
-        </a>
+      <footer className="px-4 pb-10 sm:px-6 lg:px-10">
+        <div className="flex w-full flex-col gap-1 border-t border-white/10 pt-6 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-white/80">powered by 100% ai code</p>
+          <a
+            href="https://github.com/byPixelTV/bypixel.dev"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline decoration-white/35 underline-offset-4 transition-colors hover:text-white"
+          >
+            source on github
+          </a>
+        </div>
       </footer>
     </BackgroundLayout>
   );

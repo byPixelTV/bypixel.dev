@@ -8,7 +8,7 @@ export default function BackgroundLayout({ children }: { children: React.ReactNo
       {/* Fixed Background Layer */}
       <div
         className="fixed inset-0 -z-10"
-        style={{ background: 'radial-gradient(ellipse at 50% 0%, #1a0533 0%, #0c0018 45%, #000000 100%)' }}
+        style={{ background: '#030305' }}
       >
         {/* Animated Gradient Blobs */}
         <div className="gradient-blob blob-1"></div>
@@ -31,40 +31,40 @@ export default function BackgroundLayout({ children }: { children: React.ReactNo
         .gradient-blob {
           position: absolute;
           border-radius: 50%;
-          filter: blur(100px);
-          opacity: 0.28;
+          filter: blur(110px);
+          opacity: 0.32;
           mix-blend-mode: screen;
         }
         .blob-1 {
-          width: 500px;
-          height: 500px;
+          width: 720px;
+          height: 720px;
           background: radial-gradient(circle, #7c3aed, #9333ea, transparent);
-          top: 8%;
-          right: 8%;
+          top: -14%;
+          right: -10%;
           animation: float1 18s ease-in-out infinite, pulse1 10s ease-in-out infinite;
         }
         .blob-2 {
-          width: 420px;
-          height: 420px;
+          width: 680px;
+          height: 680px;
           background: radial-gradient(circle, #a855f7, #c026d3, transparent);
-          bottom: 20%;
-          left: 10%;
+          bottom: -18%;
+          left: -14%;
           animation: float2 22s ease-in-out infinite reverse, pulse2 13s ease-in-out infinite;
         }
         .blob-3 {
-          width: 340px;
-          height: 340px;
+          width: 620px;
+          height: 620px;
           background: radial-gradient(circle, #6d28d9, #7c3aed, transparent);
-          top: 48%;
-          left: 58%;
+          top: 36%;
+          left: 46%;
           animation: float3 20s ease-in-out infinite, pulse3 15s ease-in-out infinite;
         }
         .blob-4 {
-          width: 300px;
-          height: 300px;
+          width: 540px;
+          height: 540px;
           background: radial-gradient(circle, #4c1d95, #9333ea, transparent);
-          top: 72%;
-          right: 28%;
+          top: 62%;
+          right: 20%;
           animation: float2 28s ease-in-out 5s infinite, pulse2 18s ease-in-out infinite reverse;
         }
 
@@ -102,7 +102,7 @@ export default function BackgroundLayout({ children }: { children: React.ReactNo
         }
 
         .grid-pattern {
-          background-image: radial-gradient(circle at 1px 1px, rgba(168, 85, 247, 0.11) 1px, transparent 0);
+          background-image: radial-gradient(circle at 1px 1px, rgba(168, 85, 247, 0.09) 1px, transparent 0);
           background-size: 30px 30px;
           width: 100%;
           height: 100%;

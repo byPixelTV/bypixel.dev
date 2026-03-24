@@ -16,7 +16,7 @@ import {
   useScroll,
   useMotionValueEvent,
 } from "framer-motion";
-import { LuEqual, LuBook, LuUser, LuTerminal } from "react-icons/lu";
+import { LuEqual, LuBook, LuUser } from "react-icons/lu";
 import type { Variants } from "framer-motion";
 
 const headerNavLinks = [
@@ -53,7 +53,7 @@ const Navbar = () => {
 
   const navVariants: Variants = {
     top: {
-      backgroundColor: "rgba(20, 4, 48, 0.22)",
+      backgroundColor: "rgba(20, 4, 48, 0.3)",
       backdropFilter: "blur(8px)",
       margin: "20px 12px",
       transition: {
@@ -63,7 +63,7 @@ const Navbar = () => {
       },
     },
     scroll: {
-      backgroundColor: "rgba(8, 2, 22, 0.90)",
+      backgroundColor: "rgba(8, 2, 22, 0.9)",
       backdropFilter: "blur(14px)",
       margin: "8px 12px",
       transition: {
@@ -111,12 +111,12 @@ const Navbar = () => {
   return (
     <>
       <motion.header
-        className="fixed mx-auto w-full max-w-5xl top-0 left-0 right-0 z-40 transition-all duration-500 ease-in-out flex justify-center"
+        className="fixed left-0 right-0 top-0 z-40 mx-auto flex w-full max-w-[980px] justify-center transition-all duration-500 ease-in-out"
         initial="hidden"
         animate="visible"
       >
         <motion.nav
-          className="px-4 py-3 w-full shadow-lg border border-purple-900/50 rounded-3xl mt-3 mx-3 md:mt-4 md:mx-4 lg:mt-5 lg:mx-5"
+          className="mx-3 mt-3 w-full rounded-3xl border border-purple-900/35 px-3 py-2.5 shadow-lg md:mx-4 md:mt-4"
           variants={navVariants}
           initial="top"
           animate={isScrolled ? "scroll" : "top"}
@@ -125,11 +125,11 @@ const Navbar = () => {
             <motion.div className="flex space-x-1 sm:space-x-2" custom={0}>
               <Link
                 href="/"
-                className="md:text-lg tracking-wide text-[#F4F0E6] cursor-pointer font-normal"
+                className="text-sm md:text-base tracking-wide text-[#F4F0E6] cursor-pointer font-medium"
               >
                 ~
                 {pathname === "/" && (
-                  <span className="ml-1 md:text-lg tracking-wide">
+                  <span className="ml-1 md:text-base tracking-wide">
                     byPixelTV
                   </span>
                 )}
@@ -157,13 +157,13 @@ const Navbar = () => {
               </motion.button>
             </div>
 
-            <ul className="hidden md:flex gap-3 sm:gap-4 relative">
+            <ul className="relative hidden gap-2 rounded-full border border-white/12 bg-white/5 p-1.5 md:flex">
               {headerNavLinks.map((navLink, index) => (
                 <motion.li key={index} custom={index + 1}>
                   <Link href={navLink.url}>
                     <motion.button
                       onClick={() => setSelected(navLink.url)}
-                      className={`relative px-2 sm:px-3 py-1 sm:py-2 rounded-lg overflow-hidden group tracking-wider font-normal`}
+                      className={`group relative overflow-hidden rounded-full px-3 py-1.5 text-sm tracking-wide font-medium`}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                     >

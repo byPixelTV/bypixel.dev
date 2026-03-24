@@ -1,18 +1,11 @@
 "use client";
 
-import React from "react";
-import { IoBriefcaseOutline } from "react-icons/io5";
-import { LuTerminal, LuArrowUpRight } from "react-icons/lu";
+import { LuTerminal, LuArrowUpRight, LuWaypoints } from "react-icons/lu";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { Project } from "@/lib/schema/project";
 import { Skill } from "@/lib/schema/skill";
 import { Icon } from "@iconify/react";
-
-const STATUS_COLORS: Record<string, string> = {
-  now: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30",
-  default: "bg-purple-500/10 text-purple-300 border-purple-500/20",
-};
 
 const ProjectsAndSkills = ({
   projects,
@@ -21,143 +14,180 @@ const ProjectsAndSkills = ({
   projects: Project[];
   skills: Skill[];
 }) => {
-  // Group skills by category for desktop view
-  const skillCategories = skills.reduce<Record<string, Skill[]>>((acc, skill) => {
-    const cat = skill.category ?? "Other";
-    if (!acc[cat]) acc[cat] = [];
-    acc[cat].push(skill);
-    return acc;
-  }, {});
-  const categoryOrder = ["Frontend", "Backend", "Database", "DevOps & Systems", "Tools & Platforms"];
-  const orderedCategories = [
-    ...categoryOrder.filter((c) => skillCategories[c]),
-    ...Object.keys(skillCategories).filter((c) => !categoryOrder.includes(c)),
-  ];
+  const secondaryProjects = projects.filter((project) => project.name.toLowerCase() !== "eramc");
+  const skillRows: Skill[][] = [[], [], []];
+  skills.forEach((skill, index) => {
+    skillRows[index % 3].push(skill);
+  });
 
   return (
-    <div className="mt-8 flex flex-col gap-6">
-      {/* ── Projects ── */}
-      <motion.div
-        className="p-4 md:p-6 rounded-3xl border border-[#333] bg-[#111111]"
+    <div id="projects" className="scroll-mt-28 flex flex-col gap-16">
+      <motion.section
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.4, duration: 0.5 }}
+        transition={{ delay: 0.3, duration: 0.5 }}
       >
-        <div className="text-white uppercase tracking-wider flex gap-3 items-center">
-          <span className="p-1.5 rounded-md">
-            <IoBriefcaseOutline size={20} color="#FFFFFF" />
-          </span>
-          Projects
+        <div className="text-center">
+          <h2 className="text-3xl font-bold text-white sm:text-4xl">My Projects</h2>
+          <p className="mx-auto mt-3 max-w-2xl text-sm text-white/55 sm:text-base">
+            A selection of projects I built to solve real problems and improve my skills.
+          </p>
         </div>
-        <p className="text-sm mt-2 text-[#888]">
-          Projects I&apos;ve built or contributed to.
-        </p>
 
-        <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
-          {projects?.map((project, i) => (
-            <motion.div
-              key={i}
-              className="group flex gap-3 p-3 rounded-2xl border border-[#222] bg-[#161616] hover:border-purple-900/60 hover:bg-[#18121f] transition-colors duration-200"
-              initial={{ x: -8, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ delay: 0.45 + i * 0.07, duration: 0.35 }}
+        <div className="mt-10 grid grid-cols-1 gap-5 lg:grid-cols-3">
+          {secondaryProjects?.map((project, i) => (
+            <motion.article
+              key={project.name}
+              className="group overflow-hidden rounded-2xl border border-white/12 bg-[#0b0c14]/80 transition-colors duration-200 hover:border-purple-400/45 hover:bg-[#101322]"
+              initial={{ y: 14, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.35 + i * 0.06, duration: 0.35 }}
             >
-              <Image
-                src={project.imagePath}
-                alt={project.name}
-                width={52}
-                height={52}
-                className="h-12 w-12 shrink-0 object-cover rounded-xl bg-[#222] border border-[#333] mt-0.5"
-              />
-              <div className="flex flex-col flex-1 min-w-0">
-                <div className="flex items-center justify-between gap-2">
-                  <span className="font-semibold text-white truncate">{project.name}</span>
+              <div className="relative aspect-16/9 overflow-hidden border-b border-white/10 bg-[#090a12]">
+                <div className="absolute inset-0 flex items-center justify-center p-4">
+                  <div className="relative aspect-square w-full max-w-[220px] overflow-hidden rounded-2xl bg-[#0d0f18] ring-1 ring-white/10">
+                    <Image
+                      src={project.imagePath}
+                      alt={project.name}
+                      fill
+                      className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <h3 className="text-xl font-semibold text-white truncate">{project.name}</h3>
+                    <p className="mt-1 text-xs text-white/55 truncate">{project.role}</p>
+                  </div>
                   {project.url && (
                     <a
                       href={project.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="shrink-0 p-1 rounded-lg text-[#666] hover:text-white hover:bg-white/10 transition-colors"
+                      className="rounded-lg border border-white/12 p-1.5 text-white/65 transition-colors hover:border-purple-400/45 hover:text-white"
                       title="Visit"
                     >
                       <LuArrowUpRight size={15} />
                     </a>
                   )}
                 </div>
-                <p className="text-xs text-purple-300/80 mt-0.5 truncate">{project.role}</p>
-                <p className="text-xs text-[#666] mt-0.5">
-                  {project.startAt} – {project.endAt ?? "now"}
-                </p>
-                {project.description && (
-                  <p className="text-xs text-[#999] mt-1.5 leading-relaxed">
-                    {project.description}
-                  </p>
-                )}
-                {project.tags && project.tags.length > 0 && (
-                  <div className="flex flex-wrap gap-1.5 mt-2">
-                    {project.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className={`text-[10px] font-medium px-1.5 py-0.5 rounded-md border ${
-                          tag.toLowerCase() === "active" || tag.toLowerCase() === "wip"
-                            ? STATUS_COLORS.now
-                            : STATUS_COLORS.default
-                        }`}
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </motion.div>
 
-      {/* ── Skills ── */}
-      <motion.div
-        className="p-4 md:p-6 rounded-3xl border border-[#333] bg-[#111111]"
-        initial={{ y: 20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.4, duration: 0.5 }}
-      >
-        <div className="text-white uppercase tracking-wider flex gap-3 items-center">
-          <span className="p-1.5 rounded-md">
-            <LuTerminal size={20} color="#FFFFFF" />
-          </span>
-          Skills
-        </div>
-        <p className="text-sm mt-2 text-[#888]">
-          Tools &amp; frameworks I work with — not limited to.
-        </p>
+                <p className="mt-3 text-sm leading-relaxed text-white/70">{project.description}</p>
 
-        <div className="flex flex-col gap-5 mt-5">
-          {orderedCategories.map((category) => {
-            const catSkills = skillCategories[category] ?? [];
-            return (
-              <div key={category}>
-                <span className="text-[10px] font-semibold uppercase tracking-widest text-purple-400/70">
-                  {category}
-                </span>
-                <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-2 mt-2">
-                  {catSkills.map((skill) => (
-                    <div
-                      key={skill.name}
-                      className="flex flex-col items-center justify-center gap-1.5 p-2.5 rounded-xl bg-[#161616] border border-[#2a2a2a] hover:border-purple-800/60 hover:bg-[#1c1228] transition-colors duration-150 cursor-default"
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {project.tags?.map((tag) => (
+                    <span
+                      key={tag}
+                      className={`rounded-full border px-2 py-0.5 text-[10px] font-medium ${
+                        tag.toLowerCase() === "active" || tag.toLowerCase() === "wip"
+                          ? "border-emerald-400/35 text-emerald-300"
+                          : "border-purple-400/30 text-purple-300"
+                      }`}
                     >
-                      <Icon icon={skill.icon} className="w-7 h-7 shrink-0" />
-                      <span className="text-[11px] text-[#aaa] text-center leading-tight w-full truncate px-0.5">
-                        {skill.name}
-                      </span>
-                    </div>
+                      {tag}
+                    </span>
                   ))}
                 </div>
               </div>
-            );
-          })}
+            </motion.article>
+          ))}
         </div>
-      </motion.div>
+
+      </motion.section>
+
+      <motion.section
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.4, duration: 0.45 }}
+      >
+        <div className="overflow-hidden rounded-2xl border border-white/12 bg-[#0b0c14]/80 p-5 sm:p-6">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-3 text-white uppercase tracking-wider">
+                <span className="rounded-md p-1.5">
+                  <LuTerminal size={20} color="#FFFFFF" />
+                </span>
+                Skills
+              </div>
+              <p className="mt-2 text-sm text-white/55">
+                Core technologies I use regularly.
+              </p>
+            </div>
+            <div className="rounded-full border border-white/12 px-3 py-1 text-[11px] text-white/60">
+              {skills.length} tools in active rotation
+            </div>
+          </div>
+
+          <div className="mt-6 space-y-3 overflow-hidden">
+            {skillRows.map((row, rowIndex) => {
+              const repeated = [...row, ...row];
+              const isReverse = rowIndex === 1;
+              const duration = 34 + rowIndex * 4;
+
+              return (
+                <div key={`skill-row-${rowIndex}`} className="relative overflow-hidden">
+                  <div
+                    className={`flex w-max gap-3 ${isReverse ? "skills-marquee-reverse" : "skills-marquee"}`}
+                    style={{ animationDuration: `${duration}s` }}
+                  >
+                    {repeated.map((skill, i) => (
+                      <div
+                        key={`${skill.name}-${i}`}
+                        className="group flex min-w-[136px] items-center gap-2 rounded-xl border border-white/10 bg-[#0b0c14]/76 px-3 py-2.5 transition-colors duration-200 hover:border-purple-400/45 hover:bg-[#111322]"
+                      >
+                        <Icon icon={skill.icon} className="h-4 w-4 shrink-0" />
+                        <span className="truncate text-[11px] font-medium text-white/85">{skill.name}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="mt-6 rounded-xl border border-purple-400/25 bg-linear-to-r from-[#161826] via-[#121423] to-[#0e101a] p-3.5 text-sm text-white/75">
+            <div className="flex items-center gap-2">
+              <LuWaypoints className="h-4 w-4 text-purple-200" />
+              <span className="font-medium">These skills are reflected in the timeline below.</span>
+            </div>
+          </div>
+        </div>
+      </motion.section>
+
+      <style jsx>{`
+        .skills-marquee {
+          animation-name: skillsMarquee;
+          animation-timing-function: linear;
+          animation-iteration-count: infinite;
+        }
+
+        .skills-marquee-reverse {
+          animation-name: skillsMarqueeReverse;
+          animation-timing-function: linear;
+          animation-iteration-count: infinite;
+        }
+
+        @keyframes skillsMarquee {
+          from {
+            transform: translateX(0);
+          }
+          to {
+            transform: translateX(-50%);
+          }
+        }
+
+        @keyframes skillsMarqueeReverse {
+          from {
+            transform: translateX(-50%);
+          }
+          to {
+            transform: translateX(0);
+          }
+        }
+      `}</style>
     </div>
   );
 };
