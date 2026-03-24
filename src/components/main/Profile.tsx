@@ -7,7 +7,8 @@ import { Icon } from "@iconify/react";
 import SpotifyNowPlaying from "@/components/SpotifyNowPlaying";
 import type { NowPlayingResult } from "@/lib/actions/spotify";
 
-const FALLBACK_BLOB_COLORS = ["#1DB954", "#40C7FF", "#A78BFA"];
+const ACTIVE_FALLBACK_BLOB_COLORS = ["#1DB954", "#40C7FF", "#A78BFA"];
+const IDLE_BLOB_COLORS = ["#d8dbe2", "#b9bec8", "#8f96a3"];
 const BLOB_TRANSITION_MS = 650;
 
 type RGB = [number, number, number];
@@ -73,7 +74,7 @@ function getRegionAverage(
     }
   }
 
-  if (!count) return FALLBACK_BLOB_COLORS[0];
+  if (!count) return ACTIVE_FALLBACK_BLOB_COLORS[0];
 
   return `rgb(${Math.round(r / count)} ${Math.round(g / count)} ${Math.round(b / count)})`;
 }
@@ -88,7 +89,7 @@ function getAlbumBlobColors(imageUrl: string): Promise<string[]> {
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d", { willReadFrequently: true });
         if (!ctx) {
-          resolve(FALLBACK_BLOB_COLORS);
+          resolve(ACTIVE_FALLBACK_BLOB_COLORS);
           return;
         }
 
@@ -104,20 +105,20 @@ function getAlbumBlobColors(imageUrl: string): Promise<string[]> {
 
         resolve([left, mid, right]);
       } catch {
-        resolve(FALLBACK_BLOB_COLORS);
+        resolve(ACTIVE_FALLBACK_BLOB_COLORS);
       }
     };
 
-    img.onerror = () => resolve(FALLBACK_BLOB_COLORS);
+    img.onerror = () => resolve(ACTIVE_FALLBACK_BLOB_COLORS);
     img.src = imageUrl;
   });
 }
 
 const Profile = () => {
   const [albumAmbience, setAlbumAmbience] = useState<string | null>(null);
-  const [targetBlobColors, setTargetBlobColors] = useState<string[]>(FALLBACK_BLOB_COLORS);
-  const [blobColors, setBlobColors] = useState<string[]>(FALLBACK_BLOB_COLORS);
-  const blobColorsRef = useRef<string[]>(FALLBACK_BLOB_COLORS);
+  const [targetBlobColors, setTargetBlobColors] = useState<string[]>(IDLE_BLOB_COLORS);
+  const [blobColors, setBlobColors] = useState<string[]>(IDLE_BLOB_COLORS);
+  const blobColorsRef = useRef<string[]>(IDLE_BLOB_COLORS);
   const rafRef = useRef<number | null>(null);
 
   useEffect(() => {
@@ -128,7 +129,7 @@ const Profile = () => {
     let disposed = false;
 
     if (!albumAmbience) {
-      setTargetBlobColors(FALLBACK_BLOB_COLORS);
+      setTargetBlobColors(IDLE_BLOB_COLORS);
       return;
     }
 
@@ -191,49 +192,47 @@ const Profile = () => {
           aria-hidden="true"
           className="pointer-events-none absolute -inset-x-28 -inset-y-24 overflow-visible"
           initial={false}
-          animate={{ opacity: albumAmbience ? 1 : 0 }}
+          animate={{ opacity: albumAmbience ? 1 : 0.86 }}
           transition={{ duration: 0.55, ease: "easeInOut" }}
         >
-          {albumAmbience && (
-            <>
-              <motion.div
-                className="absolute -left-36 -top-20 h-[34rem] w-[34rem] rounded-full blur-[92px] saturate-[1.75]"
-                style={{
-                  background: `radial-gradient(circle, ${blobColors[0]} 0%, transparent 58%)`,
-                  mixBlendMode: "plus-lighter",
-                }}
-                animate={{ x: [0, 38, -30, 0], y: [0, -32, 18, 0], scale: [1, 1.18, 0.9, 1] }}
-                transition={{ duration: 10, ease: "easeInOut", repeat: Infinity }}
-              />
-              <motion.div
-                className="absolute -right-32 top-[2rem] h-lg w-lg rounded-full blur-[94px] saturate-[1.8]"
-                style={{
-                  background: `radial-gradient(circle, ${blobColors[1]} 0%, transparent 58%)`,
-                  mixBlendMode: "plus-lighter",
-                }}
-                animate={{ x: [0, -32, 22, 0], y: [0, 30, -20, 0], scale: [1, 0.88, 1.16, 1] }}
-                transition={{ duration: 9, ease: "easeInOut", repeat: Infinity }}
-              />
-              <motion.div
-                className="absolute -bottom-32 left-[20%] h-[30rem] w-[30rem] rounded-full blur-[96px] saturate-[1.8]"
-                style={{
-                  background: `radial-gradient(circle, ${blobColors[2]} 0%, transparent 60%)`,
-                  mixBlendMode: "plus-lighter",
-                }}
-                animate={{ x: [0, 20, -24, 0], y: [0, -24, 18, 0], scale: [1, 1.2, 0.88, 1] }}
-                transition={{ duration: 12, ease: "easeInOut", repeat: Infinity }}
-              />
-              <motion.div
-                className="absolute left-[48%] top-[18%] h-sm w-sm -translate-x-1/2 rounded-full blur-[86px] saturate-[1.85]"
-                style={{
-                  background: `radial-gradient(circle, ${blobColors[1]} 0%, transparent 60%)`,
-                  mixBlendMode: "plus-lighter",
-                }}
-                animate={{ x: [0, 14, -14, 0], y: [0, -14, 16, 0], scale: [0.9, 1.16, 0.9] }}
-                transition={{ duration: 8.5, ease: "easeInOut", repeat: Infinity }}
-              />
-            </>
-          )}
+          <>
+            <motion.div
+              className="absolute -left-36 -top-20 h-[34rem] w-[34rem] rounded-full blur-[92px] saturate-[1.75]"
+              style={{
+                background: `radial-gradient(circle, ${blobColors[0]} 0%, transparent 58%)`,
+                mixBlendMode: "plus-lighter",
+              }}
+              animate={{ x: [0, 38, -30, 0], y: [0, -32, 18, 0], scale: [1, 1.18, 0.9, 1] }}
+              transition={{ duration: 10, ease: "easeInOut", repeat: Infinity }}
+            />
+            <motion.div
+              className="absolute -right-32 top-[2rem] h-lg w-lg rounded-full blur-[94px] saturate-[1.8]"
+              style={{
+                background: `radial-gradient(circle, ${blobColors[1]} 0%, transparent 58%)`,
+                mixBlendMode: "plus-lighter",
+              }}
+              animate={{ x: [0, -32, 22, 0], y: [0, 30, -20, 0], scale: [1, 0.88, 1.16, 1] }}
+              transition={{ duration: 9, ease: "easeInOut", repeat: Infinity }}
+            />
+            <motion.div
+              className="absolute -bottom-32 left-[20%] h-[30rem] w-[30rem] rounded-full blur-[96px] saturate-[1.8]"
+              style={{
+                background: `radial-gradient(circle, ${blobColors[2]} 0%, transparent 60%)`,
+                mixBlendMode: "plus-lighter",
+              }}
+              animate={{ x: [0, 20, -24, 0], y: [0, -24, 18, 0], scale: [1, 1.2, 0.88, 1] }}
+              transition={{ duration: 12, ease: "easeInOut", repeat: Infinity }}
+            />
+            <motion.div
+              className="absolute left-[48%] top-[18%] h-sm w-sm -translate-x-1/2 rounded-full blur-[86px] saturate-[1.85]"
+              style={{
+                background: `radial-gradient(circle, ${blobColors[1]} 0%, transparent 60%)`,
+                mixBlendMode: "plus-lighter",
+              }}
+              animate={{ x: [0, 14, -14, 0], y: [0, -14, 16, 0], scale: [0.9, 1.16, 0.9] }}
+              transition={{ duration: 8.5, ease: "easeInOut", repeat: Infinity }}
+            />
+          </>
         </motion.div>
 
         <div className="relative z-10 flex min-h-[calc(100vh-8.25rem)] items-center justify-center px-6 py-14 sm:px-8 lg:px-10">

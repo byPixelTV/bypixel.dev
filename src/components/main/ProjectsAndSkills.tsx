@@ -1,11 +1,12 @@
 "use client";
 
-import { LuTerminal, LuArrowUpRight, LuWaypoints } from "react-icons/lu";
+import { LuTerminal, LuArrowUpRight, LuWaypoints, LuChevronsDown } from "react-icons/lu";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { Project } from "@/lib/schema/project";
 import { Skill } from "@/lib/schema/skill";
 import { Icon } from "@iconify/react";
+import { useRef } from "react";
 
 const ProjectsAndSkills = ({
   projects,
@@ -14,6 +15,15 @@ const ProjectsAndSkills = ({
   projects: Project[];
   skills: Skill[];
 }) => {
+  const bridgeRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: bridgeRef,
+    offset: ["start 88%", "end 20%"],
+  });
+  const bridgeOpacity = useTransform(scrollYProgress, [0, 0.45, 1], [0.25, 1, 0.4]);
+  const bridgeScale = useTransform(scrollYProgress, [0, 0.45, 1], [0.96, 1, 0.97]);
+  const bridgeY = useTransform(scrollYProgress, [0, 1], [18, -6]);
+
   const secondaryProjects = projects.filter((project) => project.name.toLowerCase() !== "eramc");
   const skillRows: Skill[][] = [[], [], []];
   skills.forEach((skill, index) => {
@@ -156,6 +166,19 @@ const ProjectsAndSkills = ({
           </div>
         </div>
       </motion.section>
+
+      <div ref={bridgeRef} className="relative -mt-7 flex h-28 items-center justify-center">
+        <motion.div
+          className="pointer-events-none relative w-full max-w-[540px]"
+          style={{ opacity: bridgeOpacity, scale: bridgeScale, y: bridgeY }}
+        >
+          <div className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-linear-to-r from-transparent via-white/35 to-transparent" />
+          <div className="mx-auto flex w-fit items-center gap-2 rounded-full border border-white/12 bg-[#101320]/85 px-3 py-1 text-[11px] text-white/70 backdrop-blur-sm">
+            <LuChevronsDown className="h-3.5 w-3.5 text-purple-200/90" />
+            Continue to journey
+          </div>
+        </motion.div>
+      </div>
 
       <style jsx>{`
         .skills-marquee {
