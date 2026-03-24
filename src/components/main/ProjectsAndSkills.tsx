@@ -24,7 +24,7 @@ const ProjectsAndSkills = ({
   const bridgeScale = useTransform(scrollYProgress, [0, 0.45, 1], [0.96, 1, 0.97]);
   const bridgeY = useTransform(scrollYProgress, [0, 1], [18, -6]);
 
-  const secondaryProjects = projects.filter((project) => project.name.toLowerCase() !== "eramc");
+  const secondaryProjects = projects.filter((project) => project.name.toLowerCase());
   const skillRows: Skill[][] = [[], [], []];
   skills.forEach((skill, index) => {
     skillRows[index % 3].push(skill);
@@ -88,13 +88,24 @@ const ProjectsAndSkills = ({
                 <p className="mt-3 text-sm leading-relaxed text-white/70">{project.description}</p>
 
                 <div className="mt-3 flex flex-wrap gap-2">
-                  {project.tags?.map((tag) => (
+                  {Array.from(new Set([
+                    ...(project.tags ?? []),
+                    ...(project.endAt && project.endAt.toLowerCase() !== "now" ? ["Former Member"] : []),
+                  ])).map((tag, i) => (
                     <span
-                      key={tag}
+                      key={`${tag}-${i}`}
                       className={`rounded-full border px-2 py-0.5 text-[10px] font-medium ${
                         tag.toLowerCase() === "active" || tag.toLowerCase() === "wip"
                           ? "border-emerald-400/35 text-emerald-300"
-                          : "border-purple-400/30 text-purple-300"
+                          : tag.toLowerCase() === "inactive" || tag.toLowerCase() === "discontinued"
+                            ? "border-rose-400/40 text-rose-300"
+                          : tag.toLowerCase() === "maintenance"
+                            ? "border-amber-400/40 text-amber-300"
+                            : tag.toLowerCase() === "primary"
+                              ? "border-sky-400/45 text-sky-300"
+                            : tag.toLowerCase() === "former member" || tag.toLowerCase() === "ex-team"
+                              ? "border-slate-300/35 text-slate-200"
+                              : "border-purple-400/30 text-purple-300"
                       }`}
                     >
                       {tag}
