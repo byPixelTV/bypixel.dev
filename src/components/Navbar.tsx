@@ -7,7 +7,7 @@
 
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -31,6 +31,7 @@ const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [selected, setSelected] = useState(pathname);
   const { scrollY } = useScroll();
+  const hasCrossedScrollThresholdRef = useRef(false);
 
   // Prefetch all pages on mount
   useEffect(() => {
@@ -44,7 +45,11 @@ const Navbar = () => {
 
   // Scroll listener for navbar styling
   useMotionValueEvent(scrollY, "change", (latest) => {
-    setIsScrolled(latest > 20);
+    const nextScrolled = latest > 20;
+    if (nextScrolled !== hasCrossedScrollThresholdRef.current) {
+      hasCrossedScrollThresholdRef.current = nextScrolled;
+      setIsScrolled(nextScrolled);
+    }
   });
 
   useEffect(() => {
@@ -55,7 +60,6 @@ const Navbar = () => {
     top: {
       backgroundColor: "rgba(20, 4, 48, 0.3)",
       backdropFilter: "blur(8px)",
-      margin: "20px 12px",
       transition: {
         type: "spring",
         stiffness: 300,
@@ -65,7 +69,6 @@ const Navbar = () => {
     scroll: {
       backgroundColor: "rgba(8, 2, 22, 0.9)",
       backdropFilter: "blur(14px)",
-      margin: "8px 12px",
       transition: {
         type: "spring",
         stiffness: 300,
@@ -116,7 +119,7 @@ const Navbar = () => {
         animate="visible"
       >
         <motion.nav
-          className="mx-3 mt-3 w-full rounded-3xl border border-purple-900/35 px-3 py-2.5 shadow-lg md:mx-4 md:mt-4"
+          className="mx-auto mt-3 w-[calc(100%-1.5rem)] rounded-3xl border border-purple-900/35 px-3 py-2.5 shadow-lg md:mt-4 md:w-[calc(100%-2rem)]"
           variants={navVariants}
           initial="top"
           animate={isScrolled ? "scroll" : "top"}

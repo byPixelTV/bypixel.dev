@@ -190,14 +190,14 @@ const Profile = () => {
       >
         <motion.div
           aria-hidden="true"
-          className="pointer-events-none absolute -inset-x-28 -inset-y-24 overflow-visible"
+          className="pointer-events-none absolute -inset-x-16 -inset-y-16 overflow-visible opacity-70 sm:-inset-x-28 sm:-inset-y-24 sm:opacity-100"
           initial={false}
           animate={{ opacity: albumAmbience ? 1 : 0.86 }}
           transition={{ duration: 0.55, ease: "easeInOut" }}
         >
           <>
             <motion.div
-              className="absolute -left-36 -top-20 h-[34rem] w-[34rem] rounded-full blur-[92px] saturate-[1.75]"
+              className="absolute -left-28 -top-14 h-[22rem] w-[22rem] rounded-full blur-[74px] saturate-[1.6] sm:-left-36 sm:-top-20 sm:h-[34rem] sm:w-[34rem] sm:blur-[92px] sm:saturate-[1.75]"
               style={{
                 background: `radial-gradient(circle, ${blobColors[0]} 0%, transparent 58%)`,
                 mixBlendMode: "plus-lighter",
@@ -206,7 +206,7 @@ const Profile = () => {
               transition={{ duration: 10, ease: "easeInOut", repeat: Infinity }}
             />
             <motion.div
-              className="absolute -right-32 top-[2rem] h-lg w-lg rounded-full blur-[94px] saturate-[1.8]"
+              className="absolute -right-20 top-[3rem] h-[20rem] w-[20rem] rounded-full blur-[72px] saturate-[1.65] sm:-right-32 sm:top-[2rem] sm:h-lg sm:w-lg sm:blur-[94px] sm:saturate-[1.8]"
               style={{
                 background: `radial-gradient(circle, ${blobColors[1]} 0%, transparent 58%)`,
                 mixBlendMode: "plus-lighter",
@@ -215,7 +215,7 @@ const Profile = () => {
               transition={{ duration: 9, ease: "easeInOut", repeat: Infinity }}
             />
             <motion.div
-              className="absolute -bottom-32 left-[20%] h-[30rem] w-[30rem] rounded-full blur-[96px] saturate-[1.8]"
+              className="absolute -bottom-32 left-[20%] hidden h-[30rem] w-[30rem] rounded-full blur-[96px] saturate-[1.8] sm:block"
               style={{
                 background: `radial-gradient(circle, ${blobColors[2]} 0%, transparent 60%)`,
                 mixBlendMode: "plus-lighter",
@@ -224,7 +224,7 @@ const Profile = () => {
               transition={{ duration: 12, ease: "easeInOut", repeat: Infinity }}
             />
             <motion.div
-              className="absolute left-[48%] top-[18%] h-sm w-sm -translate-x-1/2 rounded-full blur-[86px] saturate-[1.85]"
+              className="absolute left-[48%] top-[18%] hidden h-sm w-sm -translate-x-1/2 rounded-full blur-[86px] saturate-[1.85] sm:block"
               style={{
                 background: `radial-gradient(circle, ${blobColors[1]} 0%, transparent 60%)`,
                 mixBlendMode: "plus-lighter",

@@ -7,7 +7,7 @@ export default function BackgroundLayout({ children }: { children: React.ReactNo
     <>
       {/* Fixed Background Layer */}
       <div
-        className="fixed inset-0 -z-10"
+        className="fixed inset-0 -z-10 overflow-hidden"
         style={{ background: '#030305' }}
       >
         {/* Animated Gradient Blobs */}
@@ -66,6 +66,28 @@ export default function BackgroundLayout({ children }: { children: React.ReactNo
           top: 62%;
           right: 20%;
           animation: float2 28s ease-in-out 5s infinite, pulse2 18s ease-in-out infinite reverse;
+        }
+
+        @media (max-width: 640px) {
+          .gradient-blob {
+            filter: blur(84px);
+            opacity: 0.2;
+          }
+
+          .blob-1 {
+            width: 460px;
+            height: 460px;
+          }
+
+          .blob-2 {
+            width: 420px;
+            height: 420px;
+          }
+
+          .blob-3,
+          .blob-4 {
+            display: none;
+          }
         }
 
         @keyframes float1 {
