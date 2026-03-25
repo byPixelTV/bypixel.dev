@@ -6,7 +6,6 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { Project } from "@/lib/schema/project";
 import { Skill } from "@/lib/schema/skill";
 import { Icon } from "@iconify/react";
-import { useRef } from "react";
 
 const ProjectsAndSkills = ({
   projects,
@@ -15,11 +14,7 @@ const ProjectsAndSkills = ({
   projects: Project[];
   skills: Skill[];
 }) => {
-  const bridgeRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: bridgeRef,
-    offset: ["start 88%", "end 20%"],
-  });
+  const { scrollYProgress } = useScroll();
   const bridgeOpacity = useTransform(scrollYProgress, [0, 0.45, 1], [0.25, 1, 0.4]);
   const bridgeScale = useTransform(scrollYProgress, [0, 0.45, 1], [0.96, 1, 0.97]);
   const bridgeY = useTransform(scrollYProgress, [0, 1], [18, -6]);
@@ -31,7 +26,7 @@ const ProjectsAndSkills = ({
   });
 
   return (
-    <div id="projects" className="scroll-mt-28 flex flex-col gap-16">
+    <div id="projects" className="relative scroll-mt-28 flex flex-col gap-16">
       <motion.section
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -60,6 +55,7 @@ const ProjectsAndSkills = ({
                       src={project.imagePath}
                       alt={project.name}
                       fill
+                      sizes="(max-width: 1024px) 220px, 18vw"
                       className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
                     />
                   </div>
@@ -71,6 +67,9 @@ const ProjectsAndSkills = ({
                   <div className="min-w-0">
                     <h3 className="text-xl font-semibold text-white truncate">{project.name}</h3>
                     <p className="mt-1 text-xs text-white/55 truncate">{project.role}</p>
+                    <p className="mt-1 text-[11px] text-white/45 truncate">
+                      {project.startAt} - {project.endAt ?? "Now"}
+                    </p>
                   </div>
                   {project.url && (
                     <a
@@ -178,7 +177,7 @@ const ProjectsAndSkills = ({
         </div>
       </motion.section>
 
-      <div ref={bridgeRef} className="relative -mt-7 flex h-28 items-center justify-center">
+      <div className="relative -mt-7 flex h-28 items-center justify-center">
         <motion.div
           className="pointer-events-none relative w-full max-w-[540px]"
           style={{ opacity: bridgeOpacity, scale: bridgeScale, y: bridgeY }}

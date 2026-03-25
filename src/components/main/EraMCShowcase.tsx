@@ -34,6 +34,7 @@ const EraMCShowcase = () => {
           src="/projects/banners/eramc.png"
           alt="EraMC Banner"
           fill
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 1200px"
           className="object-cover"
           quality={90}
         />
