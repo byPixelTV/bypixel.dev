@@ -26,7 +26,7 @@
     "highlight.js": "^11.11.1",
     "jsdom": "^29.0.0",
     "lightningcss": "^1.31.1",
-    "lucide-react": "^0.577.0",
+    "lucide-react": "^1.0.0",
     "marked": "^17.0.3",
     "motion": "^12.34.3",
     "next": "16.2.0",
