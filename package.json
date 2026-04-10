@@ -28,7 +28,7 @@
     "jsdom": "^29.0.0",
     "lightningcss": "^1.31.1",
     "lucide-react": "^1.0.0",
-    "marked": "^17.0.3",
+    "marked": "^18.0.0",
     "motion": "^12.34.3",
     "next": "16.2.3",
     "node-appwrite": "^23.0.0",
