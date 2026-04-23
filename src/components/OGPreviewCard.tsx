@@ -85,6 +85,9 @@ export default function OGPreviewCard({ data, href }: OGPreviewCardProps) {
               {data.description}
             </p>
           )}
+          <p className="text-[11px] text-gray-500 leading-tight truncate" title={href}>
+            {href}
+          </p>
         </div>
 
         {/* Footer row */}

@@ -1,4 +1,4 @@
-import { serverDatabases, serverUsers } from "@/lib/appwrite/server";
+import { serverTables, serverUsers } from "@/lib/appwrite/server";
 import Navbar from "@/components/Navbar";
 import BackgroundLayout from "@/components/BackgroundLayout";
 import { Posts } from "../../../types/appwrite";
@@ -10,15 +10,14 @@ export const dynamic = 'force-dynamic';
 
 async function getPosts(): Promise<{ posts: Posts[]; error: string | null }> {
   try {
-    
-    const response = await serverDatabases.listDocuments(
-      "685a9e8a0021f75d1389",
-      "685a9ec7002f9eb12d08",
-      [Query.equal("draft", false)]
-    );
+    const response = await serverTables.listRows({
+      databaseId: "685a9e8a0021f75d1389",
+      tableId: "685a9ec7002f9eb12d08",
+      queries: [Query.equal("draft", false)],
+    });
 
     return {
-      posts: response.documents as unknown as Posts[],
+      posts: response.rows as unknown as Posts[],
       error: null,
     };
   } catch (error) {

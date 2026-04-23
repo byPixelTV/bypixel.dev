@@ -128,10 +128,7 @@ const Profile = () => {
   useEffect(() => {
     let disposed = false;
 
-    if (!albumAmbience) {
-      setTargetBlobColors(IDLE_BLOB_COLORS);
-      return;
-    }
+    if (!albumAmbience) return;
 
     getAlbumBlobColors(albumAmbience).then((colors) => {
       if (!disposed) setTargetBlobColors(colors);
@@ -179,6 +176,7 @@ const Profile = () => {
       return;
     }
     setAlbumAmbience(null);
+    setTargetBlobColors(IDLE_BLOB_COLORS);
   };
 
   return (
@@ -206,7 +204,7 @@ const Profile = () => {
               transition={{ duration: 10, ease: "easeInOut", repeat: Infinity }}
             />
             <motion.div
-              className="absolute -right-20 top-[3rem] h-[20rem] w-[20rem] rounded-full blur-[72px] saturate-[1.65] sm:-right-32 sm:top-[2rem] sm:h-lg sm:w-lg sm:blur-[94px] sm:saturate-[1.8]"
+              className="absolute -right-20 top-[3rem] h-[20rem] w-xs rounded-full blur-[72px] saturate-[1.65] sm:-right-32 sm:top-[2rem] sm:h-lg sm:w-lg sm:blur-[94px] sm:saturate-[1.8]"
               style={{
                 background: `radial-gradient(circle, ${blobColors[1]} 0%, transparent 58%)`,
                 mixBlendMode: "plus-lighter",

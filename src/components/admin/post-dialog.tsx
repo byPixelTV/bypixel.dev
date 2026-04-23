@@ -55,25 +55,37 @@ export function PostDialog({
   });
 
   useEffect(() => {
+    let cancelled = false;
+
     if (post) {
-      setFormData({
-        title: post.title || "",
-        shortDescription: post.shortDescription || "",
-        thumbnail: post.thumbnail || "",
-        slug: post.slug || "",
-        draft: post.draft ?? true,
-        content: post.content || "",
+      queueMicrotask(() => {
+        if (cancelled) return;
+        setFormData({
+          title: post.title || "",
+          shortDescription: post.shortDescription || "",
+          thumbnail: post.thumbnail || "",
+          slug: post.slug || "",
+          draft: post.draft ?? true,
+          content: post.content || "",
+        });
       });
     } else {
-      setFormData({
-        title: "",
-        shortDescription: "",
-        thumbnail: "",
-        slug: "",
-        draft: true,
-        content: "",
+      queueMicrotask(() => {
+        if (cancelled) return;
+        setFormData({
+          title: "",
+          shortDescription: "",
+          thumbnail: "",
+          slug: "",
+          draft: true,
+          content: "",
+        });
       });
     }
+
+    return () => {
+      cancelled = true;
+    };
   }, [post, open]);
 
   const handleSubmit = (e: React.FormEvent) => {

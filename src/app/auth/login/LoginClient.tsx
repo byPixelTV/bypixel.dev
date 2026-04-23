@@ -11,26 +11,14 @@ import {
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { AlertCircle } from "lucide-react";
 
 export default function LoginContent() {
-  const [showError, setShowError] = useState(false);
-  const [showDisabled, setShowDisabled] = useState(false);
-  const [showNotLoggedIn, setShowNotLoggedIn] = useState(false);
   const searchParams = useSearchParams();
-
-  useEffect(() => {
-    const error = searchParams.get("error");
-    if (error === "true") setShowError(true);
-
-    const disabled = searchParams.get("disabled");
-    if (disabled === "true") setShowDisabled(true);
-
-    const notLoggedIn = searchParams.get("not-logged-in");
-    if (notLoggedIn === "true") setShowNotLoggedIn(true);
-  }, [searchParams]);
+  const showError = searchParams.get("error") === "true";
+  const showDisabled = searchParams.get("disabled") === "true";
+  const showNotLoggedIn = searchParams.get("not-logged-in") === "true";
 
   const loginWith = (provider: OAuthProvider) => {
     account.createOAuth2Token({

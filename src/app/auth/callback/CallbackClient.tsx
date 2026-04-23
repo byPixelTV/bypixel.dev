@@ -1,16 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { account } from "@/lib/appwrite/client";
 
 export default function AuthCallback() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [ran, setRan] = useState(false);
+  const ranRef = useRef(false);
 
   useEffect(() => {
-    if (ran) return;
+    if (ranRef.current) return;
 
     const userId = searchParams.get("userId");
     const secret = searchParams.get("secret");
@@ -19,7 +19,7 @@ export default function AuthCallback() {
 
     const handleCallback = async () => {
       try {
-        await account.createSession(userId, secret);
+        await account.createSession({ userId, secret });
 
         router.push("/admin");
       } catch (err) {
@@ -29,8 +29,8 @@ export default function AuthCallback() {
     };
 
     handleCallback();
-    setRan(true);
-  }, [searchParams, router, ran]);
+    ranRef.current = true;
+  }, [searchParams, router]);
 
   return (
     <div className="flex flex-col gap-4 items-center justify-center h-screen text-white">

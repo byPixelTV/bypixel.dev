@@ -1,4 +1,4 @@
-import { Client, Account, Databases, Users, Storage } from 'node-appwrite';
+import { Client, Account, Databases, Users, Storage, TablesDB } from 'node-appwrite';
 
 // Server-side client with API key for admin operations
 const serverClient = new Client()
@@ -11,5 +11,6 @@ export const serverAccount = new Account(serverClient);
 export const serverDatabases = new Databases(serverClient);
 export const serverUsers = new Users(serverClient);
 export const serverStorage = new Storage(serverClient);
+export const serverTables = new TablesDB(serverClient);
 
 export { serverClient };

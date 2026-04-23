@@ -1,6 +1,6 @@
 // app/blog/post/[slug]/page.tsx
 
-import { serverDatabases, serverUsers } from "@/lib/appwrite/server";
+import { serverDatabases, serverUsers, serverTables } from "@/lib/appwrite/server";
 import { Query } from "node-appwrite";
 import Navbar from "@/components/Navbar";
 import BackgroundLayout from "@/components/BackgroundLayout";
@@ -15,6 +15,8 @@ import ScrollToTop from "@/components/ScrollToTop";
 import { Metadata } from "next";
 import { fetchOGData, OGData } from "@/lib/og-fetcher";
 import OGPreviewCard from "@/components/OGPreviewCard";
+import PostImageLightbox from "@/components/blog/PostImageLightbox";
+import CustomVideoPlayer from "@/components/blog/CustomVideoPlayer";
 
 // ISR: Revalidate page every 60 seconds
 export const revalidate = 60;
@@ -59,14 +61,14 @@ async function getPostWithAuthor(slug: string): Promise<(Posts & { authorName: s
 
 async function incrementPostViews(postId: string, currentViews: number) {
   try {
-    await serverDatabases.updateDocument(
-      "685a9e8a0021f75d1389",
-      "685a9ec7002f9eb12d08",
-      postId,
-      {
+    await serverTables.updateRow({
+      databaseId: "685a9e8a0021f75d1389",
+      tableId: "685a9ec7002f9eb12d08",
+      rowId: postId,
+      data: {
         views: currentViews + 1,
-      }
-    );
+      },
+    });
   } catch (error) {
     console.error("Error incrementing views:", error);
   }
@@ -146,6 +148,31 @@ type ContentSegment =
   | { type: "html"; html: string }
   | { type: "og"; url: string; data: OGData };
 
+const VIDEO_URL_PATTERN = /\.(mp4|webm|ogg|mov|m4v)(\?[^"']*)?$/i;
+const INLINE_VIDEO_TOKEN_REGEX = /@@INLINE_VIDEO@@(.*?)@@END_INLINE_VIDEO@@/g;
+
+interface InlineVideoTokenPayload {
+  src: string;
+  caption?: string;
+  captionIsLink?: boolean;
+}
+
+function createInlineVideoToken(payload: InlineVideoTokenPayload): string {
+  return `@@INLINE_VIDEO@@${encodeURIComponent(JSON.stringify(payload))}@@END_INLINE_VIDEO@@`;
+}
+
+function parseInlineVideoToken(value: string): InlineVideoTokenPayload | null {
+  try {
+    return JSON.parse(decodeURIComponent(value)) as InlineVideoTokenPayload;
+  } catch {
+    return null;
+  }
+}
+
+function stripHtmlTags(input: string): string {
+  return input.replace(/<[^>]+>/g, "").trim();
+}
+
 async function buildContentSegments(raw: string): Promise<ContentSegment[]> {
   const segments: ContentSegment[] = [];
   const regex = /<og\s+url=["']([^"']+)["']\s*\/?>/gi;
@@ -175,6 +202,140 @@ async function buildContentSegments(raw: string): Promise<ContentSegment[]> {
   return segments;
 }
 
+function makeMarkdownImagesClickable(html: string): string {
+  const getAttribute = (attrs: string, attrName: string): string | null => {
+    const match = attrs.match(new RegExp(`\\b${attrName}\\s*=\\s*(["'])(.*?)\\1`, "i"));
+    return match?.[2] ?? null;
+  };
+
+  const withClickableImages = html.replace(/<img\b([^>]*)>/gi, (match, attrs) => {
+    if (/\bdata-post-image\s*=/.test(attrs)) return match;
+
+    const src = getAttribute(attrs, "src");
+    const alt = getAttribute(attrs, "alt") || "Post media";
+
+    if (src && VIDEO_URL_PATTERN.test(src)) {
+      return createInlineVideoToken({
+        src,
+        caption: alt,
+        captionIsLink: false,
+      });
+    }
+
+    let updatedAttrs = attrs;
+
+    if (/\bclass\s*=/.test(updatedAttrs)) {
+      updatedAttrs = updatedAttrs.replace(
+        /\bclass\s*=\s*(["'])(.*?)\1/i,
+        (_full: string, quote: string, classNames: string) =>
+          `class=${quote}${classNames} cursor-zoom-in transition-opacity hover:opacity-95${quote}`
+      );
+    } else {
+      updatedAttrs += ' class="cursor-zoom-in transition-opacity hover:opacity-95"';
+    }
+
+    if (!/\btitle\s*=/.test(updatedAttrs)) {
+      updatedAttrs += ' title="Click to enlarge"';
+    }
+
+    updatedAttrs += ' data-post-image="true" data-post-media="true" data-post-type="image"';
+
+    return `<img${updatedAttrs}>`;
+  });
+
+  return withClickableImages.replace(
+    /<a\b[^>]*href=(["'])(https?:\/\/[^"']+\.(?:mp4|webm|ogg|mov|m4v)(?:\?[^"']*)?)\1[^>]*>(.*?)<\/a>/gi,
+    (_match, _quote: string, url: string, label: string) => {
+      const rawLabel = label?.trim();
+      const caption = rawLabel && stripHtmlTags(rawLabel) !== url ? stripHtmlTags(rawLabel) : url;
+      return createInlineVideoToken({
+        src: url,
+        caption,
+        captionIsLink: true,
+      });
+    }
+  );
+}
+
+function renderHtmlWithInlineVideos(html: string, keyPrefix: string) {
+  const nodes: React.ReactNode[] = [];
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
+  let chunkIndex = 0;
+
+  while ((match = INLINE_VIDEO_TOKEN_REGEX.exec(html)) !== null) {
+    if (match.index > lastIndex) {
+      nodes.push(
+        <div
+          key={`${keyPrefix}-html-${chunkIndex}`}
+          dangerouslySetInnerHTML={{ __html: html.slice(lastIndex, match.index) }}
+        />
+      );
+      chunkIndex += 1;
+    }
+
+    const payload = parseInlineVideoToken(match[1]);
+    if (payload?.src) {
+      nodes.push(
+        <figure key={`${keyPrefix}-video-${chunkIndex}`} className="not-prose my-6">
+          <div className="relative">
+            <CustomVideoPlayer
+              src={payload.src}
+              className="w-full"
+              wrapperProps={{
+                "data-post-media": "true",
+                "data-post-type": "video",
+                "data-post-src": payload.src,
+                title: "Inline video",
+              }}
+            />
+            <button
+              type="button"
+              data-post-open-viewer="true"
+              data-post-open-viewer-src={payload.src}
+              className="absolute right-3 top-3 rounded-md border border-white/20 bg-black/65 px-2 py-1 text-xs text-white cursor-pointer hover:bg-black/85"
+            >
+              Open in gallery
+            </button>
+          </div>
+          {payload.caption && (
+            payload.captionIsLink ? (
+              <figcaption className="mt-2 text-sm text-sky-300 break-all">
+                <a
+                  href={payload.src}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline/60 hover:underline"
+                >
+                  {payload.caption}
+                </a>
+              </figcaption>
+            ) : (
+              <figcaption className="mt-2 text-sm text-gray-400">{payload.caption}</figcaption>
+            )
+          )}
+        </figure>
+      );
+      chunkIndex += 1;
+    }
+
+    lastIndex = INLINE_VIDEO_TOKEN_REGEX.lastIndex;
+  }
+
+  if (lastIndex < html.length) {
+    nodes.push(
+      <div
+        key={`${keyPrefix}-html-${chunkIndex}`}
+        dangerouslySetInnerHTML={{ __html: html.slice(lastIndex) }}
+      />
+    );
+  }
+
+  INLINE_VIDEO_TOKEN_REGEX.lastIndex = 0;
+
+  return nodes;
+}
+
 export default async function BlogPostPage({ params }: PageProps) {
   const { slug } = await params;
   const post = await getPostWithAuthor(slug);
@@ -183,8 +344,14 @@ export default async function BlogPostPage({ params }: PageProps) {
 
   await incrementPostViews(post.$id, post.views || 0);
 
-  const segments = await buildContentSegments(post.content || "");
+  const rawSegments = await buildContentSegments(post.content || "");
+  const segments = rawSegments.map((segment) =>
+    segment.type === "html"
+      ? { ...segment, html: makeMarkdownImagesClickable(segment.html) }
+      : segment
+  );
   const titleHtml = await marked.parseInline(post.title || "");
+  const hasMedia = Boolean(post.thumbnail) || segments.some((segment) => segment.type === "html" && segment.html.includes("data-post-media=\"true\""));
 
   return (
     <>
@@ -205,7 +372,7 @@ export default async function BlogPostPage({ params }: PageProps) {
             </Button>
           </div>
 
-          <article className="max-w-4xl mx-auto">
+          <article id="post-content-root" className="max-w-4xl mx-auto">
             <header className="mb-8 text-center max-w-3xl mx-auto">
               <h1
                 className="text-5xl font-bold text-white mb-6"
@@ -219,7 +386,11 @@ export default async function BlogPostPage({ params }: PageProps) {
                     alt="Post thumbnail"
                     fill
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
-                    className="object-cover rounded-lg"
+                    className="object-cover rounded-lg cursor-zoom-in transition-opacity hover:opacity-95"
+                    data-post-image="true"
+                    data-post-media="true"
+                    data-post-type="image"
+                    title="Click to enlarge"
                   />
                 </div>
               )}
@@ -244,15 +415,29 @@ export default async function BlogPostPage({ params }: PageProps) {
               </div>
             </header>
             <div className="prose prose-invert max-w-none">
+              {hasMedia && (
+                <p className="text-sm text-gray-400 mb-4">Tip: Click images and videos to open the media viewer.</p>
+              )}
               {segments.map((seg, i) =>
                 seg.type === "html" ? (
-                  <div key={i} dangerouslySetInnerHTML={{ __html: seg.html }} />
+                  <div key={i}>{renderHtmlWithInlineVideos(seg.html, `segment-${i}`)}</div>
                 ) : (
-                  <OGPreviewCard key={i} data={seg.data} href={seg.url} />
+                  <div key={i} className="not-prose my-6">
+                    <a
+                      href={seg.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mb-2 block break-all text-sm text-sky-300 underline/60 hover:underline"
+                    >
+                      {seg.url}
+                    </a>
+                    <OGPreviewCard data={seg.data} href={seg.url} />
+                  </div>
                 )
               )}
             </div>
           </article>
+          <PostImageLightbox rootId="post-content-root" />
         </div>
       </BackgroundLayout>
     </>

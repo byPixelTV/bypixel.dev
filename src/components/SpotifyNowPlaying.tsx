@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { Icon } from "@iconify/react";
@@ -162,7 +162,7 @@ const SpotifyNowPlaying = ({ onNowPlayingChange }: SpotifyNowPlayingProps) => {
     cardColorsRef.current = cardColors;
   }, [cardColors]);
 
-  const fetchNowPlaying = async () => {
+  const fetchNowPlaying = useCallback(async () => {
     try {
       const result = await getNowPlaying();
 
@@ -187,14 +187,21 @@ const SpotifyNowPlaying = ({ onNowPlayingChange }: SpotifyNowPlayingProps) => {
       setData(null);
       onNowPlayingChange?.(null);
     }
-  };
+  }, [onNowPlayingChange]);
 
   useEffect(() => {
-    fetchNowPlaying();
-    const id = setInterval(fetchNowPlaying, POLL_INTERVAL);
-    return () => clearInterval(id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    const run = () => {
+      void fetchNowPlaying();
+    };
+
+    const initialId = setTimeout(run, 0);
+    const intervalId = setInterval(run, POLL_INTERVAL);
+
+    return () => {
+      clearTimeout(initialId);
+      clearInterval(intervalId);
+    };
+  }, [fetchNowPlaying]);
 
   // Tick progress forward every second between polls
   useEffect(() => {
@@ -207,15 +214,20 @@ const SpotifyNowPlaying = ({ onNowPlayingChange }: SpotifyNowPlayingProps) => {
     return () => {
       if (tickRef.current) clearInterval(tickRef.current);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data?.isPlaying, data?.trackId, data?.durationMs]);
 
   useEffect(() => {
     let disposed = false;
+    let fallbackRaf: number | null = null;
 
     if (!data?.isPlaying || !data.albumImageUrl) {
-      setTargetCardColors(FALLBACK_CARD_COLORS);
-      return;
+      fallbackRaf = requestAnimationFrame(() => {
+        setTargetCardColors(FALLBACK_CARD_COLORS);
+      });
+      return () => {
+        disposed = true;
+        if (fallbackRaf !== null) cancelAnimationFrame(fallbackRaf);
+      };
     }
 
     getAlbumCardColors(data.albumImageUrl).then((colors) => {
@@ -224,6 +236,7 @@ const SpotifyNowPlaying = ({ onNowPlayingChange }: SpotifyNowPlayingProps) => {
 
     return () => {
       disposed = true;
+      if (fallbackRaf !== null) cancelAnimationFrame(fallbackRaf);
     };
   }, [data?.isPlaying, data?.albumImageUrl, data?.trackId]);
 
