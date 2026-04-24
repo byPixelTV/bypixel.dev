@@ -9,6 +9,8 @@ export const auth = betterAuth({
 			"localhost:3000",
 			"bypixel.dev",
 			"*.vercel.app",
+      "*.bypixel.dev",
+      "www.bypixel.dev",
 		],
 		protocol: process.env.NODE_ENV === "development" ? "http" : "https",
 	},
