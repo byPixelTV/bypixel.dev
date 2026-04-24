@@ -4,6 +4,14 @@ import { db } from "./mongo";
 
 export const auth = betterAuth({
   database: mongodbAdapter(db),
+	baseURL: {
+		allowedHosts: [
+			"localhost:3000",
+			"bypixel.dev",
+			"*.vercel.app",
+		],
+		protocol: process.env.NODE_ENV === "development" ? "http" : "https",
+	},
   experimental: { joins: true },
   emailAndPassword: {
     enabled: false
