@@ -253,7 +253,7 @@ const Profile = () => {
               transition={{ duration: 0.5, delay: 0.1 }}
             >
               A fullstack developer
-              <span className="block text-white/60">from Germany.</span>
+              <span className="block text-purple-400">from Germany.</span>
             </motion.h1>
 
             <motion.p
