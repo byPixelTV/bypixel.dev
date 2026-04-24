@@ -3,7 +3,9 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-import { Icon } from "@iconify/react";
+import { FaDiscord, FaGithub } from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6";
+import { MdEmail } from "react-icons/md";
 import SpotifyNowPlaying from "@/components/SpotifyNowPlaying";
 import type { NowPlayingResult } from "@/lib/actions/spotify";
 
@@ -306,7 +308,7 @@ const Profile = () => {
                 whileHover={{ scale: 1.08 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <Icon icon="mdi:github" className="h-5 w-5 text-white" />
+                <FaGithub className="h-5 w-5 text-white" />
               </motion.a>
               <motion.a
                 href="https://discord.gg/yVp7Qvhj9k"
@@ -316,7 +318,7 @@ const Profile = () => {
                 whileHover={{ scale: 1.08 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <Icon icon="ic:baseline-discord" className="h-5 w-5 text-white" />
+                <FaDiscord className="h-5 w-5 text-white" />
               </motion.a>
               <motion.a
                 href="https://twitter.com/bypixeltv"
@@ -326,7 +328,7 @@ const Profile = () => {
                 whileHover={{ scale: 1.08 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <Icon icon="mdi:twitter" className="h-5 w-5 text-white" />
+                <FaXTwitter className="h-5 w-5 text-white" />
               </motion.a>
               <motion.a
                 href="https://streame.gg/@bypixelttv"
@@ -352,7 +354,7 @@ const Profile = () => {
                 whileHover={{ scale: 1.08 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <Icon icon="mdi:email" className="h-5 w-5 text-white" />
+                <MdEmail className="h-5 w-5 text-white" />
               </motion.a>
             </motion.div>
           </div>

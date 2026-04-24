@@ -21,7 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Posts } from "../../../types/appwrite";
+import { SerializedPost } from "@/lib/mongo";
 
 interface PostFormData {
   title: string;
@@ -35,7 +35,7 @@ interface PostFormData {
 interface PostDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  post?: Posts;
+  post?: SerializedPost;
   onSave: (postData: PostFormData) => void;
 }
 

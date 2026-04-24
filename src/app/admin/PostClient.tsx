@@ -33,15 +33,15 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PostDialog } from "@/components/admin/post-dialog";
-import { Posts } from "../../../types/appwrite";
 import {
   getPosts,
   getAuthorName,
-  createPost,
   updatePost,
   deletePost,
+  createPostByFormData,
 } from "@/lib/actions/blog";
-import { account } from "@/lib/appwrite/client";
+import { authClient } from "@/lib/auth-client";
+import { SerializedPost } from "@/lib/mongo";
 
 // Define the form data interface (should match what's in post-dialog.tsx)
 interface PostFormData {
@@ -55,12 +55,13 @@ interface PostFormData {
 
 export function PostsPage() {
   const router = useRouter();
-  const [posts, setPosts] = useState<Posts[]>([]);
+  const [posts, setPosts] = useState<SerializedPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [editingPost, setEditingPost] = useState<Posts | undefined>(undefined);
+  const [editingPost, setEditingPost] = useState<SerializedPost | undefined>(undefined);
   const [authors, setAuthors] = useState<Record<string, string>>({});
+  const { data: session } = authClient.useSession();
 
   // Fetch posts using Server Action
   const fetchPosts = async () => {
@@ -95,6 +96,7 @@ export function PostsPage() {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchPosts();
   }, []);
 
@@ -111,7 +113,7 @@ export function PostsPage() {
   const totalViews = posts.reduce((sum, post) => sum + (post.views || 0), 0);
 
   const handleCreatePost = async (postData: PostFormData) => {
-    const result = await createPost(postData, (await account.get()).$id);
+    const result = await createPostByFormData(postData, session?.user.id || "");
     if (result.success) {
       await fetchPosts(); // Refresh the list
       setIsDialogOpen(false);
@@ -123,7 +125,7 @@ export function PostsPage() {
   const handleEditPost = async (postData: PostFormData) => {
     if (!editingPost) return;
 
-    const result = await updatePost(editingPost.$id, postData, editingPost);
+    const result = await updatePost(editingPost._id, postData, editingPost);
     if (result.success) {
       await fetchPosts(); // Refresh the list
       setEditingPost(undefined);
@@ -136,13 +138,13 @@ export function PostsPage() {
   const handleDeletePost = async (postId: string) => {
     const result = await deletePost(postId);
     if (result.success) {
-      setPosts(posts.filter((post) => post.$id !== postId));
+      setPosts(posts.filter((post) => post._id !== postId));
     } else {
       console.error("Error deleting post:", result.error);
     }
   };
 
-  const openEditDialog = (post: Posts) => {
+  const openEditDialog = (post: SerializedPost) => {
     setEditingPost(post);
     setIsDialogOpen(true);
   };
@@ -154,11 +156,16 @@ export function PostsPage() {
 
   const handleLogout = async () => {
     try {
-      await account.deleteSession("current");
+      await authClient.signOut({
+        fetchOptions: {
+          onSuccess: () => {
+            router.push("/auth/login");
+          }
+        }
+      })
       router.push("/auth/login");
     } catch (error) {
       console.error("Logout error:", error);
-      // Force redirect even if logout fails
       router.push("/auth/login");
     }
   };
@@ -307,7 +314,7 @@ export function PostsPage() {
               </TableHeader>
               <TableBody>
                 {filteredPosts.map((post) => (
-                  <TableRow key={post.$id}>
+                  <TableRow key={post._id}>
                     <TableCell>
                       <div className="font-medium">{post.title}</div>
                       <div className="text-sm text-muted-foreground truncate max-w-[250px]">
@@ -329,7 +336,7 @@ export function PostsPage() {
                     <TableCell>
                       <div className="flex items-center gap-2">
                         <Calendar className="h-4 w-4 text-muted-foreground" />
-                        {formatDate(post.$createdAt)}
+                        {formatDate(post.creationDate)}
                       </div>
                     </TableCell>
                     <TableCell>
@@ -364,7 +371,7 @@ export function PostsPage() {
                             Edit
                           </DropdownMenuItem>
                           <DropdownMenuItem
-                            onClick={() => handleDeletePost(post.$id)}
+                            onClick={() => handleDeletePost(post._id)}
                             className="text-destructive focus:text-destructive"
                           >
                             <Trash2 className="mr-2 h-4 w-4" />

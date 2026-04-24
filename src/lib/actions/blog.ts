@@ -1,7 +1,7 @@
 "use server";
 
-import { serverDatabases, serverUsers } from "@/lib/appwrite/server";
-import { Posts } from "../../../types/appwrite";
+import { ObjectId } from "mongodb";
+import { db, getPostsCollection, Post, SerializedPost } from "../mongo";
 
 interface PostFormData {
   title: string;
@@ -12,18 +12,7 @@ interface PostFormData {
   content: string;
 }
 
-// Define the database document structure
-interface PostDocumentData {
-  title: string;
-  shortDescription: string;
-  slug: string;
-  draft: boolean;
-  content: string;
-  userId: string;
-  creationDate: string;
-  thumbnail?: string; // Optional field
-  updateDate?: string; // Optional field for updates
-}
+const defaultThumbnail = "https://cdn.bypixel.dev/raw/FIwMLM.png";
 
 function toPlainObject<T>(value: T): T {
   return JSON.parse(JSON.stringify(value)) as T;
@@ -60,44 +49,87 @@ function validateThumbnailUrl(url: string): string | undefined {
   return trimmedUrl;
 }
 
-export async function getPosts(): Promise<{
-  posts: Posts[];
+export async function getPosts() {
+  try {
+    const collection = await getPostsCollection();
+    const posts = await collection.find({ }).toArray();
+
+    // ObjectId → string serialisieren
+    const serialized = posts.map((post) => ({
+      ...post,
+      _id: post._id.toString(),
+    }));
+
+    return { posts: serialized, error: null };
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (error) {
+    return { posts: [], error: "Failed to fetch posts" };
+  }
+}
+
+export async function getPostBySlug(slug: string): Promise<{
+  post: Post | null;
   error: string | null;
 }> {
   try {
-    const response = await serverDatabases.listDocuments(
-      "685a9e8a0021f75d1389",
-      "685a9ec7002f9eb12d08"
-    );
+    const collection = await getPostsCollection();
+    const post = await collection.findOne({ slug, draft: false });
 
+    if (!post) {
+      return {
+        post: null,
+        error: "Post not found",
+      };
+    }
     return {
-      posts: response.documents.map((doc) => toPlainObject(doc)) as unknown as Posts[],
+      post,
       error: null,
     };
   } catch (error) {
     return {
-      posts: [],
-      error: error instanceof Error ? error.message : "Failed to load posts",
+      post: null,
+      error: error instanceof Error ? error.message : "Failed to fetch post",
+    };
+  }
+}
+
+export async function incrementPostViews(postId: string): Promise<{
+  success: boolean;
+  error: string | null;
+}> {
+  try {
+    const collection = await getPostsCollection();
+    await collection.updateOne(
+      { _id: new ObjectId(postId) },
+      { $inc: { views: 1 } }
+    );
+    return { success: true, error: null };
+  }
+  catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Failed to increment views",
     };
   }
 }
 
 export async function getAuthorName(userId: string): Promise<string> {
   try {
-    const user = await serverUsers.get(userId);
-    return user.name || "Unknown";
+    const user = await db.collection("user").findOne({ _id: new ObjectId(userId) });
+    return user?.name || "Unknown";
   } catch {
     return "Unknown";
   }
 }
 
-export async function createPost(postData: PostFormData, userId: string) {
+export async function createPost(postData: Post, userId: string) {
   try {
     // Validate and sanitize thumbnail URL
-    const thumbnailUrl = validateThumbnailUrl(postData.thumbnail);
+    const thumbnailUrl = validateThumbnailUrl(postData.thumbnail ?? defaultThumbnail) || defaultThumbnail;
+    const collection = await getPostsCollection();
 
     // Map camelCase form data to hyphenated database field names
-    const documentData: PostDocumentData = {
+    const documentData: Post = {
       title: postData.title,
       shortDescription: postData.shortDescription,
       slug: postData.slug,
@@ -105,6 +137,8 @@ export async function createPost(postData: PostFormData, userId: string) {
       content: postData.content,
       userId: userId,
       creationDate: new Date().toISOString(),
+      _id: new ObjectId,
+      views: 0
     };
 
     // Only add thumbnail if it's a valid URL
@@ -112,12 +146,7 @@ export async function createPost(postData: PostFormData, userId: string) {
       documentData.thumbnail = thumbnailUrl;
     }
 
-    const result = await serverDatabases.createDocument(
-      "685a9e8a0021f75d1389",
-      "685a9ec7002f9eb12d08",
-      "unique()",
-      documentData
-    );
+    const result = await collection.insertOne(documentData);
     return { success: true, data: toPlainObject(result) };
   } catch (error) {
     console.error("Error creating post:", error);
@@ -128,7 +157,11 @@ export async function createPost(postData: PostFormData, userId: string) {
   }
 }
 
-export async function updatePost(postId: string, postData: PostFormData, originalPost?: Posts) {
+export async function createPostByFormData(postData: PostFormData, userId: string) {
+  return createPost(postData as Post, userId);
+}
+
+export async function updatePost(postId: string, postData: PostFormData, originalPost?: SerializedPost) {
   try {
     // Validate and sanitize thumbnail URL
     const thumbnailUrl = validateThumbnailUrl(postData.thumbnail);
@@ -140,12 +173,12 @@ export async function updatePost(postId: string, postData: PostFormData, origina
       const fieldsToCheck = ["title", "shortDescription", "slug", "content", "thumbnail"];
       onlyDraftChanged =
         fieldsToCheck.every(
-          (field) => postData[field as keyof PostFormData] === originalPost[field as keyof PostDocumentData]
+          (field) => postData[field as keyof PostFormData] === originalPost[field as keyof Post]
         ) && postData.draft !== originalPost.draft;
     }
 
     // Build document data
-    const documentData: Partial<PostDocumentData> & {
+    const documentData: Partial<Post> & {
       thumbnail?: string | null;
     } = {
       title: postData.title,
@@ -162,11 +195,11 @@ export async function updatePost(postId: string, postData: PostFormData, origina
       documentData.updateDate = new Date().toISOString();
     }
 
-    const result = await serverDatabases.updateDocument(
-      "685a9e8a0021f75d1389",
-      "685a9ec7002f9eb12d08",
-      postId,
-      documentData
+    const collection = await getPostsCollection();
+
+    const result = await collection.updateOne(
+      { _id: new ObjectId(postId) },
+      { $set: documentData }
     );
     return { success: true, data: toPlainObject(result) };
   } catch (error) {
@@ -180,11 +213,8 @@ export async function updatePost(postId: string, postData: PostFormData, origina
 
 export async function deletePost(postId: string) {
   try {
-    await serverDatabases.deleteDocument(
-      "685a9e8a0021f75d1389",
-      "685a9ec7002f9eb12d08",
-      postId
-    );
+    const collection = await getPostsCollection();
+    await collection.deleteOne({ _id: new ObjectId(postId) });
     return { success: true };
   } catch (error) {
     

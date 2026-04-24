@@ -41,6 +41,11 @@ const Navbar = () => {
         router.prefetch(url);
       }
     });
+    
+    // Also prefetch blog posts list aggressively
+    if (pathname !== "/blog") {
+      router.prefetch("/blog");
+    }
   }, [pathname, router]);
 
   // Scroll listener for navbar styling
@@ -53,6 +58,7 @@ const Navbar = () => {
   });
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setSelected(pathname);
   }, [pathname]);
 
@@ -130,10 +136,9 @@ const Navbar = () => {
                 href="/"
                 className="text-sm md:text-base tracking-wide text-[#F4F0E6] cursor-pointer font-medium"
               >
-                ~
                 {pathname === "/" && (
                   <span className="ml-1 md:text-base tracking-wide">
-                    byPixelTV
+                    bypixel.dev
                   </span>
                 )}
               </Link>

@@ -6,17 +6,17 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
 import dayjs from "dayjs";
-import { Posts } from "../../types/appwrite";
-interface PostCardProps {
-  post: Posts;
+import { Post } from "@/lib/mongo";
+interface Props {
+  post: Omit<Post, "_id"> & { _id: string };
   authorName: string;
 }
 
-export default function BlogPostCard({ post, authorName }: PostCardProps) {
+export default function BlogPostCard({ post, authorName }: Props) {
   return (
     <Card className="bg-white/5 border-white/10 border overflow-hidden">
       {post.thumbnail && (
-        <div className="relative w-full aspect-[16/9]">
+        <div className="relative w-full aspect-16/9">
           <Image
             src={post.thumbnail}
             alt="Post thumbnail"
@@ -50,7 +50,7 @@ export default function BlogPostCard({ post, authorName }: PostCardProps) {
           </span>
         </div>
         <Button asChild variant="secondary">
-          <Link href={`/blog/post/${post.slug || post.$id}`} prefetch={true}>Read More</Link>
+          <Link href={`/blog/post/${post.slug || post._id.toString()}`} prefetch={true}>Read More</Link>
         </Button>
       </CardFooter>
     </Card>

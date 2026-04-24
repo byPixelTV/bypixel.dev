@@ -3,7 +3,7 @@
 import { PostsPage } from "@/app/admin/PostClient";
 import BackgroundLayout from "@/components/BackgroundLayout";
 import { Button } from "@/components/ui/button";
-import { account } from "@/lib/appwrite/client";
+import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -16,9 +16,10 @@ export default function AdminClient() {
   useEffect(() => {
     const checkAuthAndAdmin = async () => {
       try {
+        const session = await authClient.getSession();
         // Check if user has a session
-        const session = await account.getSession("current");
-        if (!session) {
+        console.log("Checking session:", session.data);
+        if (!session.data || !session.data.session) {
           router.push("/auth/login?not-logged-in=true");
           return;
         }
@@ -26,8 +27,8 @@ export default function AdminClient() {
         setIsAuthenticated(true);
 
         // Check if user is admin
-        const user = await account.get();
-        const hasAdminLabel = user.labels.includes("admin");
+        const user = session.data?.user;
+        const hasAdminLabel = user?.admin === true;
         
         setIsAdmin(hasAdminLabel);
       } catch (error) {
@@ -61,7 +62,13 @@ export default function AdminClient() {
         <p>You do not have permission to view this page.</p>
         <Button onClick={async () => {
           try {
-            await account.deleteSession('current');
+            await authClient.signOut({
+              fetchOptions: {
+                onSuccess: () => {
+                  router.push("/auth/login");
+                }
+              }
+            })
           } catch (error) {
             console.error('Logout error:', error);
           }

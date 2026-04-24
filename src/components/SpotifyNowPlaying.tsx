@@ -1,10 +1,11 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import Image from "next/image";
-import { motion, AnimatePresence } from "framer-motion";
-import { Icon } from "@iconify/react";
 import { getNowPlaying, type NowPlayingResult } from "@/lib/actions/spotify";
+import { Icon } from "@iconify/react";
+import { AnimatePresence, motion } from "framer-motion";
+import Image from "next/image";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 // Animated equalizer bars
 const MusicBars = () => (
@@ -187,7 +188,7 @@ const SpotifyNowPlaying = ({ onNowPlayingChange }: SpotifyNowPlayingProps) => {
       setData(null);
       onNowPlayingChange?.(null);
     }
-  }, [onNowPlayingChange]);
+  }, []);
 
   useEffect(() => {
     const run = () => {
@@ -201,7 +202,7 @@ const SpotifyNowPlaying = ({ onNowPlayingChange }: SpotifyNowPlayingProps) => {
       clearTimeout(initialId);
       clearInterval(intervalId);
     };
-  }, [fetchNowPlaying]);
+  }, []);
 
   // Tick progress forward every second between polls
   useEffect(() => {

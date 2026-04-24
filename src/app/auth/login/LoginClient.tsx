@@ -1,6 +1,5 @@
 "use client";
 
-import { account, OAuthProvider } from "@/lib/appwrite/client";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -9,24 +8,18 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useSearchParams } from "next/navigation";
 import { AlertCircle } from "lucide-react";
+import { signIn } from "@/lib/auth-client";
 
 export default function LoginContent() {
   const searchParams = useSearchParams();
-  const showError = searchParams.get("error") === "true";
-  const showDisabled = searchParams.get("disabled") === "true";
+  const showDisabled = searchParams.get("error") === "disabled";
+  const showNoEmail = searchParams.get("error") === "no_email";
+  const error = searchParams.get("error");
   const showNotLoggedIn = searchParams.get("not-logged-in") === "true";
-
-  const loginWith = (provider: OAuthProvider) => {
-    account.createOAuth2Token({
-      provider,
-      success: `${process.env.NEXT_PUBLIC_BASE_URL}/auth/callback`,
-      failure: `${process.env.NEXT_PUBLIC_BASE_URL}/auth/failed`,
-    });
-  };
+  const showError = error && !showDisabled && !showNoEmail;
 
   return (
     <div className="w-full max-w-md space-y-4">
@@ -41,6 +34,14 @@ export default function LoginContent() {
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
             Logins are currently disabled. Please try again later.
+          </AlertDescription>
+        </Alert>
+      )}
+      {showNoEmail && (
+        <Alert className="bg-red-500/10 border-red-500/50 text-red-400">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>
+            An email address is required to create an account. Please make sure your Discord account has an email associated with it and try again.
           </AlertDescription>
         </Alert>
       )}
@@ -64,7 +65,7 @@ export default function LoginContent() {
         </CardHeader>
         <CardContent className="space-y-4">
           <Button
-            onClick={() => loginWith(OAuthProvider.Discord)}
+            onClick={() => signIn.social({ provider: "discord", callbackURL: "/admin", errorCallbackURL: "/auth/login?disabled=true" })}
             className="w-full bg-[#5865F2] hover:bg-[#4752C4] text-white font-medium py-3 h-auto"
             size="lg"
           >
@@ -77,19 +78,6 @@ export default function LoginContent() {
             </svg>
             Continue with Discord
           </Button>
-
-          <div className="relative">
-            <Separator className="bg-white/20" />
-            <div className="absolute inset-0 flex items-center justify-center">
-              <span className="bg-white/10 backdrop-blur-md px-2 text-xs text-white/80 rounded">
-                Quick & Secure
-              </span>
-            </div>
-          </div>
-
-          <div className="text-center text-sm text-white/80">
-            <p>New users will automatically have an account created</p>
-          </div>
         </CardContent>
       </Card>
     </div>

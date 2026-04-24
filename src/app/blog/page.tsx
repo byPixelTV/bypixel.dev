@@ -1,45 +1,7 @@
-import { serverTables, serverUsers } from "@/lib/appwrite/server";
-import Navbar from "@/components/Navbar";
 import BackgroundLayout from "@/components/BackgroundLayout";
-import { Posts } from "../../../types/appwrite";
-import BlogPostCard from "@/components/BlogPostCard";
-import { Query } from "node-appwrite";
+import BlogFeed from "@/components/blog/BlogFeed";
+import Navbar from "@/components/Navbar";
 import { Metadata } from "next";
-
-export const dynamic = 'force-dynamic';
-
-async function getPosts(): Promise<{ posts: Posts[]; error: string | null }> {
-  try {
-    const response = await serverTables.listRows({
-      databaseId: "685a9e8a0021f75d1389",
-      tableId: "685a9ec7002f9eb12d08",
-      queries: [Query.equal("draft", false)],
-    });
-
-    return {
-      posts: response.rows as unknown as Posts[],
-      error: null,
-    };
-  } catch (error) {
-    console.error('Error fetching posts:', error);
-    return {
-      posts: [],
-      error: error instanceof Error ? error.message : "Failed to load posts",
-    };
-  }
-}
-
-async function getAuthorsNames(userIds: string[]) {
-  const uniqueIds = Array.from(new Set(userIds));
-  const promises = uniqueIds.map((id) =>
-    serverUsers.get(id).then(user => ({ id, name: user.name || "Unknown" })).catch(() => ({ id, name: "Unknown" }))
-  );
-  const users = await Promise.all(promises);
-  return users.reduce<Record<string, string>>((acc, cur) => {
-    acc[cur.id] = cur.name;
-    return acc;
-  }, {});
-}
 
 export const metadata: Metadata = {
   title: "Blog | byPixelTV – Software Developer",
@@ -86,16 +48,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function BlogPage() {
-  const { posts, error } = await getPosts();
-
-  const sortedPosts = posts.slice().sort((a, b) =>
-    new Date(b.creationDate).getTime() - new Date(a.creationDate).getTime()
-  );
-
-  const userIds = sortedPosts.map(p => p.userId);
-  const authorsMap = await getAuthorsNames(userIds);
-
+export default function BlogPage() {
   return (
     <>
       <Navbar />
@@ -108,28 +61,8 @@ export default async function BlogPage() {
             <p className="text-xl text-gray-300 max-w-2xl mx-auto">
               Thoughts, tutorials, and insights about development and technology.
             </p>
-            <div className="text-sm text-gray-400 mt-4">
-              Posts found: {sortedPosts.length}
-            </div>
           </div>
-
-          {error ? (
-            <div className="text-center text-red-400">Error loading posts: {error}</div>
-          ) : sortedPosts.length === 0 ? (
-            <div className="text-center text-gray-300">No posts found.</div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
-              {await Promise.all(
-                sortedPosts.map(async (post) => (
-                  <BlogPostCard
-                    key={post.$id}
-                    post={{ ...post } as Posts}
-                    authorName={authorsMap[post.userId] || "Unknown"}
-                  />
-                ))
-              )}
-            </div>
-          )}
+          <BlogFeed />
         </div>
       </BackgroundLayout>
     </>

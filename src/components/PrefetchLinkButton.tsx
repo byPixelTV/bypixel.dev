@@ -18,7 +18,7 @@ export function PrefetchLinkButton({ href, children, ...props }: PrefetchLinkBut
   return (
     <button
       onMouseEnter={onHover}
-      onFocus={onHover} // Für Accessibility, wenn per Tastatur fokusiert wird
+      onFocus={onHover}
       {...props}
     >
       {children}

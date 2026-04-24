@@ -37,7 +37,7 @@ export default function ProjectCard({ project }: { project: Project }) {
       </div>
 
       {/* Description */}
-      <p className="text-gray-300 mb-6 flex-grow leading-relaxed">{project.description}</p>
+      <p className="text-gray-300 mb-6 grow leading-relaxed">{project.description}</p>
 
       {/* Tech */}
       <div className="mb-6">
