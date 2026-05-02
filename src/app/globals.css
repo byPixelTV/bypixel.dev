@@ -1,6 +1,42 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:is(.dark *));
+
+/* Prose Heading Overrides */
+.prose h1 {
+  font-size: 2.25rem !important;
+  line-height: 2.5rem !important;
+  font-weight: 800 !important;
+  margin-top: 3rem !important;
+  margin-bottom: 1.5rem !important;
+  color: white !important;
+  letter-spacing: -0.025em !important;
+}
+
+.prose h2 {
+  font-size: 1.875rem !important;
+  line-height: 2.25rem !important;
+  font-weight: 700 !important;
+  margin-top: 2.5rem !important;
+  margin-bottom: 1.25rem !important;
+  color: white !important;
+  letter-spacing: -0.025em !important;
+}
+
+.prose h3 {
+  font-size: 1.5rem !important;
+  line-height: 2rem !important;
+  font-weight: 700 !important;
+  margin-top: 2rem !important;
+  margin-bottom: 1rem !important;
+  color: white !important;
+}
+
+.prose p {
+  margin-top: 1.25rem !important;
+  margin-bottom: 1.25rem !important;
+}
 
 :root {
   --background: #fafafa;
