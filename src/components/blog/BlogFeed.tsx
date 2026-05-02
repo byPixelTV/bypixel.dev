@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import BlogPostCard from "@/components/BlogPostCard";
 import type { Post } from "@/lib/mongo";
+import { motion } from "framer-motion";
 
 type BlogPostListItem = (Omit<Post, "_id"> & { _id: string }) & {
   authorName: string;
@@ -50,29 +51,56 @@ export default function BlogFeed() {
   }, []);
 
   if (loading) {
-    return <div className="text-center text-gray-400">Loading posts...</div>;
+    return (
+      <div className="flex flex-col items-center justify-center py-20 gap-4">
+        <div className="size-10 border-2 border-purple-500/20 border-t-purple-500 rounded-full animate-spin" />
+        <p className="text-white/40 text-sm font-medium animate-pulse">Fetching articles...</p>
+      </div>
+    );
   }
 
   if (error) {
-    return <div className="text-center text-red-400">Error loading posts: {error}</div>;
+    return (
+      <div className="text-center py-20 bg-red-500/5 border border-red-500/10 rounded-2xl">
+        <p className="text-red-400 font-medium">Error loading posts</p>
+        <p className="text-red-400/60 text-sm mt-1">{error}</p>
+      </div>
+    );
   }
 
   if (posts.length === 0) {
-    return <div className="text-center text-gray-300">No posts found.</div>;
+    return (
+      <div className="text-center py-20 bg-white/5 border border-white/10 rounded-2xl backdrop-blur-md">
+        <p className="text-white/60">No articles found yet.</p>
+      </div>
+    );
   }
 
   return (
-    <>
-      <div className="text-center text-sm text-gray-400 mt-4 mb-8">Posts found: {posts.length}</div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
-        {posts.map((post) => (
-          <BlogPostCard
+    <div className="max-w-6xl mx-auto">
+      <div className="flex items-center gap-4 mb-10">
+        <div className="h-px flex-grow bg-white/10" />
+        <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-white/30 whitespace-nowrap">
+          {posts.length} {posts.length === 1 ? "Article" : "Articles"} Published
+        </span>
+        <div className="h-px flex-grow bg-white/10" />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 lg:gap-10">
+        {posts.map((post, index) => (
+          <motion.div
             key={post._id}
-            post={post}
-            authorName={post.authorName || "Unknown"}
-          />
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: index * 0.1 }}
+          >
+            <BlogPostCard
+              post={post}
+              authorName={post.authorName || "Unknown"}
+            />
+          </motion.div>
         ))}
       </div>
-    </>
+    </div>
   );
 }
