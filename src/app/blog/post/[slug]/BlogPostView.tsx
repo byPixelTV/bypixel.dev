@@ -160,7 +160,7 @@ export default function BlogPostView({ post, authorName, segments, readingTime, 
                   data-post-media="true"
                   data-post-type="image"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0c0618]/40 to-transparent pointer-events-none" />
+                <div className="absolute inset-0 bg-linear-to-t from-[#0c0618]/40 to-transparent pointer-events-none" />
               </motion.div>
             )}
 
@@ -199,18 +199,18 @@ export default function BlogPostView({ post, authorName, segments, readingTime, 
                 ) : (
                   <div key={i} className="not-prose my-12 group">
                     <div className="mb-4 flex items-center gap-2">
-                      <div className="h-px flex-grow bg-white/10" />
+                      <div className="h-px grow bg-white/10" />
                       <span className="text-[10px] font-bold uppercase tracking-widest text-white/20 group-hover:text-purple-500/40 transition-colors">External Preview</span>
-                      <div className="h-px flex-grow bg-white/10" />
+                      <div className="h-px grow bg-white/10" />
                     </div>
-                    <OGPreviewCard data={seg.data} href={seg.url!} />
+                    {seg.data && <OGPreviewCard data={seg.data} href={seg.url!} />}
                   </div>
                 )
               )}
             </div>
             
-            <div className="absolute top-[20%] -left-[20%] w-96 h-96 bg-purple-600/5 blur-[120px] rounded-full pointer-events-none -z-1" />
-            <div className="absolute bottom-[20%] -right-[20%] w-96 h-96 bg-blue-600/5 blur-[120px] rounded-full pointer-events-none -z-1" />
+            <div className="absolute top-[20%] left-[-20%] w-96 h-96 bg-purple-600/5 blur-[120px] rounded-full pointer-events-none -z-1" />
+            <div className="absolute bottom-[20%] right-[-20%] w-96 h-96 bg-blue-600/5 blur-[120px] rounded-full pointer-events-none -z-1" />
           </motion.div>
 
           <footer className="mt-20 pt-10 border-t border-white/10 flex flex-col items-center">

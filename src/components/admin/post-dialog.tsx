@@ -102,7 +102,7 @@ export function PostDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px] bg-black text-white border border-neutral-800 max-h-[90vh] flex flex-col">
+      <DialogContent className="sm:max-w-150 bg-black text-white border border-neutral-800 max-h-[90vh] flex flex-col">
         <DialogHeader>
           <DialogTitle className="text-white">
             {post ? "Edit Post" : "Create New Post"}
@@ -198,7 +198,7 @@ export function PostDialog({
               </Label>
               <Textarea
                 id="content"
-                className="min-h-[120px] bg-neutral-900 text-white border-neutral-700 placeholder:text-neutral-500"
+                className="min-h-30 bg-neutral-900 text-white border-neutral-700 placeholder:text-neutral-500"
                 value={formData.content}
                 onChange={(e) => handleInputChange("content", e.target.value)}
                 placeholder="Write your post content here..."

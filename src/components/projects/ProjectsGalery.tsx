@@ -297,7 +297,7 @@ function ProjectCardItem({
       }}
       whileHover={isMobile ? {} : { y: -10, scale: 1.02 }}
       transition={{ type: "spring", stiffness: 220, damping: 26 }}
-      className={`group relative overflow-hidden rounded-[2rem] sm:rounded-[2.5rem] bg-slate-950/45 shadow-[0_30px_90px_rgba(2,6,23,0.42)] backdrop-blur-2xl will-change-transform`}
+      className={`group relative overflow-hidden rounded-4xl sm:rounded-[2.5rem] bg-slate-950/45 shadow-[0_30px_90px_rgba(2,6,23,0.42)] backdrop-blur-2xl will-change-transform`}
     >
       <div className="pointer-events-none absolute inset-0">
         <div
