@@ -7,13 +7,12 @@ import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-// Animated equalizer bars
 const MusicBars = () => (
-  <div className="flex items-end gap-[2px] h-3.5">
+  <div className="flex items-end gap-0.5 h-3.5">
     {[0.55, 0.7, 0.6].map((dur, i) => (
       <span
         key={i}
-        className="w-[3px] rounded-full bg-[#1DB954]"
+        className="w-0.75 rounded-full bg-[#1DB954]"
         style={{
           animation: `spotifyBar ${dur}s ease-in-out infinite alternate`,
           animationDelay: `${i * 0.12}s`,
@@ -309,7 +308,7 @@ const SpotifyNowPlaying = ({ onNowPlayingChange }: SpotifyNowPlayingProps) => {
           />
           <motion.div
             aria-hidden="true"
-            className="pointer-events-none absolute -right-12 bottom-[-2.5rem] h-44 w-44 rounded-full blur-3xl"
+            className="pointer-events-none absolute -right-12 -bottom-10 h-44 w-44 rounded-full blur-3xl"
             style={{ background: `radial-gradient(circle, ${cardColors[1]} 0%, transparent 70%)` }}
             animate={{ x: [0, -10, 8, 0], y: [0, 10, -8, 0], scale: [1, 1.12, 1] }}
             transition={{ duration: 8.2, ease: "easeInOut", repeat: Infinity }}
@@ -333,9 +332,7 @@ const SpotifyNowPlaying = ({ onNowPlayingChange }: SpotifyNowPlayingProps) => {
               exit="exit"
               transition={{ duration: 0.25, ease: "easeInOut" }}
             >
-              {/* Top section: album art + track info */}
               <div className="flex items-center gap-3 px-4 pt-3 pb-2">
-                {/* Album Art – bigger */}
                 {data!.albumImageUrl && (
                   <div className="relative shrink-0">
                     <Image
@@ -349,7 +346,6 @@ const SpotifyNowPlaying = ({ onNowPlayingChange }: SpotifyNowPlayingProps) => {
                   </div>
                 )}
 
-                {/* Track info */}
                 <div className="flex flex-col min-w-0 flex-1 gap-0.5">
                   <div className="flex items-center justify-between gap-2">
                     <div className="flex items-center gap-1.5 min-w-0">
@@ -378,9 +374,7 @@ const SpotifyNowPlaying = ({ onNowPlayingChange }: SpotifyNowPlayingProps) => {
                 </div>
               </div>
 
-              {/* Progress section */}
               <div className="px-4 pb-3">
-                {/* Animated progress bar */}
                 <div className="h-1 w-full bg-white/10 rounded-full overflow-hidden">
                   <div
                     key={data!.trackId}
@@ -391,7 +385,7 @@ const SpotifyNowPlaying = ({ onNowPlayingChange }: SpotifyNowPlayingProps) => {
                     }}
                   />
                 </div>
-                {/* Time display */}
+
                 <div className="flex justify-between items-center mt-1.5">
                   <span className="text-[10px] text-white/40 tabular-nums font-medium">
                     {formatMs(progressMs)}

@@ -9,6 +9,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import {
   motion,
@@ -18,7 +19,6 @@ import {
 } from "framer-motion";
 import { LuEqual, LuBook, LuUser } from "react-icons/lu";
 import type { Variants } from "framer-motion";
-
 const headerNavLinks = [
   { title: "About", url: "/", icon: <LuUser color="#FFFFFF" /> },
   { title: "Blog", url: "/blog", icon: <LuBook color="#FFFFFF" /> },
@@ -29,7 +29,7 @@ const Navbar = () => {
   const router = useRouter();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [selected, setSelected] = useState(pathname);
+  const [, setSelected] = useState(pathname);
   const { scrollY } = useScroll();
   const hasCrossedScrollThresholdRef = useRef(false);
 
@@ -61,27 +61,6 @@ const Navbar = () => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setSelected(pathname);
   }, [pathname]);
-
-  const navVariants: Variants = {
-    top: {
-      backgroundColor: "rgba(20, 4, 48, 0.3)",
-      backdropFilter: "blur(8px)",
-      transition: {
-        type: "spring",
-        stiffness: 300,
-        damping: 30,
-      },
-    },
-    scroll: {
-      backgroundColor: "rgba(8, 2, 22, 0.9)",
-      backdropFilter: "blur(14px)",
-      transition: {
-        type: "spring",
-        stiffness: 300,
-        damping: 30,
-      },
-    },
-  };
 
   const mobileMenuVariants: Variants = {
     closed: {
@@ -120,32 +99,25 @@ const Navbar = () => {
   return (
     <>
       <motion.header
-        className="fixed left-0 right-0 top-0 z-40 mx-auto flex w-full max-w-[980px] justify-center transition-all duration-500 ease-in-out"
+        className="fixed left-0 right-0 top-0 z-40 mx-auto flex w-full justify-center transition-all duration-500 ease-in-out"
         initial="hidden"
         animate="visible"
       >
         <motion.nav
-          className="mx-auto mt-3 w-[calc(100%-1.5rem)] rounded-3xl border border-purple-900/35 px-3 py-2.5 shadow-lg md:mt-4 md:w-[calc(100%-2rem)]"
-          variants={navVariants}
+          className="mx-auto mt-3 w-[calc(100%-1.5rem)] rounded-3xl px-3 py-2.5 shadow-lg md:mt-4 md:w-[calc(100%-2rem)]"
           initial="top"
           animate={isScrolled ? "scroll" : "top"}
         >
-          <div className="flex justify-between items-center">
-            <motion.div className="flex space-x-1 sm:space-x-2" custom={0}>
-              <Link
-                href="/"
-                className="text-sm md:text-base tracking-wide text-[#F4F0E6] cursor-pointer font-medium"
-              >
-                {pathname === "/" && (
-                  <span className="ml-1 md:text-base tracking-wide">
-                    bypixel.dev
-                  </span>
-                )}
+          <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2 md:gap-4">
+            <motion.div className="flex items-center space-x-2 sm:space-x-3" custom={0}>
+              <Link href="/" className="brand-mark" aria-label="bypixel.dev home">
+                <span className="brand-title">bypixel.dev</span>
+                <span className="brand-sub">software engineer</span>
               </Link>
               {pathname !== "/" && (
                 <Link
                   href={`/${pathname.split("/")[1]}`}
-                  className="md:text-lg tracking-wide text-[#F4F0E6] cursor-pointer font-normal"
+                  className="brand-crumb md:text-lg tracking-wide text-[#F4F0E6] cursor-pointer font-normal"
                 >
                   <span className="text-[#F4F0E6]">/</span>&nbsp;
                   {pathname.split("/")[1]
@@ -156,7 +128,44 @@ const Navbar = () => {
               )}
             </motion.div>
 
-            <div className="flex items-center justify-center md:hidden">
+            <motion.div
+              className="mx-auto hidden md:flex"
+              animate={
+                isScrolled
+                  ? {
+                      opacity: 0,
+                      scale: 0.9,
+                      y: -8,
+                      filter: "drop-shadow(0 0 20px rgba(255,255,255,0.35)) blur(1.5px)",
+                    }
+                  : {
+                      opacity: 1,
+                      scale: 1,
+                      y: 0,
+                      filter: "drop-shadow(0 0 0 rgba(255,255,255,0)) blur(0px)",
+                    }
+              }
+              transition={{ duration: 0.34, ease: "easeOut" }}
+              style={{ pointerEvents: isScrolled ? "none" : "auto" }}
+            >
+              <Link
+                href="/"
+                aria-label="Go to homepage"
+                className="nav-logo"
+              >
+                <span className={`nav-logo-core ${isScrolled ? "nav-logo-core-exit" : ""}`}>
+                  <Image
+                    src="/assets/logo/eramc_base.svg"
+                    alt="ERAMC lightning logo"
+                    width={30}
+                    height={44}
+                    priority
+                  />
+                </span>
+              </Link>
+            </motion.div>
+
+            <div className="flex items-center justify-end md:hidden">
               <motion.button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 className="text-[#F4F0E6] focus:outline-none"
@@ -165,45 +174,16 @@ const Navbar = () => {
               </motion.button>
             </div>
 
-            <ul className="relative hidden gap-2 rounded-full border border-white/12 bg-white/5 p-1.5 md:flex">
-              {headerNavLinks.map((navLink, index) => (
-                <motion.li key={index} custom={index + 1}>
-                  <Link href={navLink.url}>
-                    <motion.button
-                      onClick={() => setSelected(navLink.url)}
-                      className={`group relative overflow-hidden rounded-full px-3 py-1.5 text-sm tracking-wide font-medium`}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      <span
-                        className={`relative z-10 ${
-                          selected === navLink.url ? "text-black" : "text-white"
-                        }`}
-                      >
-                        {navLink.title}
-                      </span>
-                      {selected === navLink.url && (
-                        <motion.span
-                          layoutId="navbar-pill"
-                          className="absolute inset-0 bg-[#F4F0E6] rounded-lg"
-                          initial={false}
-                          transition={{
-                            type: "spring",
-                            stiffness: 350,
-                            damping: 30,
-                          }}
-                        />
-                      )}
-                      <motion.span
-                        className="absolute inset-0 bg-white/10 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                        initial={false}
-                        transition={{
-                          type: "spring",
-                          stiffness: 350,
-                          damping: 30,
-                        }}
-                      />
-                    </motion.button>
+            <ul className="relative hidden items-center justify-end gap-2 md:flex">
+              {headerNavLinks.map((navLink) => (
+                <motion.li key={navLink.url}>
+                  <Link
+                    href={navLink.url}
+                    className={`nav-btn inline-flex min-w-28 items-center justify-center rounded-xl px-5 py-2.5 text-base font-semibold tracking-wide transition-all duration-300 ${
+                      pathname === navLink.url ? "active-nav" : ""
+                    }`}
+                  >
+                    {navLink.title}
                   </Link>
                 </motion.li>
               ))}
@@ -223,14 +203,16 @@ const Navbar = () => {
           >
             <div className="flex flex-col h-full">
               <div className="flex justify-between items-center p-4 border-b border-[#333]">
-                <motion.div
-                  className="md:text-lg font-medium tracking-wide text-white"
-                  initial={{ opacity: 0, y: -20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 }}
-                >
-                  Menu
-                </motion.div>
+                <Link href="/" className="nav-logo" onClick={() => setIsMobileMenuOpen(false)}>
+                  <span className="nav-logo-core">
+                    <Image
+                      src="/assets/logo/eramc_base.svg"
+                      alt="ERAMC lightning logo"
+                      width={22}
+                      height={32}
+                    />
+                  </span>
+                </Link>
                 <motion.button
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="text-white focus:outline-none"
