@@ -6,6 +6,8 @@ import "./globals.css";
 import 'lenis/dist/lenis.css'
 import SmoothScroll from "@/components/scroll/SmoothScroll";
 import ScrollToTop from "@/components/scroll/ScrollToTop";
+import PageLoader from "@/components/scroll/PageLoader";
+import { Suspense } from "react";
 
 const fontSans = Inter({
   subsets: ["latin"],
@@ -30,6 +32,9 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={`${fontSans.variable} ${fontMono.variable} antialiased`}>
+        <Suspense fallback={null}>
+          <PageLoader />
+        </Suspense>
         <SmoothScroll>
           {children}
           <ScrollToTop />
