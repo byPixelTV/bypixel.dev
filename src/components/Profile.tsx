@@ -197,7 +197,7 @@ const Profile = () => {
         >
           <>
             <motion.div
-              className="absolute -left-28 -top-14 h-[22rem] w-[22rem] rounded-full blur-[74px] saturate-[1.6] sm:-left-36 sm:-top-20 sm:h-[34rem] sm:w-[34rem] sm:blur-[92px] sm:saturate-[1.75]"
+              className="absolute -left-28 -top-14 h-88 w-88 rounded-full blur-[74px] saturate-[1.6] sm:-left-36 sm:-top-20 sm:h-136 sm:w-136 sm:blur-[92px] sm:saturate-[1.75]"
               style={{
                 background: `radial-gradient(circle, ${blobColors[0]} 0%, transparent 58%)`,
                 mixBlendMode: "plus-lighter",
@@ -206,7 +206,7 @@ const Profile = () => {
               transition={{ duration: 10, ease: "easeInOut", repeat: Infinity }}
             />
             <motion.div
-              className="absolute -right-20 top-[3rem] h-[20rem] w-xs rounded-full blur-[72px] saturate-[1.65] sm:-right-32 sm:top-[2rem] sm:h-lg sm:w-lg sm:blur-[94px] sm:saturate-[1.8]"
+              className="absolute -right-20 top-12 h-80 w-xs rounded-full blur-[72px] saturate-[1.65] sm:-right-32 sm:top-8 sm:h-lg sm:w-lg sm:blur-[94px] sm:saturate-[1.8]"
               style={{
                 background: `radial-gradient(circle, ${blobColors[1]} 0%, transparent 58%)`,
                 mixBlendMode: "plus-lighter",
@@ -215,7 +215,7 @@ const Profile = () => {
               transition={{ duration: 9, ease: "easeInOut", repeat: Infinity }}
             />
             <motion.div
-              className="absolute -bottom-32 left-[20%] hidden h-[30rem] w-[30rem] rounded-full blur-[96px] saturate-[1.8] sm:block"
+              className="absolute -bottom-32 left-[20%] hidden h-120 w-120 rounded-full blur-[96px] saturate-[1.8] sm:block"
               style={{
                 background: `radial-gradient(circle, ${blobColors[2]} 0%, transparent 60%)`,
                 mixBlendMode: "plus-lighter",
@@ -236,7 +236,7 @@ const Profile = () => {
         </motion.div>
 
         <div className="relative z-10 flex min-h-[calc(100vh-8.25rem)] items-center justify-center px-6 py-14 sm:px-8 lg:px-10">
-          <div className="w-full max-w-[1200px] text-center text-white">
+          <div className="w-full max-w-300 text-center text-white">
             <motion.p
               className="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/65 sm:text-xs"
               initial={{ opacity: 0, y: 16 }}
