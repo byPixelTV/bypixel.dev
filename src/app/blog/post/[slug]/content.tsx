@@ -31,6 +31,7 @@ export async function BlogPostContent({ slug }: { slug: string }) {
   const postData = await getPostBySlug(slug);
   if (!postData || !postData.post) notFound();
   const post = postData.post;
+  const authorName = await getAuthorName(post.userId);
 
   await incrementPostViews(post._id.toString());
 
@@ -103,7 +104,7 @@ export async function BlogPostContent({ slug }: { slug: string }) {
   return (
     <BlogPostView 
       post={JSON.parse(JSON.stringify(post))}
-      authorName={getAuthorName(post.userId)}
+      authorName={authorName}
       segments={segments}
       readingTime={readingTime}
       hasMedia={hasMedia}

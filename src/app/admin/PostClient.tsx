@@ -303,13 +303,13 @@ export function PostsPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-[300px]">Title</TableHead>
+                  <TableHead className="w-75">Title</TableHead>
                   <TableHead>Author</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Created</TableHead>
                   <TableHead>Updated</TableHead>
-                  <TableHead className="w-[100px]">Views</TableHead>
-                  <TableHead className="w-[70px]">Actions</TableHead>
+                  <TableHead className="w-25">Views</TableHead>
+                  <TableHead className="w-17.5">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -317,7 +317,7 @@ export function PostsPage() {
                   <TableRow key={post._id}>
                     <TableCell>
                       <div className="font-medium">{post.title}</div>
-                      <div className="text-sm text-muted-foreground truncate max-w-[250px]">
+                      <div className="text-sm text-muted-foreground truncate max-w-62.5">
                         {post.shortDescription}
                       </div>
                     </TableCell>

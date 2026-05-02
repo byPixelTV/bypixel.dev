@@ -31,7 +31,7 @@ export default function BlogPostCard({ post, authorName }: Props) {
               className="object-cover transition-transform duration-500 group-hover:scale-105"
             />
             {/* Gradient Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0c0618]/60 to-transparent opacity-60" />
+            <div className="absolute inset-0 bg-linear-to-t from-[#0c0618]/60 to-transparent opacity-60" />
             
             {/* Date Badge */}
             <div className="absolute top-4 left-4">
@@ -44,7 +44,7 @@ export default function BlogPostCard({ post, authorName }: Props) {
         )}
 
         {/* Content Area */}
-        <div className="flex flex-col flex-grow p-6">
+        <div className="flex flex-col grow p-6">
           <h2 className="text-xl font-bold text-white mb-3 group-hover:text-purple-400 transition-colors duration-300 line-clamp-2">
             {post.title}
           </h2>

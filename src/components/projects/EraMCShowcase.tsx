@@ -183,7 +183,7 @@ export default function EraMCShowcase() {
             >
               <div className="relative mb-8 sm:mb-12 group">
                 <div className="absolute inset-0 bg-purple-600/15 blur-[80px] sm:blur-[120px] rounded-full scale-150" />
-                <div className="relative w-36 h-36 sm:w-64 sm:h-64 rounded-[2rem] sm:rounded-[3rem] overflow-hidden border border-white/10 shadow-2xl">
+                <div className="relative w-36 h-36 sm:w-64 sm:h-64 rounded-4xl sm:rounded-[3rem] overflow-hidden border border-white/10 shadow-2xl">
                   <Image
                     src="/projects/eramc.png"
                     alt="EraMC Icon"
@@ -205,7 +205,7 @@ export default function EraMCShowcase() {
               style={{ opacity: bannerOpacity, scale: bannerScale }}
               className="absolute inset-0 z-30 flex items-center justify-center p-4 sm:p-16 pointer-events-none"
             >
-              <div className="relative w-full max-w-7xl aspect-[4/5] sm:aspect-video md:aspect-21/9 rounded-[2rem] sm:rounded-[3.5rem] overflow-hidden border border-white/5 shadow-2xl">
+              <div className="relative w-full max-w-7xl aspect-4/5 sm:aspect-video md:aspect-21/9 rounded-4xl sm:rounded-[3.5rem] overflow-hidden border border-white/5 shadow-2xl">
                 <motion.div 
                   style={{ y: bannerImageY }}
                   className="absolute inset-0 w-full h-[130%] top-[-15%]"
@@ -230,7 +230,7 @@ export default function EraMCShowcase() {
                   </div>
                   <Button
                     asChild
-                    className="bg-purple-600 text-white hover:bg-white hover:text-black rounded-full px-8 py-6 sm:px-12 sm:py-9 text-lg sm:text-2xl font-black transition-all italic pointer-events-auto relative z-[100]"
+                    className="bg-purple-600 text-white hover:bg-white hover:text-black rounded-full px-8 py-6 sm:px-12 sm:py-9 text-lg sm:text-2xl font-black transition-all italic pointer-events-auto relative z-100"
                   >
                     <a href="https://dc.eramc.net" target="_blank" rel="noopener noreferrer">
                       JOIN DISCORD
@@ -254,7 +254,7 @@ export default function EraMCShowcase() {
                   <motion.div
                     key={h.title}
                     whileHover={isMobile ? {} : { y: -15, backgroundColor: "rgba(255,255,255,0.08)" }}
-                    className="group relative bg-white/5 border border-white/10 backdrop-blur-3xl p-6 sm:p-12 rounded-[2rem] sm:rounded-[3.5rem] transition-all"
+                    className="group relative bg-white/5 border border-white/10 backdrop-blur-3xl p-6 sm:p-12 rounded-4xl sm:rounded-[3.5rem] transition-all"
                   >
                     <div className={`w-12 h-12 sm:w-20 sm:h-20 rounded-2xl sm:rounded-3xl bg-linear-to-br ${h.color} flex items-center justify-center mb-6 sm:mb-10 shadow-2xl`}>
                       <Icon icon={h.icon} className="text-2xl sm:text-4xl text-white" />
@@ -288,11 +288,11 @@ export default function EraMCShowcase() {
                     </div>
                     
                     <div className="grid grid-cols-2 gap-4 sm:gap-6">
-                      <div className="p-4 sm:p-8 bg-white/5 rounded-[1.5rem] sm:rounded-[2.5rem] border border-white/10 group">
+                      <div className="p-4 sm:p-8 bg-white/5 rounded-3xl sm:rounded-[2.5rem] border border-white/10 group">
                         <span className="text-xl sm:text-4xl font-bold text-white block mb-1 sm:mb-2 tracking-tighter">Dual-Sync</span>
                         <span className="text-[8px] sm:text-xs text-slate-500 uppercase font-bold tracking-widest">Async Logic / DB Persistence</span>
                       </div>
-                      <div className="p-4 sm:p-8 bg-white/5 rounded-[1.5rem] sm:rounded-[2.5rem] border border-white/10 group">
+                      <div className="p-4 sm:p-8 bg-white/5 rounded-3xl sm:rounded-[2.5rem] border border-white/10 group">
                         <span className="text-xl sm:text-4xl font-bold text-white block mb-1 sm:mb-2 tracking-tighter">Bespoke</span>
                         <span className="text-[8px] sm:text-xs text-slate-500 uppercase font-bold tracking-widest">Custom CLI & Tooling Ecosystem</span>
                       </div>
@@ -304,7 +304,7 @@ export default function EraMCShowcase() {
                       <motion.div
                         key={tech.name}
                         whileHover={isMobile ? {} : { y: -5, backgroundColor: "rgba(139, 92, 246, 0.15)", borderColor: "rgba(139, 92, 246, 0.3)" }}
-                        className="flex flex-col items-center justify-center p-4 sm:p-8 bg-slate-900/60 border border-slate-800 rounded-[1.5rem] sm:rounded-[2.5rem] transition-all"
+                        className="flex flex-col items-center justify-center p-4 sm:p-8 bg-slate-900/60 border border-slate-800 rounded-3xl sm:rounded-[2.5rem] transition-all"
                       >
                         <Icon icon={tech.icon} className="text-2xl sm:text-5xl mb-2 sm:mb-4" />
                         <span className="text-[8px] sm:text-xs font-black text-white text-center uppercase tracking-widest">{tech.name}</span>
@@ -315,7 +315,7 @@ export default function EraMCShowcase() {
                 </div>
 
                 <motion.div 
-                  className="mt-10 sm:mt-20 p-6 sm:p-12 bg-linear-to-r from-purple-900/30 to-blue-900/20 border border-white/10 rounded-[2rem] sm:rounded-[3.5rem] backdrop-blur-3xl text-center relative overflow-hidden"
+                  className="mt-10 sm:mt-20 p-6 sm:p-12 bg-linear-to-r from-purple-900/30 to-blue-900/20 border border-white/10 rounded-4xl sm:rounded-[3.5rem] backdrop-blur-3xl text-center relative overflow-hidden"
                 >
                   <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-transparent via-purple-500 to-transparent" />
                   <p className="text-sm sm:text-2xl text-slate-200 leading-relaxed italic max-w-5xl mx-auto">

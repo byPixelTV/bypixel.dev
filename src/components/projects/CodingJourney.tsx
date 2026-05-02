@@ -119,9 +119,9 @@ function TimelineItem({ milestone, index }: { milestone: typeof milestones[0]; i
 
       {/* Content Card */}
       <div className={`w-full md:w-[45%] pl-10 md:pl-0 ${isEven ? 'md:text-left' : 'md:text-right'} group`}>
-        <div className={`relative p-6 sm:p-8 rounded-[2rem] sm:rounded-[2.5rem] bg-white/5 border border-white/10 backdrop-blur-xl overflow-hidden transition-all duration-500 group-hover:bg-white/10 group-hover:border-white/20`}>
+        <div className={`relative p-6 sm:p-8 rounded-4xl sm:rounded-[2.5rem] bg-white/5 border border-white/10 backdrop-blur-xl overflow-hidden transition-all duration-500 group-hover:bg-white/10 group-hover:border-white/20`}>
           {/* Subtle background glow */}
-          <div className={`absolute -right-20 -top-20 w-40 h-40 bg-gradient-to-br ${milestone.color} blur-3xl opacity-50 group-hover:opacity-80 transition-opacity`} />
+          <div className={`absolute -right-20 -top-20 w-40 h-40 bg-linear-to-br ${milestone.color} blur-3xl opacity-50 group-hover:opacity-80 transition-opacity`} />
           
           <div className={`flex flex-col ${isEven ? 'items-start' : 'md:items-end'} mb-4`}>
             <span className="text-xs sm:text-sm font-black text-purple-400 tracking-[0.3em] mb-2">{milestone.year}</span>
