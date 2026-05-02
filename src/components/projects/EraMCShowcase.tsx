@@ -1,12 +1,23 @@
 "use client";
 
-import { useRef, Suspense, useMemo, useEffect, useState } from "react";
+import { useRef, Suspense, useMemo, useEffect, useState, useSyncExternalStore } from "react";
 import { motion, useScroll, useTransform, useSpring, MotionValue } from "framer-motion";
 import { Icon } from "@iconify/react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Canvas, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
+
+function useViewportWidth() {
+  return useSyncExternalStore(
+    (onStoreChange) => {
+      window.addEventListener("resize", onStoreChange);
+      return () => window.removeEventListener("resize", onStoreChange);
+    },
+    () => (typeof window !== "undefined" ? window.innerWidth : 0),
+    () => 0,
+  );
+}
 
 function NetworkNodes({ progress }: { progress: MotionValue<number> }) {
   const pointsRef = useRef<THREE.Points>(null);
@@ -87,6 +98,8 @@ const highlights = [
 export default function EraMCShowcase() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isMounted, setIsMounted] = useState(false);
+  const viewportWidth = useViewportWidth();
+  const isMobile = isMounted && viewportWidth < 768;
 
   useEffect(() => {
     const handle = requestAnimationFrame(() => {
@@ -134,7 +147,7 @@ export default function EraMCShowcase() {
   return (
     <section
       ref={containerRef}
-      className="relative w-screen left-[50%] -translate-x-1/2 h-[1500vh] overflow-visible bg-black"
+      className="relative w-screen left-[50%] -translate-x-1/2 h-[800vh] md:h-[1500vh] overflow-visible bg-black"
     >
       <div className="sticky top-0 flex h-screen w-full items-center justify-center overflow-hidden">
         {isMounted && (
@@ -144,10 +157,10 @@ export default function EraMCShowcase() {
               style={{ y: bgNetworkY, opacity: bgNetworkOpacity }}
               className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-0"
             >
-              <h2 className="text-[18vw] font-black text-white/80 leading-none tracking-tighter uppercase select-none italic">
+              <h2 className="text-[22vw] sm:text-[18vw] font-black text-white/80 leading-none tracking-tighter uppercase select-none italic">
                 ERAMC
               </h2>
-              <h2 className="mt-[-4vw] text-[12vw] font-black text-purple-500/40 leading-none tracking-widest uppercase select-none">
+              <h2 className="mt-[-2vw] sm:mt-[-4vw] text-[14vw] sm:text-[12vw] font-black text-purple-500/40 leading-none tracking-widest uppercase select-none">
                 NETWORK
               </h2>
             </motion.div>
@@ -163,14 +176,14 @@ export default function EraMCShowcase() {
               </Canvas>
             </motion.div>
 
-            {/* STAGE 1: HERO — fully pointer-events-none, no interaction needed */}
+            {/* STAGE 1: HERO */}
             <motion.div
               style={{ opacity: heroOpacity, scale: heroScale, y: heroY }}
               className="absolute inset-0 z-20 flex flex-col items-center justify-center p-6 text-center pointer-events-none"
             >
-              <div className="relative mb-12 group">
-                <div className="absolute inset-0 bg-purple-600/15 blur-[120px] rounded-full scale-150" />
-                <div className="relative w-44 h-44 sm:w-64 sm:h-64 rounded-[3rem] overflow-hidden border border-white/10 shadow-2xl">
+              <div className="relative mb-8 sm:mb-12 group">
+                <div className="absolute inset-0 bg-purple-600/15 blur-[80px] sm:blur-[120px] rounded-full scale-150" />
+                <div className="relative w-36 h-36 sm:w-64 sm:h-64 rounded-[2rem] sm:rounded-[3rem] overflow-hidden border border-white/10 shadow-2xl">
                   <Image
                     src="/projects/eramc.png"
                     alt="EraMC Icon"
@@ -179,22 +192,20 @@ export default function EraMCShowcase() {
                   />
                 </div>
               </div>
-              <p className="mb-6 text-sm font-bold uppercase tracking-[1em] text-purple-400/60">
+              <p className="mb-4 sm:mb-6 text-[10px] sm:text-sm font-bold uppercase tracking-[0.6em] sm:tracking-[1em] text-purple-400/60">
                 EraMC Network
               </p>
-              <h2 className="text-8xl font-black tracking-tighter text-white sm:text-9xl md:text-[14rem] italic leading-[0.75]">
+              <h2 className="text-6xl sm:text-9xl md:text-[14rem] font-black tracking-tighter text-white italic leading-[0.8] sm:leading-[0.75]">
                 FOUNDED
               </h2>
             </motion.div>
 
-            {/* STAGE 2: BANNER PORTAL
-                The wrapper itself is pointer-events-none so stages above can't block it.
-                Only the <a> tag inside the Button gets pointer-events-auto. */}
+            {/* STAGE 2: BANNER PORTAL */}
             <motion.div
               style={{ opacity: bannerOpacity, scale: bannerScale }}
               className="absolute inset-0 z-30 flex items-center justify-center p-4 sm:p-16 pointer-events-none"
             >
-              <div className="relative w-full max-w-7xl aspect-video sm:aspect-21/9 rounded-[3.5rem] overflow-hidden border border-white/5 shadow-2xl">
+              <div className="relative w-full max-w-7xl aspect-[4/5] sm:aspect-video md:aspect-21/9 rounded-[2rem] sm:rounded-[3.5rem] overflow-hidden border border-white/5 shadow-2xl">
                 <motion.div 
                   style={{ y: bannerImageY }}
                   className="absolute inset-0 w-full h-[130%] top-[-15%]"
@@ -206,21 +217,20 @@ export default function EraMCShowcase() {
                     className="object-cover brightness-90"
                   />
                 </motion.div>
-                <div className="absolute inset-0 bg-linear-to-t from-black via-black/10 to-transparent" />
-                <div className="absolute bottom-16 left-16 right-16 flex flex-col sm:flex-row items-end justify-between gap-12">
+                <div className="absolute inset-0 bg-linear-to-t from-black via-black/20 to-transparent" />
+                <div className="absolute bottom-8 left-8 right-8 sm:bottom-16 sm:left-16 sm:right-16 flex flex-col items-start sm:items-end sm:flex-row justify-between gap-6 sm:gap-12">
                   <div className="max-w-2xl">
-                    <h3 className="text-5xl sm:text-7xl font-bold text-white tracking-tighter mb-6 italic">
+                    <h3 className="text-3xl sm:text-7xl font-bold text-white tracking-tighter mb-4 sm:mb-6 italic">
                       Infinite Scaling.
                     </h3>
-                    <p className="text-xl text-slate-300 leading-relaxed font-medium">
+                    <p className="text-base sm:text-xl text-slate-300 leading-relaxed font-medium">
                       Architecture designed for thousands. We don&apos;t just host servers; 
                       we engineer distributed systems.
                     </p>
                   </div>
-                  {/* pointer-events-auto scoped tightly to just the button */}
                   <Button
                     asChild
-                    className="bg-purple-600 text-white hover:bg-white hover:text-black rounded-full px-12 py-9 text-2xl font-black transition-all italic pointer-events-auto relative z-[100]"
+                    className="bg-purple-600 text-white hover:bg-white hover:text-black rounded-full px-8 py-6 sm:px-12 sm:py-9 text-lg sm:text-2xl font-black transition-all italic pointer-events-auto relative z-[100]"
                   >
                     <a href="https://dc.eramc.net" target="_blank" rel="noopener noreferrer">
                       JOIN DISCORD
@@ -230,85 +240,85 @@ export default function EraMCShowcase() {
               </div>
             </motion.div>
 
-            {/* STAGE 3: MANIFESTO — fully pointer-events-none, cards are decorative */}
+            {/* STAGE 3: MANIFESTO */}
             <motion.div
               style={{ opacity: manifestoOpacity, y: manifestoY }}
-              className="absolute inset-0 z-40 flex flex-col items-center justify-center p-6 pointer-events-none"
+              className="absolute inset-0 z-40 flex flex-col items-center justify-center p-4 sm:p-6 pointer-events-none"
             >
-              <div className="text-center mb-24">
-                <h3 className="text-6xl sm:text-8xl font-black text-white mb-6 tracking-tighter italic">THE MANIFESTO</h3>
-                <div className="h-1.5 w-48 bg-purple-500 mx-auto rounded-full" />
+              <div className="text-center mb-12 sm:mb-24">
+                <h3 className="text-4xl sm:text-8xl font-black text-white mb-4 sm:mb-6 tracking-tighter italic">THE MANIFESTO</h3>
+                <div className="h-1 w-24 sm:h-1.5 sm:w-48 bg-purple-500 mx-auto rounded-full" />
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-10 max-w-7xl w-full">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-10 max-w-7xl w-full">
                 {highlights.map((h) => (
                   <motion.div
                     key={h.title}
-                    whileHover={{ y: -15, backgroundColor: "rgba(255,255,255,0.08)" }}
-                    className="group relative bg-white/5 border border-white/10 backdrop-blur-3xl p-12 rounded-[3.5rem] transition-all"
+                    whileHover={isMobile ? {} : { y: -15, backgroundColor: "rgba(255,255,255,0.08)" }}
+                    className="group relative bg-white/5 border border-white/10 backdrop-blur-3xl p-6 sm:p-12 rounded-[2rem] sm:rounded-[3.5rem] transition-all"
                   >
-                    <div className={`w-20 h-20 rounded-3xl bg-linear-to-br ${h.color} flex items-center justify-center mb-10 shadow-2xl`}>
-                      <Icon icon={h.icon} className="text-4xl text-white" />
+                    <div className={`w-12 h-12 sm:w-20 sm:h-20 rounded-2xl sm:rounded-3xl bg-linear-to-br ${h.color} flex items-center justify-center mb-6 sm:mb-10 shadow-2xl`}>
+                      <Icon icon={h.icon} className="text-2xl sm:text-4xl text-white" />
                     </div>
-                    <h4 className="text-3xl font-bold text-white mb-4 italic tracking-tight">{h.title}</h4>
-                    <p className="text-slate-400 text-lg leading-relaxed">{h.description}</p>
+                    <h4 className="text-xl sm:text-3xl font-bold text-white mb-2 sm:mb-4 italic tracking-tight">{h.title}</h4>
+                    <p className="text-slate-400 text-sm sm:text-lg leading-relaxed">{h.description}</p>
                   </motion.div>
                 ))}
               </div>
             </motion.div>
 
-            {/* STAGE 4: ASYNC-FIRST ARCHITECTURE — fully pointer-events-none */}
+            {/* STAGE 4: ASYNC-FIRST ARCHITECTURE */}
             <motion.div
               style={{ opacity: techOpacity, y: techY }}
-              className="absolute inset-0 z-50 flex flex-col items-center justify-center p-6 pointer-events-none"
+              className="absolute inset-0 z-50 flex flex-col items-center justify-center p-4 sm:p-6 pointer-events-none"
             >
-              <div className="max-w-7xl w-full">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-                  <div className="space-y-12">
-                    <div className="space-y-6">
-                      <span className="text-purple-400 font-black tracking-[0.4em] uppercase text-sm">Technical Philosophy</span>
-                      <h3 className="text-6xl font-black text-white italic tracking-tighter uppercase leading-tight">Async-First<br/>Architecture</h3>
-                      <p className="text-xl text-slate-300 leading-relaxed">
+              <div className="max-w-7xl w-full overflow-y-auto max-h-[90vh] sm:max-h-none sm:overflow-visible pr-2">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 sm:gap-20 items-center">
+                  <div className="space-y-6 sm:space-y-12">
+                    <div className="space-y-4 sm:space-y-6">
+                      <span className="text-purple-400 font-black tracking-[0.4em] uppercase text-[10px] sm:text-sm">Technical Philosophy</span>
+                      <h3 className="text-4xl sm:text-6xl font-black text-white italic tracking-tighter uppercase leading-tight">Async-First<br/>Architecture</h3>
+                      <p className="text-sm sm:text-xl text-slate-300 leading-relaxed">
                         We push the boundaries of what Minecraft servers can handle. By running logic **strictly asynchronously** on the gameservers, 
                         we maintain peak performance while keeping the central database constantly in sync for external API and tooling access.
                       </p>
-                      <p className="text-lg text-slate-400 leading-relaxed border-l-4 border-purple-500 pl-6 italic">
+                      <p className="text-xs sm:text-lg text-slate-400 leading-relaxed border-l-4 border-purple-500 pl-4 sm:pl-6 italic">
                         Complex problems require bespoke solutions. When existing software fails, we build our own 
                         ecosystem of external CLIs and monitoring tools.
                       </p>
                     </div>
                     
-                    <div className="grid grid-cols-2 gap-6">
-                      <div className="p-8 bg-white/5 rounded-[2.5rem] border border-white/10 group hover:bg-white/8 transition-all">
-                        <span className="text-4xl font-bold text-white block mb-2 tracking-tighter">Dual-Sync</span>
-                        <span className="text-xs text-slate-500 uppercase font-bold tracking-widest">Async Logic / DB Persistence</span>
+                    <div className="grid grid-cols-2 gap-4 sm:gap-6">
+                      <div className="p-4 sm:p-8 bg-white/5 rounded-[1.5rem] sm:rounded-[2.5rem] border border-white/10 group">
+                        <span className="text-xl sm:text-4xl font-bold text-white block mb-1 sm:mb-2 tracking-tighter">Dual-Sync</span>
+                        <span className="text-[8px] sm:text-xs text-slate-500 uppercase font-bold tracking-widest">Async Logic / DB Persistence</span>
                       </div>
-                      <div className="p-8 bg-white/5 rounded-[2.5rem] border border-white/10 group hover:bg-white/8 transition-all">
-                        <span className="text-4xl font-bold text-white block mb-2 tracking-tighter">Bespoke</span>
-                        <span className="text-xs text-slate-500 uppercase font-bold tracking-widest">Custom CLI & Tooling Ecosystem</span>
+                      <div className="p-4 sm:p-8 bg-white/5 rounded-[1.5rem] sm:rounded-[2.5rem] border border-white/10 group">
+                        <span className="text-xl sm:text-4xl font-bold text-white block mb-1 sm:mb-2 tracking-tighter">Bespoke</span>
+                        <span className="text-[8px] sm:text-xs text-slate-500 uppercase font-bold tracking-widest">Custom CLI & Tooling Ecosystem</span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-5">
+                  <div className="grid grid-cols-3 sm:grid-cols-3 gap-3 sm:gap-5">
                     {techStack.map((tech) => (
                       <motion.div
                         key={tech.name}
-                        whileHover={{ y: -5, backgroundColor: "rgba(139, 92, 246, 0.15)", borderColor: "rgba(139, 92, 246, 0.3)" }}
-                        className="flex flex-col items-center justify-center p-8 bg-slate-900/60 border border-slate-800 rounded-[2.5rem] transition-all"
+                        whileHover={isMobile ? {} : { y: -5, backgroundColor: "rgba(139, 92, 246, 0.15)", borderColor: "rgba(139, 92, 246, 0.3)" }}
+                        className="flex flex-col items-center justify-center p-4 sm:p-8 bg-slate-900/60 border border-slate-800 rounded-[1.5rem] sm:rounded-[2.5rem] transition-all"
                       >
-                        <Icon icon={tech.icon} className="text-5xl mb-4" />
-                        <span className="text-xs font-black text-white text-center uppercase tracking-widest">{tech.name}</span>
-                        <span className="text-[8px] text-purple-400 uppercase font-black mt-2 tracking-tighter">{tech.category}</span>
+                        <Icon icon={tech.icon} className="text-2xl sm:text-5xl mb-2 sm:mb-4" />
+                        <span className="text-[8px] sm:text-xs font-black text-white text-center uppercase tracking-widest">{tech.name}</span>
+                        <span className="text-[6px] sm:text-[8px] text-purple-400 uppercase font-black mt-1 sm:mt-2 tracking-tighter">{tech.category}</span>
                       </motion.div>
                     ))}
                   </div>
                 </div>
 
                 <motion.div 
-                  className="mt-20 p-12 bg-linear-to-r from-purple-900/30 to-blue-900/20 border border-white/10 rounded-[3.5rem] backdrop-blur-3xl text-center relative overflow-hidden"
+                  className="mt-10 sm:mt-20 p-6 sm:p-12 bg-linear-to-r from-purple-900/30 to-blue-900/20 border border-white/10 rounded-[2rem] sm:rounded-[3.5rem] backdrop-blur-3xl text-center relative overflow-hidden"
                 >
                   <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-transparent via-purple-500 to-transparent" />
-                  <p className="text-2xl text-slate-200 leading-relaxed italic max-w-5xl mx-auto">
+                  <p className="text-sm sm:text-2xl text-slate-200 leading-relaxed italic max-w-5xl mx-auto">
                     &quot;We don&apos;t just write plugins; we architect a global mesh. Every gameserver operates as a 
                     high-speed async node, feeding a centralized data layer that empowers our entire 
                     web and CLI tooling infrastructure.&quot;

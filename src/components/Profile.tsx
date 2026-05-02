@@ -247,7 +247,7 @@ const Profile = () => {
             </motion.p>
 
             <motion.h1
-              className="mt-3 text-4xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl"
+              className="mt-3 text-3xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
@@ -257,7 +257,7 @@ const Profile = () => {
             </motion.h1>
 
             <motion.p
-              className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-white/75 sm:text-lg"
+              className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed text-white/75 sm:text-lg"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
@@ -273,13 +273,13 @@ const Profile = () => {
             >
               <a
                 href="#projects"
-                className="rounded-full border border-white/30 bg-white/92 px-5 py-2 text-sm font-medium text-black transition-colors hover:bg-white"
+                className="rounded-full border border-white/30 bg-white/92 px-6 py-2.5 text-xs font-medium text-black transition-colors hover:bg-white sm:px-5 sm:py-2 sm:text-sm"
               >
                 View projects
               </a>
               <a
                 href="mailto:contact@bypixel.dev"
-                className="rounded-full border border-white/25 bg-transparent px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-white/10"
+                className="rounded-full border border-white/25 bg-transparent px-6 py-2.5 text-xs font-medium text-white transition-colors hover:bg-white/10 sm:px-5 sm:py-2 sm:text-sm"
               >
                 Contact
               </a>
