@@ -57,11 +57,11 @@ export default async function About() {
     <BackgroundLayout>
       <Navbar />
       <main className="relative z-10 w-full pb-14 pt-22 md:pt-26">
-        <div className="mx-auto w-full max-w-395 space-y-16 px-4 sm:px-7 md:space-y-20 lg:px-12">
+        <div className="mx-auto w-full max-w-395 space-y-10 px-4 sm:px-7 md:space-y-20 lg:px-12">
           <section className="py-2">
             <Profile />
           </section>
-          <section className="space-y-4">
+          <section className="space-y-10 md:space-y-20">
             <HorizontalGallery />
             <EraMCShowcase />
             <SkillsShowcase />

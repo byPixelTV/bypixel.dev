@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useSyncExternalStore } from "react";
+import { useEffect, useMemo, useRef, useSyncExternalStore } from "react";
 import {
   motion,
   useMotionValue,
@@ -157,7 +157,26 @@ function useViewportWidth() {
 export default function HorizontalGallery() {
   const ref = useRef<HTMLDivElement>(null);
   const viewportWidth = useViewportWidth();
-  const firstItem = projectCards[0];
+  const isMobile = viewportWidth > 0 && viewportWidth < 768;
+
+  const responsiveProjectCards = useMemo(() => {
+    return projectCards.map((card, index) => {
+      if (!isMobile) return card;
+
+      // Mobile adjustments
+      const mobileWidth = Math.min(viewportWidth * 0.85, 400);
+      const mobileHeight = mobileWidth * 1.3;
+      return {
+        ...card,
+        width: mobileWidth,
+        height: mobileHeight,
+        x: index * (mobileWidth + 40),
+        scrollShift: -50,
+      };
+    });
+  }, [isMobile, viewportWidth]);
+
+  const firstItem = responsiveProjectCards[0];
 
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -165,7 +184,7 @@ export default function HorizontalGallery() {
   });
 
   const totalWidth =
-    Math.max(...projectCards.map((card) => card.x + card.width)) + 620;
+    Math.max(...responsiveProjectCards.map((card) => card.x + card.width)) + (isMobile ? 100 : 620);
   const travelDistance = Math.max(totalWidth - viewportWidth, 0);
   const startOffset = Math.max(
     (viewportWidth - firstItem.width) / 2 - firstItem.x,
@@ -196,7 +215,7 @@ export default function HorizontalGallery() {
   return (
     <section
       ref={ref}
-      className="relative left-1/2 right-1/2 h-[400vh] w-screen -translate-x-1/2"
+      className={`relative left-1/2 right-1/2 w-screen -translate-x-1/2 ${isMobile ? 'h-[250vh]' : 'h-[400vh]'}`}
     >
       <div className="sticky top-0 h-screen w-screen overflow-hidden">
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
@@ -207,7 +226,7 @@ export default function HorizontalGallery() {
           style={{ x, width: totalWidth }}
           className="relative h-full"
         >
-          {projectCards.map((project, index) => (
+          {responsiveProjectCards.map((project, index) => (
             <ProjectCardItem
               key={project.name}
               item={project}
@@ -215,6 +234,7 @@ export default function HorizontalGallery() {
               progress={scrollYProgress}
               mouseX={smoothX}
               mouseY={smoothY}
+              isMobile={isMobile}
             />
           ))}
         </motion.div>
@@ -229,12 +249,14 @@ function ProjectCardItem({
   progress,
   mouseX,
   mouseY,
+  isMobile,
 }: {
   item: ProjectCard;
   index: number;
   progress: MotionValue<number>;
   mouseX: MotionValue<number>;
   mouseY: MotionValue<number>;
+  isMobile: boolean;
 }) {
   const depth = item.depth;
   const yScroll = useTransform(progress, [0, 1], [0, item.scrollShift]);
@@ -250,6 +272,7 @@ function ProjectCardItem({
   ][index];
 
   const getVerticalPosition = () => {
+    if (isMobile) return "top-1/2 -translate-y-1/2";
     switch (item.position) {
       case "top":
         return "top-[9%]";
@@ -267,14 +290,14 @@ function ProjectCardItem({
   const content = (
     <motion.div
       style={{
-        x: xMouse,
-        y: yMouse,
+        x: isMobile ? 0 : xMouse,
+        y: isMobile ? 0 : yMouse,
         width: item.width,
         height: item.height,
       }}
-      whileHover={{ y: -10, scale: 1.02 }}
+      whileHover={isMobile ? {} : { y: -10, scale: 1.02 }}
       transition={{ type: "spring", stiffness: 220, damping: 26 }}
-      className="group relative overflow-hidden rounded-[2.5rem] bg-slate-950/45 shadow-[0_30px_90px_rgba(2,6,23,0.42)] backdrop-blur-2xl will-change-transform"
+      className={`group relative overflow-hidden rounded-[2rem] sm:rounded-[2.5rem] bg-slate-950/45 shadow-[0_30px_90px_rgba(2,6,23,0.42)] backdrop-blur-2xl will-change-transform`}
     >
       <div className="pointer-events-none absolute inset-0">
         <div
@@ -285,84 +308,89 @@ function ProjectCardItem({
       </div>
 
       <div className="relative flex h-full flex-col overflow-hidden">
-        <div className="relative h-[46%] min-h-55 overflow-hidden">
+        <div className={`relative ${isMobile ? 'h-[40%]' : 'h-[46%]'} min-h-48 sm:min-h-55 overflow-hidden`}>
           <Image
             src={item.imagePath}
             alt={`${item.name} preview`}
             fill
             sizes="(max-width: 768px) 90vw, 520px"
-            className="object-cover transition duration-700 ease-out group-hover:scale-110"
+            className="object-cover transition duration-700 ease-out sm:group-hover:scale-110"
           />
           <div className="absolute inset-0 bg-linear-to-t from-slate-950 via-slate-950/35 to-transparent" />
-          <div className="absolute left-5 top-5 flex items-center gap-2 rounded-full border border-white/15 bg-slate-950/55 px-3 py-1 text-xs font-medium text-white/90 backdrop-blur-md">
-            <Sparkles className="size-3.5 text-emerald-300" />
+          <div className="absolute left-4 top-4 sm:left-5 sm:top-5 flex items-center gap-2 rounded-full border border-white/15 bg-slate-950/55 px-2.5 py-1 sm:px-3 sm:py-1 text-[10px] sm:text-xs font-medium text-white/90 backdrop-blur-md">
+            <Sparkles className="size-3 sm:size-3.5 text-emerald-300" />
             {item.startAt} - {item.endAt ?? "now"}
           </div>
-          <div className="absolute bottom-5 left-5 right-5 flex items-end justify-between gap-3">
-            <div className="space-y-1.5">
-              <p className="text-xs font-medium uppercase tracking-[0.32em] text-white/65">
+          <div className="absolute bottom-4 left-4 right-4 sm:bottom-5 sm:left-5 sm:right-5 flex items-end justify-between gap-3">
+            <div className="space-y-1 sm:space-y-1.5">
+              <p className="text-[10px] sm:text-xs font-medium uppercase tracking-[0.32em] text-white/65">
                 Project {index + 1}
               </p>
-              <h3 className="max-w-[12ch] text-4xl font-semibold tracking-tight text-white drop-shadow-[0_6px_20px_rgba(0,0,0,0.45)]">
+              <h3 className="max-w-[12ch] text-2xl sm:text-4xl font-semibold tracking-tight text-white drop-shadow-[0_6px_20px_rgba(0,0,0,0.45)]">
                 {item.name}
               </h3>
             </div>
-            <div className="rounded-full border border-white/15 bg-white/10 px-3 py-2 text-xs font-medium text-white/85 backdrop-blur-md transition duration-300 group-hover:bg-emerald-400/15 group-hover:text-emerald-50">
+            <div className="rounded-full border border-white/15 bg-white/10 px-2.5 py-1.5 sm:px-3 sm:py-2 text-[10px] sm:text-xs font-medium text-white/85 backdrop-blur-md transition duration-300 sm:group-hover:bg-emerald-400/15 sm:group-hover:text-emerald-50">
               Open
             </div>
           </div>
         </div>
 
-        <div className="flex flex-1 flex-col justify-between gap-5 p-5">
-          <div className="space-y-4">
-            <div className="flex flex-wrap items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.28em] text-white/65">
-              <span className="rounded-full border border-white/10 bg-white/8 px-3 py-1.5 text-white/82">
+        <div className="flex flex-1 flex-col justify-between gap-3 sm:gap-5 p-4 sm:p-5">
+          <div className="space-y-3 sm:space-y-4">
+            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 text-[9px] sm:text-[11px] font-semibold uppercase tracking-[0.2em] sm:tracking-[0.28em] text-white/65">
+              <span className="rounded-full border border-white/10 bg-white/8 px-2.5 py-1 sm:px-3 sm:py-1.5 text-white/82">
                 {item.role}
               </span>
-              <span className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-slate-950/35 px-3 py-1.5 text-white/70">
-                <Clock3 className="size-3.5" />
+              <span className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-slate-950/35 px-2.5 py-1 sm:px-3 sm:py-1.5 text-white/70">
+                <Clock3 className="size-3 sm:size-3.5" />
                 {item.startAt} - {item.endAt ?? "now"}
               </span>
             </div>
 
-            <p className="max-w-prose text-sm leading-6 text-white/78">
+            <p className="max-w-prose text-xs sm:text-sm leading-5 sm:leading-6 text-white/78 line-clamp-3 sm:line-clamp-none">
               {item.description}
             </p>
           </div>
 
-          <div className="space-y-4">
-            <div className="flex flex-wrap gap-2">
-              {item.tags?.map((tag) => (
+          <div className="space-y-3 sm:space-y-4">
+            <div className="flex flex-wrap gap-1.5 sm:gap-2">
+              {item.tags?.slice(0, isMobile ? 3 : undefined).map((tag) => (
                 <span
                   key={tag}
-                  className="rounded-full border border-white/10 bg-white/8 px-3 py-1.5 text-xs font-medium text-white/82 transition duration-300 group-hover:border-emerald-300/25 group-hover:bg-emerald-300/10 group-hover:text-emerald-50"
+                  className="rounded-full border border-white/10 bg-white/8 px-2.5 py-1 sm:px-3 sm:py-1.5 text-[10px] sm:text-xs font-medium text-white/82 transition duration-300 sm:group-hover:border-emerald-300/25 sm:group-hover:bg-emerald-300/10 sm:group-hover:text-emerald-50"
                 >
                   {tag}
                 </span>
               ))}
+              {isMobile && item.tags && item.tags.length > 3 && (
+                <span className="text-[10px] text-white/50 self-center">+{item.tags.length - 3}</span>
+              )}
             </div>
 
-            <div className="flex items-center justify-between gap-3 border-t border-white/10 pt-4 text-sm text-white/70">
+            <div className="flex items-center justify-between gap-3 border-t border-white/10 pt-3 sm:pt-4 text-xs sm:text-sm text-white/70">
               <span>
                 {item.url ? "External project link" : "Project showcase"}
               </span>
-              <span className="inline-flex items-center gap-1.5 text-white/90 transition group-hover:translate-x-0.5 group-hover:text-emerald-100">
+              <span className="inline-flex items-center gap-1.5 text-white/90 transition sm:group-hover:translate-x-0.5 sm:group-hover:text-emerald-100">
                 View project
-                <ArrowUpRight className="size-4" />
+                <ArrowUpRight className="size-3.5 sm:size-4" />
               </span>
             </div>
           </div>
         </div>
       </div>
 
-      <motion.div
-        style={{ rotate: tilt }}
-        className="pointer-events-none absolute inset-0 opacity-0 transition duration-300 group-hover:opacity-100"
-      >
-        <div className="absolute left-[14%] top-[14%] h-[52%] w-[42%] rounded-full bg-white/10 blur-3xl" />
-        <div className="absolute right-[14%] bottom-[10%] h-[30%] w-[30%] rounded-full bg-emerald-300/12 blur-3xl" />
-        <div className="absolute inset-x-[24%] top-[18%] h-10 rounded-full bg-white/8 blur-2xl" />
-      </motion.div>
+      {!isMobile && (
+        <motion.div
+          style={{ rotate: tilt }}
+          className="pointer-events-none absolute inset-0 opacity-0 transition duration-300 group-hover:opacity-100"
+        >
+          <div className="absolute left-[14%] top-[14%] h-[52%] w-[42%] rounded-full bg-white/10 blur-3xl" />
+          <div className="absolute right-[14%] bottom-[10%] h-[30%] w-[30%] rounded-full bg-emerald-300/12 blur-3xl" />
+          <div className="absolute inset-x-[24%] top-[18%] h-10 rounded-full bg-white/8 blur-2xl" />
+        </motion.div>
+      )}
     </motion.div>
   );
 
@@ -370,7 +398,7 @@ function ProjectCardItem({
     <motion.div
       style={{
         x: item.x,
-        y: yScroll,
+        y: isMobile ? 0 : yScroll,
       }}
       className={`absolute ${getVerticalPosition()}`}
     >

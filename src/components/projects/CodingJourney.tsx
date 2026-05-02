@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import { motion, useScroll, useSpring } from "framer-motion";
 import { Icon } from "@iconify/react";
+import { cn } from "@/lib/utils";
 
 const milestones = [
   {
@@ -82,10 +83,10 @@ export default function CodingJourney() {
 
       <div className="relative">
         {/* Progress Line */}
-        <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-px bg-white/10 -translate-x-1/2 hidden sm:block" />
+        <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-px bg-white/10 -translate-x-1/2 block" />
         <motion.div
           style={{ scaleY, originY: 0 }}
-          className="absolute left-4 md:left-1/2 top-0 bottom-0 w-px bg-linear-to-b from-purple-500 via-blue-500 to-transparent -translate-x-1/2 hidden sm:block"
+          className="absolute left-4 md:left-1/2 top-0 bottom-0 w-px bg-linear-to-b from-purple-500 via-blue-500 to-transparent -translate-x-1/2 block"
         />
 
         <div className="space-y-12 sm:space-y-24">
@@ -107,37 +108,37 @@ function TimelineItem({ milestone, index }: { milestone: typeof milestones[0]; i
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-100px" }}
       transition={{ duration: 0.7, ease: "easeOut" }}
-      className={`relative flex flex-col md:flex-row items-center gap-8 ${
+      className={`relative flex flex-col md:flex-row items-center gap-6 sm:gap-8 ${
         isEven ? "md:flex-row-reverse" : ""
       }`}
     >
       {/* Year Circle */}
-      <div className="absolute left-4 md:left-1/2 w-10 h-10 rounded-full bg-slate-950 border-2 border-slate-800 flex items-center justify-center -translate-x-1/2 z-10 hidden sm:flex">
-        <div className={`w-3 h-3 rounded-full ${milestone.isCurrent ? 'bg-purple-500 animate-pulse' : 'bg-slate-600'}`} />
+      <div className="absolute left-4 md:left-1/2 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-slate-950 border-2 border-slate-800 flex items-center justify-center -translate-x-1/2 z-10">
+        <div className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full ${milestone.isCurrent ? 'bg-purple-500 animate-pulse' : 'bg-slate-600'}`} />
       </div>
 
       {/* Content Card */}
-      <div className={`w-full md:w-[45%] ${isEven ? 'md:text-left' : 'md:text-right'} group`}>
-        <div className={`relative p-8 rounded-[2.5rem] bg-white/5 border border-white/10 backdrop-blur-xl overflow-hidden transition-all duration-500 group-hover:bg-white/10 group-hover:border-white/20`}>
+      <div className={`w-full md:w-[45%] pl-10 md:pl-0 ${isEven ? 'md:text-left' : 'md:text-right'} group`}>
+        <div className={`relative p-6 sm:p-8 rounded-[2rem] sm:rounded-[2.5rem] bg-white/5 border border-white/10 backdrop-blur-xl overflow-hidden transition-all duration-500 group-hover:bg-white/10 group-hover:border-white/20`}>
           {/* Subtle background glow */}
           <div className={`absolute -right-20 -top-20 w-40 h-40 bg-gradient-to-br ${milestone.color} blur-3xl opacity-50 group-hover:opacity-80 transition-opacity`} />
           
           <div className={`flex flex-col ${isEven ? 'items-start' : 'md:items-end'} mb-4`}>
-            <span className="text-sm font-black text-purple-400 tracking-[0.3em] mb-2">{milestone.year}</span>
+            <span className="text-xs sm:text-sm font-black text-purple-400 tracking-[0.3em] mb-2">{milestone.year}</span>
             <div className="flex items-center gap-3">
-              {isEven && <Icon icon={milestone.icon} className="text-3xl" />}
-              <h3 className="text-2xl font-bold text-white italic tracking-tight">{milestone.title}</h3>
-              {!isEven && <Icon icon={milestone.icon} className="text-3xl" />}
+              <Icon icon={milestone.icon} className={cn("text-2xl sm:text-3xl", isEven ? "block" : "block md:hidden")} />
+              <h3 className="text-xl sm:text-2xl font-bold text-white italic tracking-tight">{milestone.title}</h3>
+              <Icon icon={milestone.icon} className={cn("text-2xl sm:text-3xl", !isEven ? "hidden md:block" : "hidden")} />
             </div>
           </div>
 
-          <p className="text-slate-400 leading-relaxed mb-6 text-sm">
+          <p className="text-slate-400 leading-relaxed mb-6 text-xs sm:text-sm">
             {milestone.description}
           </p>
 
           <div className={`flex flex-wrap gap-2 ${isEven ? '' : 'md:justify-end'}`}>
             {milestone.tags.map((tag) => (
-              <span key={tag} className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] font-bold uppercase tracking-wider text-slate-300">
+              <span key={tag} className="px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-slate-300">
                 {tag}
               </span>
             ))}
