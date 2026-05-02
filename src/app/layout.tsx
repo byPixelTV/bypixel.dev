@@ -5,6 +5,7 @@ import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import 'lenis/dist/lenis.css'
 import SmoothScroll from "@/components/scroll/SmoothScroll";
+import ScrollToTop from "@/components/scroll/ScrollToTop";
 
 const fontSans = Inter({
   subsets: ["latin"],
@@ -31,6 +32,7 @@ export default function RootLayout({
       <body className={`${fontSans.variable} ${fontMono.variable} antialiased`}>
         <SmoothScroll>
           {children}
+          <ScrollToTop />
         </SmoothScroll>
       </body>
     </html>
