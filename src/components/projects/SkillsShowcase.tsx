@@ -221,8 +221,8 @@ export default function SkillsShowcase() {
   return (
     <section
       ref={containerRef}
-      className={`relative w-screen left-[50%] -translate-x-1/2 ${isMobile ? "h-[600vh]" : "h-[1200vh]"} overflow-visible`}
-      onMouseMove={handleMouseMove}
+      className={`relative w-dvw left-[50%] -translate-x-1/2 ${isMobile ? "h-[600vh]" : "h-[1200vh]"} overflow-visible`}
+      onMouseMove={isMobile ? undefined : handleMouseMove}
     >
       <div className="sticky top-0 flex h-screen w-full flex-col items-center justify-center overflow-hidden">
         {mounted && (

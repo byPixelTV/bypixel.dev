@@ -203,6 +203,8 @@ export default function HorizontalGallery() {
   const smoothY = useSpring(mouseY, { stiffness: 50, damping: 20 });
 
   useEffect(() => {
+    if (isMobile) return;
+
     const handleMouseMove = (e: MouseEvent) => {
       mouseX.set(e.clientX / window.innerWidth - 0.5);
       mouseY.set(e.clientY / window.innerHeight - 0.5);
@@ -210,14 +212,14 @@ export default function HorizontalGallery() {
 
     window.addEventListener("mousemove", handleMouseMove);
     return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, [mouseX, mouseY]);
+  }, [isMobile, mouseX, mouseY]);
 
   return (
     <section
       ref={ref}
-      className={`relative left-1/2 right-1/2 w-screen -translate-x-1/2 ${isMobile ? 'h-[250vh]' : 'h-[400vh]'}`}
+      className={`relative left-1/2 right-1/2 w-dvw -translate-x-1/2 ${isMobile ? 'h-[250vh]' : 'h-[400vh]'}`}
     >
-      <div className="sticky top-0 h-screen w-screen overflow-hidden">
+      <div className="sticky top-0 h-screen w-dvw overflow-hidden">
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
           <div className="absolute left-[12%] top-[18%] h-[22vh] w-[28vw] rounded-full bg-sky-300/8 blur-3xl mix-blend-screen opacity-60" />
           <div className="absolute right-[8%] top-[10%] h-[26vh] w-[22vw] rounded-full bg-emerald-300/8 blur-3xl mix-blend-screen opacity-50" />

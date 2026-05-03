@@ -148,6 +148,7 @@ interface SpotifyNowPlayingProps {
 }
 
 const SpotifyNowPlaying = ({ onNowPlayingChange }: SpotifyNowPlayingProps) => {
+  const [isMobile, setIsMobile] = useState(false);
   const [data, setData] = useState<NowPlayingResult | null>(null);
   const [direction, setDirection] = useState<1 | -1>(1);
   const [progressMs, setProgressMs] = useState(0);
@@ -157,6 +158,14 @@ const SpotifyNowPlaying = ({ onNowPlayingChange }: SpotifyNowPlayingProps) => {
   const tickRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const cardColorsRef = useRef<string[]>(FALLBACK_CARD_COLORS);
   const rafRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    const media = window.matchMedia("(max-width: 767px)");
+    const update = () => setIsMobile(media.matches);
+    update();
+    media.addEventListener("change", update);
+    return () => media.removeEventListener("change", update);
+  }, []);
 
   useEffect(() => {
     cardColorsRef.current = cardColors;
@@ -195,13 +204,13 @@ const SpotifyNowPlaying = ({ onNowPlayingChange }: SpotifyNowPlayingProps) => {
     };
 
     const initialId = setTimeout(run, 0);
-    const intervalId = setInterval(run, POLL_INTERVAL);
+    const intervalId = setInterval(run, isMobile ? 15_000 : POLL_INTERVAL);
 
     return () => {
       clearTimeout(initialId);
       clearInterval(intervalId);
     };
-  }, []);
+  }, [fetchNowPlaying, isMobile]);
 
   // Tick progress forward every second between polls
   useEffect(() => {
@@ -220,7 +229,7 @@ const SpotifyNowPlaying = ({ onNowPlayingChange }: SpotifyNowPlayingProps) => {
     let disposed = false;
     let fallbackRaf: number | null = null;
 
-    if (!data?.isPlaying || !data.albumImageUrl) {
+    if (isMobile || !data?.isPlaying || !data.albumImageUrl) {
       fallbackRaf = requestAnimationFrame(() => {
         setTargetCardColors(FALLBACK_CARD_COLORS);
       });
@@ -238,9 +247,11 @@ const SpotifyNowPlaying = ({ onNowPlayingChange }: SpotifyNowPlayingProps) => {
       disposed = true;
       if (fallbackRaf !== null) cancelAnimationFrame(fallbackRaf);
     };
-  }, [data?.isPlaying, data?.albumImageUrl, data?.trackId]);
+  }, [data?.isPlaying, data?.albumImageUrl, data?.trackId, isMobile]);
 
   useEffect(() => {
+    if (isMobile) return;
+
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
 
     const fromPalette = cardColorsRef.current;
@@ -269,7 +280,9 @@ const SpotifyNowPlaying = ({ onNowPlayingChange }: SpotifyNowPlayingProps) => {
     return () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
-  }, [targetCardColors]);
+  }, [targetCardColors, isMobile]);
+
+  const renderedCardColors = isMobile ? targetCardColors : cardColors;
 
   const show = data?.isPlaying && data.title;
   const progressPercent = data?.durationMs
@@ -292,7 +305,9 @@ const SpotifyNowPlaying = ({ onNowPlayingChange }: SpotifyNowPlayingProps) => {
           rel="noopener noreferrer"
           className="group relative mt-4 flex flex-col overflow-hidden rounded-2xl border border-white/20 bg-white/10 backdrop-blur-md transition-colors duration-200 hover:bg-white/14"
           style={{
-            boxShadow: `0 0 42px color-mix(in srgb, ${cardColors[0]} 40%, transparent), 0 0 72px color-mix(in srgb, ${cardColors[2]} 26%, transparent)`,
+            boxShadow: isMobile
+              ? "0 6px 26px rgba(16, 18, 30, 0.34)"
+              : `0 0 42px color-mix(in srgb, ${renderedCardColors[0]} 40%, transparent), 0 0 72px color-mix(in srgb, ${renderedCardColors[2]} 26%, transparent)`,
           }}
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
@@ -302,22 +317,22 @@ const SpotifyNowPlaying = ({ onNowPlayingChange }: SpotifyNowPlayingProps) => {
           <motion.div
             aria-hidden="true"
             className="pointer-events-none absolute -left-10 -top-10 h-40 w-40 rounded-full blur-3xl"
-            style={{ background: `radial-gradient(circle, ${cardColors[0]} 0%, transparent 68%)` }}
-            animate={{ x: [0, 12, -10, 0], y: [0, -8, 10, 0], scale: [1, 1.14, 1] }}
-            transition={{ duration: 7.5, ease: "easeInOut", repeat: Infinity }}
+            style={{ background: `radial-gradient(circle, ${renderedCardColors[0]} 0%, transparent 68%)` }}
+            animate={isMobile ? { x: 0, y: 0, scale: 1 } : { x: [0, 12, -10, 0], y: [0, -8, 10, 0], scale: [1, 1.14, 1] }}
+            transition={isMobile ? { duration: 0 } : { duration: 7.5, ease: "easeInOut", repeat: Infinity }}
           />
           <motion.div
             aria-hidden="true"
             className="pointer-events-none absolute -right-12 -bottom-10 h-44 w-44 rounded-full blur-3xl"
-            style={{ background: `radial-gradient(circle, ${cardColors[1]} 0%, transparent 70%)` }}
-            animate={{ x: [0, -10, 8, 0], y: [0, 10, -8, 0], scale: [1, 1.12, 1] }}
-            transition={{ duration: 8.2, ease: "easeInOut", repeat: Infinity }}
+            style={{ background: `radial-gradient(circle, ${renderedCardColors[1]} 0%, transparent 70%)` }}
+            animate={isMobile ? { x: 0, y: 0, scale: 1 } : { x: [0, -10, 8, 0], y: [0, 10, -8, 0], scale: [1, 1.12, 1] }}
+            transition={isMobile ? { duration: 0 } : { duration: 8.2, ease: "easeInOut", repeat: Infinity }}
           />
           <div
             aria-hidden="true"
             className="pointer-events-none absolute inset-0"
             style={{
-              background: `linear-gradient(110deg, color-mix(in srgb, ${cardColors[0]} 24%, transparent), color-mix(in srgb, ${cardColors[1]} 18%, transparent) 48%, color-mix(in srgb, ${cardColors[2]} 22%, transparent))`,
+              background: `linear-gradient(110deg, color-mix(in srgb, ${renderedCardColors[0]} 24%, transparent), color-mix(in srgb, ${renderedCardColors[1]} 18%, transparent) 48%, color-mix(in srgb, ${renderedCardColors[2]} 22%, transparent))`,
             }}
           />
 
