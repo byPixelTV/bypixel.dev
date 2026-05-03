@@ -17,7 +17,7 @@ import {
   useScroll,
   useMotionValueEvent,
 } from "framer-motion";
-import { LuEqual, LuBook, LuUser } from "react-icons/lu";
+import { LuEqual, LuBook, LuUser, LuX } from "react-icons/lu";
 import type { Variants } from "framer-motion";
 
 const headerNavLinks = [
@@ -45,6 +45,7 @@ const Navbar = () => {
   const hasCrossedScrollThresholdRef = useRef(false);
   const sectionsMenuRef = useRef<HTMLLIElement | null>(null);
   const sectionHref = (hash: string) => (pathname === "/" ? hash : `/${hash}`);
+  const showSectionsNavigation = pathname === "/";
 
   // Prefetch all pages on mount
   useEffect(() => {
@@ -219,40 +220,42 @@ const Navbar = () => {
                   </Link>
                 </motion.li>
               ))}
-              <li ref={sectionsMenuRef} className="relative">
-                <button
-                  type="button"
-                  className="nav-btn inline-flex h-[46px] w-[46px] items-center justify-center rounded-xl transition-all duration-300"
-                  onClick={() => setIsSectionsMenuOpen((prev) => !prev)}
-                  aria-haspopup="menu"
-                  aria-expanded={isSectionsMenuOpen}
-                  aria-label="Open sections menu"
-                >
-                  <LuEqual size={20} />
-                </button>
-                <AnimatePresence>
-                  {isSectionsMenuOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -6, scale: 0.98 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: -6, scale: 0.98 }}
-                      transition={{ duration: 0.16, ease: "easeOut" }}
-                      className="absolute right-0 top-full z-30 mt-2 w-44 rounded-2xl border border-white/12 bg-[#120a22]/95 p-2 shadow-2xl backdrop-blur-xl"
-                    >
-                      {sectionLinks.map((section) => (
-                        <Link
-                          key={section.hash}
-                          href={sectionHref(section.hash)}
-                          className="block rounded-lg px-3 py-2 text-sm text-white/88 transition hover:bg-white/10"
-                          onClick={() => setIsSectionsMenuOpen(false)}
-                        >
-                          {section.title}
-                        </Link>
-                      ))}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </li>
+              {showSectionsNavigation && (
+                <li ref={sectionsMenuRef} className="relative">
+                  <button
+                    type="button"
+                    className="nav-btn inline-flex h-[46px] w-[46px] items-center justify-center rounded-xl transition-all duration-300"
+                    onClick={() => setIsSectionsMenuOpen((prev) => !prev)}
+                    aria-haspopup="menu"
+                    aria-expanded={isSectionsMenuOpen}
+                    aria-label={isSectionsMenuOpen ? "Close sections menu" : "Open sections menu"}
+                  >
+                    {isSectionsMenuOpen ? <LuX size={20} /> : <LuEqual size={20} />}
+                  </button>
+                  <AnimatePresence>
+                    {isSectionsMenuOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -6, scale: 0.98 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -6, scale: 0.98 }}
+                        transition={{ duration: 0.16, ease: "easeOut" }}
+                        className="absolute right-0 top-full z-30 mt-2 w-44 rounded-2xl border border-white/12 bg-[#120a22]/95 p-2 shadow-2xl backdrop-blur-xl"
+                      >
+                        {sectionLinks.map((section) => (
+                          <Link
+                            key={section.hash}
+                            href={sectionHref(section.hash)}
+                            className="block rounded-lg px-3 py-2 text-sm text-white/88 transition hover:bg-white/10"
+                            onClick={() => setIsSectionsMenuOpen(false)}
+                          >
+                            {section.title}
+                          </Link>
+                        ))}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </li>
+              )}
             </ul>
           </div>
         </motion.nav>
@@ -311,27 +314,31 @@ const Navbar = () => {
               </div>
               <nav className="grow overflow-y-auto">
                 <ul className="flex flex-col space-y-1 p-4">
-                  <li className="px-3 pb-1 pt-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/40">
-                    Sections
-                  </li>
-                  {sectionLinks.map((section, index) => (
-                    <motion.li
-                      key={section.hash}
-                      variants={mobileMenuItemVariants}
-                      custom={index + 10}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      <Link
-                        href={sectionHref(section.hash)}
-                        className="block rounded-lg px-3 py-2 text-sm tracking-wider text-white transition duration-300 ease-in-out hover:bg-white/5"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                      >
-                        {section.title}
-                      </Link>
-                    </motion.li>
-                  ))}
-                  <li className="my-2 border-t border-white/10" />
+                  {showSectionsNavigation && (
+                    <>
+                      <li className="px-3 pb-1 pt-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/40">
+                        Sections
+                      </li>
+                      {sectionLinks.map((section, index) => (
+                        <motion.li
+                          key={section.hash}
+                          variants={mobileMenuItemVariants}
+                          custom={index + 10}
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                        >
+                          <Link
+                            href={sectionHref(section.hash)}
+                            className="block rounded-lg px-3 py-2 text-sm tracking-wider text-white transition duration-300 ease-in-out hover:bg-white/5"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                          >
+                            {section.title}
+                          </Link>
+                        </motion.li>
+                      ))}
+                      <li className="my-2 border-t border-white/10" />
+                    </>
+                  )}
                   {headerNavLinks.map((item, index) => (
                     <motion.li
                       key={index}
