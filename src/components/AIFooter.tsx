@@ -5,7 +5,7 @@ import { Icon } from "@iconify/react";
 
 export default function AIFooter() {
   return (
-    <footer className="relative py-24 px-4 overflow-hidden">
+    <footer id="contact" className="relative py-24 px-4 overflow-hidden scroll-mt-28">
       {/* Background Gradient */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-px bg-linear-to-r from-transparent via-white/10 to-transparent" />

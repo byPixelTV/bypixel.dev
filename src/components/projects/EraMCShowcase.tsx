@@ -278,7 +278,7 @@ export default function EraMCShowcase() {
                       <span className="text-purple-400 font-black tracking-[0.4em] uppercase text-[10px] sm:text-sm">Technical Philosophy</span>
                       <h3 className="text-4xl sm:text-6xl font-black text-white italic tracking-tighter uppercase leading-tight">Async-First<br/>Architecture</h3>
                       <p className="text-sm sm:text-xl text-slate-300 leading-relaxed">
-                        We push the boundaries of what Minecraft servers can handle. By running logic **strictly asynchronously** on the gameservers, 
+                        We push the boundaries of what Minecraft servers can handle. By running logic <b>strictly asynchronously</b> on the gameservers, 
                         we maintain peak performance while keeping the central database constantly in sync for external API and tooling access.
                       </p>
                       <p className="text-xs sm:text-lg text-slate-400 leading-relaxed border-l-4 border-purple-500 pl-4 sm:pl-6 italic">
