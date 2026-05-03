@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useLayoutEffect, useState, useRef } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
@@ -10,8 +10,15 @@ export default function PageLoader() {
   const searchParams = useSearchParams();
   const [isChanging, setIsChanging] = useState(false);
   const prevPathname = useRef(pathname);
+  const isFirstRenderRef = useRef(true);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    if (isFirstRenderRef.current) {
+      isFirstRenderRef.current = false;
+      prevPathname.current = pathname;
+      return;
+    }
+
     if (prevPathname.current !== pathname) {
       setIsChanging(true);
       prevPathname.current = pathname;
@@ -25,21 +32,23 @@ export default function PageLoader() {
   }, [pathname, searchParams]);
 
   return (
-    <AnimatePresence mode="wait">
-      {isChanging && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-[#0c0618]/90 backdrop-blur-xl"
-        >
+    <AnimatePresence>
+      <motion.div
+        initial={false}
+        animate={{
+          opacity: isChanging ? 1 : 0,
+          pointerEvents: isChanging ? "auto" : "none",
+        }}
+        transition={{ duration: 0.22, ease: "easeOut" }}
+        className="fixed inset-0 z-[100] flex items-center justify-center bg-[#0c0618]/90 backdrop-blur-xl"
+      >
+        {isChanging && (
           <motion.div
             className="relative"
             initial={{ scale: 0.7, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 1.4, opacity: 0, filter: "blur(15px)" }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
+            exit={{ scale: 1.2, opacity: 0 }}
+            transition={{ duration: 0.35, ease: "easeOut" }}
           >
             {/* The Lightning Bolt with Rotation + Pause Sequence */}
             <motion.div
@@ -100,8 +109,8 @@ export default function PageLoader() {
               className="absolute inset-[-120px] bg-white/5 rounded-full blur-[100px] -z-2"
             />
           </motion.div>
-        </motion.div>
-      )}
+        )}
+      </motion.div>
     </AnimatePresence>
   );
 }

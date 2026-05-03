@@ -249,6 +249,42 @@ html.is-scrolling .custom-scrollbar-thumb {
   opacity: 1;
 }
 
+.app-boot-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(12, 6, 24, 0.96);
+  backdrop-filter: blur(12px);
+  transition: opacity 260ms ease;
+}
+
+.app-boot-loader.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.app-booting #app-content {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.app-boot-loader-core {
+  position: relative;
+  animation: bootPulse 1.15s ease-in-out infinite;
+}
+
+.app-boot-loader-core img {
+  filter: invert(1) brightness(1.35) drop-shadow(0 0 24px rgba(255, 255, 255, 0.72));
+}
+
+@keyframes bootPulse {
+  0%, 100% { transform: scale(0.95); opacity: 0.78; }
+  50% { transform: scale(1.04); opacity: 1; }
+}
+
 .background-layout .gradient-blob {
   position: absolute;
   border-radius: 50%;
