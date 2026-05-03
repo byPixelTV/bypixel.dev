@@ -209,6 +209,7 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
+    scrollbar-width: none;
   }
   body {
     @apply bg-background text-foreground;
@@ -218,6 +219,34 @@
   html {
     overflow-x: clip;
   }
+}
+
+*::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+  display: none;
+}
+
+.custom-scrollbar-thumb {
+  position: fixed;
+  right: 1px;
+  top: 0;
+  width: 8px;
+  min-height: 56px;
+  border-radius: 6px;
+  pointer-events: none;
+  z-index: 90;
+  opacity: 0;
+  transform: translateY(0);
+  background: linear-gradient(180deg, rgba(226, 232, 240, 0.7), rgba(203, 213, 225, 0.62));
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(6px);
+  transition: opacity 180ms ease;
+}
+
+html.is-scrolling .custom-scrollbar-thumb {
+  opacity: 1;
 }
 
 .background-layout .gradient-blob {
