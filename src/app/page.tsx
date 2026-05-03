@@ -58,14 +58,20 @@ export default async function About() {
       <Navbar />
       <main className="relative z-10 w-full pb-14 pt-22 md:pt-26">
         <div className="mx-auto w-full max-w-395 space-y-10 px-4 sm:px-7 md:space-y-20 lg:px-12">
-          <section className="py-2">
+          <section id="top" className="py-2 scroll-mt-28">
             <Profile />
           </section>
-          <section className="space-y-10 md:space-y-20">
+          <section id="projects" className="space-y-10 scroll-mt-28 md:space-y-20">
             <HorizontalGallery />
-            <EraMCShowcase />
-            <SkillsShowcase />
-            <CodingJourney />
+            <div id="eramc" className="scroll-mt-28">
+              <EraMCShowcase />
+            </div>
+            <div id="skills" className="scroll-mt-28">
+              <SkillsShowcase />
+            </div>
+            <div id="journey" className="scroll-mt-28">
+              <CodingJourney />
+            </div>
           </section>
         </div>
       </main>
