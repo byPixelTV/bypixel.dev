@@ -117,11 +117,20 @@ function getAlbumBlobColors(imageUrl: string): Promise<string[]> {
 }
 
 const Profile = () => {
+  const [isMobile, setIsMobile] = useState(false);
   const [albumAmbience, setAlbumAmbience] = useState<string | null>(null);
   const [targetBlobColors, setTargetBlobColors] = useState<string[]>(IDLE_BLOB_COLORS);
   const [blobColors, setBlobColors] = useState<string[]>(IDLE_BLOB_COLORS);
   const blobColorsRef = useRef<string[]>(IDLE_BLOB_COLORS);
   const rafRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    const media = window.matchMedia("(max-width: 767px)");
+    const update = () => setIsMobile(media.matches);
+    update();
+    media.addEventListener("change", update);
+    return () => media.removeEventListener("change", update);
+  }, []);
 
   useEffect(() => {
     blobColorsRef.current = blobColors;
@@ -130,7 +139,7 @@ const Profile = () => {
   useEffect(() => {
     let disposed = false;
 
-    if (!albumAmbience) return;
+    if (!albumAmbience || isMobile) return;
 
     getAlbumBlobColors(albumAmbience).then((colors) => {
       if (!disposed) setTargetBlobColors(colors);
@@ -139,9 +148,11 @@ const Profile = () => {
     return () => {
       disposed = true;
     };
-  }, [albumAmbience]);
+  }, [albumAmbience, isMobile]);
 
   useEffect(() => {
+    if (isMobile) return;
+
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
 
     const fromPalette = blobColorsRef.current;
@@ -170,9 +181,17 @@ const Profile = () => {
     return () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
-  }, [targetBlobColors]);
+  }, [targetBlobColors, isMobile]);
+
+  const renderedBlobColors = isMobile ? targetBlobColors : blobColors;
 
   const handleNowPlayingChange = (result: NowPlayingResult | null) => {
+    if (isMobile) {
+      setAlbumAmbience(null);
+      setTargetBlobColors(IDLE_BLOB_COLORS);
+      return;
+    }
+
     if (result?.isPlaying && result.albumImageUrl) {
       setAlbumAmbience(result.albumImageUrl);
       return;
@@ -192,32 +211,32 @@ const Profile = () => {
           aria-hidden="true"
           className="pointer-events-none absolute -inset-x-16 -inset-y-16 overflow-visible opacity-70 sm:-inset-x-28 sm:-inset-y-24 sm:opacity-100"
           initial={false}
-          animate={{ opacity: albumAmbience ? 1 : 0.86 }}
+          animate={{ opacity: isMobile ? 0.68 : albumAmbience ? 1 : 0.86 }}
           transition={{ duration: 0.55, ease: "easeInOut" }}
         >
           <>
             <motion.div
               className="absolute -left-28 -top-14 h-88 w-88 rounded-full blur-[74px] saturate-[1.6] sm:-left-36 sm:-top-20 sm:h-136 sm:w-136 sm:blur-[92px] sm:saturate-[1.75]"
               style={{
-                background: `radial-gradient(circle, ${blobColors[0]} 0%, transparent 58%)`,
+                background: `radial-gradient(circle, ${renderedBlobColors[0]} 0%, transparent 58%)`,
                 mixBlendMode: "plus-lighter",
               }}
-              animate={{ x: [0, 38, -30, 0], y: [0, -32, 18, 0], scale: [1, 1.18, 0.9, 1] }}
-              transition={{ duration: 10, ease: "easeInOut", repeat: Infinity }}
+              animate={isMobile ? { x: 0, y: 0, scale: 1 } : { x: [0, 38, -30, 0], y: [0, -32, 18, 0], scale: [1, 1.18, 0.9, 1] }}
+              transition={isMobile ? { duration: 0 } : { duration: 10, ease: "easeInOut", repeat: Infinity }}
             />
             <motion.div
               className="absolute -right-20 top-12 h-80 w-xs rounded-full blur-[72px] saturate-[1.65] sm:-right-32 sm:top-8 sm:h-lg sm:w-lg sm:blur-[94px] sm:saturate-[1.8]"
               style={{
-                background: `radial-gradient(circle, ${blobColors[1]} 0%, transparent 58%)`,
+                background: `radial-gradient(circle, ${renderedBlobColors[1]} 0%, transparent 58%)`,
                 mixBlendMode: "plus-lighter",
               }}
-              animate={{ x: [0, -32, 22, 0], y: [0, 30, -20, 0], scale: [1, 0.88, 1.16, 1] }}
-              transition={{ duration: 9, ease: "easeInOut", repeat: Infinity }}
+              animate={isMobile ? { x: 0, y: 0, scale: 1 } : { x: [0, -32, 22, 0], y: [0, 30, -20, 0], scale: [1, 0.88, 1.16, 1] }}
+              transition={isMobile ? { duration: 0 } : { duration: 9, ease: "easeInOut", repeat: Infinity }}
             />
             <motion.div
               className="absolute -bottom-32 left-[20%] hidden h-120 w-120 rounded-full blur-[96px] saturate-[1.8] sm:block"
               style={{
-                background: `radial-gradient(circle, ${blobColors[2]} 0%, transparent 60%)`,
+                background: `radial-gradient(circle, ${renderedBlobColors[2]} 0%, transparent 60%)`,
                 mixBlendMode: "plus-lighter",
               }}
               animate={{ x: [0, 20, -24, 0], y: [0, -24, 18, 0], scale: [1, 1.2, 0.88, 1] }}
@@ -226,7 +245,7 @@ const Profile = () => {
             <motion.div
               className="absolute left-[48%] top-[18%] hidden h-sm w-sm -translate-x-1/2 rounded-full blur-[86px] saturate-[1.85] sm:block"
               style={{
-                background: `radial-gradient(circle, ${blobColors[1]} 0%, transparent 60%)`,
+                background: `radial-gradient(circle, ${renderedBlobColors[1]} 0%, transparent 60%)`,
                 mixBlendMode: "plus-lighter",
               }}
               animate={{ x: [0, 14, -14, 0], y: [0, -14, 16, 0], scale: [0.9, 1.16, 0.9] }}
@@ -291,7 +310,7 @@ const Profile = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.35 }}
             >
-              <SpotifyNowPlaying onNowPlayingChange={handleNowPlayingChange} />
+              <SpotifyNowPlaying onNowPlayingChange={isMobile ? undefined : handleNowPlayingChange} />
             </motion.div>
 
             <motion.div

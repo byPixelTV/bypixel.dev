@@ -147,7 +147,7 @@ export default function EraMCShowcase() {
   return (
     <section
       ref={containerRef}
-      className="relative w-screen left-[50%] -translate-x-1/2 h-[800vh] md:h-[1500vh] overflow-visible bg-black"
+      className="relative w-dvw left-[50%] -translate-x-1/2 h-[800vh] md:h-[1500vh] overflow-visible bg-black"
     >
       <div className="sticky top-0 flex h-screen w-full items-center justify-center overflow-hidden">
         {isMounted && (

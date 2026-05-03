@@ -213,9 +213,10 @@
   body {
     @apply bg-background text-foreground;
     letter-spacing: var(--tracking-normal);
+    overflow-x: clip;
   }
   html {
-    overflow-x: hidden;
+    overflow-x: clip;
   }
 }
 
@@ -265,8 +266,10 @@
 
 @media (max-width: 640px) {
   .background-layout .gradient-blob {
-    filter: blur(84px);
-    opacity: 0.2;
+    filter: blur(72px);
+    opacity: 0.14;
+    animation: none !important;
+    transform: none !important;
   }
 
   .background-layout .blob-1 {
@@ -282,6 +285,11 @@
   .background-layout .blob-3,
   .background-layout .blob-4 {
     display: none;
+  }
+
+  .background-layout .grid-pattern {
+    opacity: 0.38;
+    background-size: 40px 40px;
   }
 }
 

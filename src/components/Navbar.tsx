@@ -60,7 +60,20 @@ const Navbar = () => {
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setSelected(pathname);
+    setIsMobileMenuOpen(false);
   }, [pathname]);
+
+  useEffect(() => {
+    if (!isMobileMenuOpen) {
+      document.body.style.overflow = "";
+      return;
+    }
+
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isMobileMenuOpen]);
 
   const mobileMenuVariants: Variants = {
     closed: {
@@ -165,14 +178,7 @@ const Navbar = () => {
               </Link>
             </motion.div>
 
-            <div className="flex items-center justify-end md:hidden">
-              <motion.button
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="text-[#F4F0E6] focus:outline-none"
-              >
-                <LuEqual size={24} />
-              </motion.button>
-            </div>
+            <div className="md:hidden" />
 
             <ul className="relative hidden items-center justify-end gap-2 md:flex">
               {headerNavLinks.map((navLink) => (
@@ -192,9 +198,37 @@ const Navbar = () => {
         </motion.nav>
       </motion.header>
 
+      <div className="fixed right-4 top-5 z-[60] md:hidden">
+        <motion.button
+          onClick={() => setIsMobileMenuOpen((prev) => !prev)}
+          className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-[#0c0618]/90 text-[#F4F0E6] shadow-xl backdrop-blur-md focus:outline-none"
+          whileTap={{ scale: 0.94 }}
+          aria-label={isMobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+          aria-expanded={isMobileMenuOpen}
+          aria-controls="mobile-nav-drawer"
+        >
+          {isMobileMenuOpen ? (
+            <svg
+              className="h-5 w-5"
+              fill="none"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          ) : (
+            <LuEqual size={22} />
+          )}
+        </motion.button>
+      </div>
+
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
+            id="mobile-nav-drawer"
             className="fixed inset-y-0 left-0 z-50 w-full sm:w-72 bg-[#0c0618] shadow-2xl overflow-hidden"
             variants={mobileMenuVariants}
             initial="closed"
@@ -213,23 +247,7 @@ const Navbar = () => {
                     />
                   </span>
                 </Link>
-                <motion.button
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="text-white focus:outline-none"
-                  whileTap={{ scale: 0.9 }}
-                >
-                  <svg
-                    className="w-6 h-6 sm:w-7 sm:h-7"
-                    fill="none"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path d="M6 18L18 6M6 6l12 12"></path>
-                  </svg>
-                </motion.button>
+                <div className="h-7 w-7 sm:h-8 sm:w-8" />
               </div>
               <nav className="grow overflow-y-auto">
                 <ul className="flex flex-col space-y-1 p-4">
