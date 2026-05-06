@@ -34,11 +34,24 @@ export default function BlogPostCard({ post, authorName }: Props) {
             <div className="absolute inset-0 bg-linear-to-t from-[#0c0618]/60 to-transparent opacity-60" />
             
             {/* Date Badge */}
-            <div className="absolute top-4 left-4">
+            <div className="absolute top-4 left-4 flex gap-2">
               <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/40 backdrop-blur-md border border-white/10 text-[11px] font-medium text-white/90">
                 <LuCalendar className="size-3 text-purple-400" />
                 {dayjs(post.creationDate).format("MMM D, YYYY")}
               </div>
+              {post.draft && (
+                <div className="flex items-center px-3 py-1.5 rounded-full bg-yellow-500/20 backdrop-blur-md border border-yellow-300/20 text-[11px] font-semibold text-yellow-200">
+                  Draft
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {!post.thumbnail && post.draft && (
+          <div className="px-6 pt-6">
+            <div className="inline-flex items-center rounded-full border border-yellow-300/20 bg-yellow-500/20 px-3 py-1.5 text-[11px] font-semibold text-yellow-200">
+              Draft
             </div>
           </div>
         )}

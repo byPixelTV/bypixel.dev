@@ -1,12 +1,15 @@
 import { NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
 import { db, getPostsCollection } from "@/lib/mongo";
+import { isAdminFromHeaders } from "@/lib/session";
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    const isAdmin = await isAdminFromHeaders(new Headers(request.headers));
+
     const collection = await getPostsCollection();
     const posts = await collection
-      .find({ draft: false })
+      .find(isAdmin ? {} : { draft: false })
       .sort({ creationDate: -1 })
       .toArray();
 

@@ -50,6 +50,17 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
       touchMultiplier: 1,
       wheelMultiplier: 0.95,
       autoRaf: false,
+      prevent: (node) => {
+        if (!(node instanceof HTMLElement)) {
+          return false;
+        }
+
+        return Boolean(
+          node.closest("[data-lenis-prevent]") ||
+          node.closest("[data-lenis-prevent-wheel]") ||
+          node.closest("[data-slot='dialog-content']")
+        );
+      },
     });
     let rafId = 0;
     lenis.on("scroll", showScrollbarWhileScrolling);

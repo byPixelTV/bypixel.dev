@@ -53,6 +53,11 @@ interface PostFormData {
   content: string;
 }
 
+interface SaveResult {
+  success: boolean;
+  error?: string;
+}
+
 export function PostsPage() {
   const router = useRouter();
   const [posts, setPosts] = useState<SerializedPost[]>([]);
@@ -61,6 +66,7 @@ export function PostsPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingPost, setEditingPost] = useState<SerializedPost | undefined>(undefined);
   const [authors, setAuthors] = useState<Record<string, string>>({});
+  const [actionError, setActionError] = useState<string | null>(null);
   const { data: session } = authClient.useSession();
 
   // Fetch posts using Server Action
@@ -112,44 +118,64 @@ export function PostsPage() {
   const draftPosts = posts.filter((post) => post.draft).length;
   const totalViews = posts.reduce((sum, post) => sum + (post.views || 0), 0);
 
-  const handleCreatePost = async (postData: PostFormData) => {
+  const handleCreatePost = async (postData: PostFormData): Promise<SaveResult> => {
+    setActionError(null);
     const result = await createPostByFormData(postData, session?.user.id || "");
     if (result.success) {
       await fetchPosts(); // Refresh the list
       setIsDialogOpen(false);
+      return { success: true };
     } else {
       console.error("Error creating post:", result.error);
+      const errorMessage = result.error || "Failed to create post";
+      setActionError(errorMessage);
+      return { success: false, error: errorMessage };
     }
+
   };
 
-  const handleEditPost = async (postData: PostFormData) => {
-    if (!editingPost) return;
+  const handleEditPost = async (postData: PostFormData): Promise<SaveResult> => {
+    if (!editingPost) {
+      return { success: false, error: "No post selected for editing" };
+    }
 
+    setActionError(null);
     const result = await updatePost(editingPost._id, postData, editingPost);
     if (result.success) {
       await fetchPosts(); // Refresh the list
       setEditingPost(undefined);
       setIsDialogOpen(false);
+      return { success: true };
     } else {
       console.error("Error updating post:", result.error);
+      const errorMessage = result.error || "Failed to update post";
+      setActionError(errorMessage);
+      return { success: false, error: errorMessage };
     }
+
   };
 
+  const dialogSaveHandler = editingPost ? handleEditPost : handleCreatePost;
+
   const handleDeletePost = async (postId: string) => {
+    setActionError(null);
     const result = await deletePost(postId);
     if (result.success) {
       setPosts(posts.filter((post) => post._id !== postId));
     } else {
       console.error("Error deleting post:", result.error);
+      setActionError(result.error || "Failed to delete post");
     }
   };
 
   const openEditDialog = (post: SerializedPost) => {
+    setActionError(null);
     setEditingPost(post);
     setIsDialogOpen(true);
   };
 
   const openCreateDialog = () => {
+    setActionError(null);
     setEditingPost(undefined);
     setIsDialogOpen(true);
   };
@@ -205,6 +231,12 @@ export function PostsPage() {
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="mx-auto max-w-7xl space-y-6">
+        {actionError && (
+          <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400">
+            {actionError}
+          </div>
+        )}
+
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
@@ -392,7 +424,7 @@ export function PostsPage() {
         open={isDialogOpen}
         onOpenChange={setIsDialogOpen}
         post={editingPost}
-        onSave={editingPost ? handleEditPost : handleCreatePost}
+        onSave={dialogSaveHandler}
       />
     </div>
   );

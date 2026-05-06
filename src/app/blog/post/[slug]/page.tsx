@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const siteUrl = "https://bypixel.dev";
 
   try {
-    const response = await getPostBySlug(slug);
+    const response = await getPostBySlug(slug, { includeDraftsForAdmin: true });
 
     const post = response.post;
 
@@ -81,7 +81,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         modifiedTime: post.updateDate || post.updateDate,
       },
       robots: {
-        index: true,
+        index: !post.draft,
         follow: true,
       },
     };

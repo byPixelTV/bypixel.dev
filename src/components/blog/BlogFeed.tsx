@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import BlogPostCard from "@/components/BlogPostCard";
 import type { Post } from "@/lib/mongo";
 import { motion } from "framer-motion";
+import { authClient } from "@/lib/auth-client";
 
 type BlogPostListItem = (Omit<Post, "_id"> & { _id: string }) & {
   authorName: string;
@@ -17,6 +18,11 @@ export default function BlogFeed() {
   const [posts, setPosts] = useState<BlogPostListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { data: session } = authClient.useSession();
+
+  const isAdmin = session?.user?.admin === true;
+  const draftCount = posts.filter((post) => post.draft).length;
+  const publishedCount = posts.length - draftCount;
 
   useEffect(() => {
     let cancelled = false;
@@ -78,10 +84,16 @@ export default function BlogFeed() {
 
   return (
     <div className="max-w-6xl mx-auto">
+      {isAdmin && draftCount > 0 && (
+        <div className="mb-6 rounded-2xl border border-yellow-500/20 bg-yellow-500/10 px-4 py-3 text-sm text-yellow-100">
+          Admin view enabled. You are seeing {draftCount} draft {draftCount === 1 ? "post" : "posts"} mixed into the feed.
+        </div>
+      )}
+
       <div className="flex items-center gap-4 mb-10">
         <div className="h-px flex-grow bg-white/10" />
         <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-white/30 whitespace-nowrap">
-          {posts.length} {posts.length === 1 ? "Article" : "Articles"} Published
+          {publishedCount} Published {isAdmin && draftCount > 0 ? `- ${draftCount} Draft` : ""}
         </span>
         <div className="h-px flex-grow bg-white/10" />
       </div>

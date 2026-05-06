@@ -2,6 +2,7 @@
 
 import { ObjectId } from "mongodb";
 import { db, getPostsCollection, Post, SerializedPost } from "../mongo";
+import { isServerAdmin } from "../session";
 
 interface PostFormData {
   title: string;
@@ -50,6 +51,12 @@ function validateThumbnailUrl(url: string): string | undefined {
 }
 
 export async function getPosts() {
+  const canViewAllPosts = await isServerAdmin();
+
+  if (!canViewAllPosts) {
+    return { posts: [], error: "Unauthorized" };
+  }
+
   try {
     const collection = await getPostsCollection();
     const posts = await collection.find({ }).toArray();
@@ -67,13 +74,20 @@ export async function getPosts() {
   }
 }
 
-export async function getPostBySlug(slug: string): Promise<{
+export async function getPostBySlug(
+  slug: string,
+  options?: { includeDraftsForAdmin?: boolean }
+): Promise<{
   post: Post | null;
   error: string | null;
 }> {
   try {
     const collection = await getPostsCollection();
-    const post = await collection.findOne({ slug, draft: false });
+    const includeDraftsForAdmin = options?.includeDraftsForAdmin === true;
+    const canReadDrafts = includeDraftsForAdmin ? await isServerAdmin() : false;
+    const post = await collection.findOne(
+      canReadDrafts ? { slug } : { slug, draft: false }
+    );
 
     if (!post) {
       return {
@@ -123,12 +137,28 @@ export async function getAuthorName(userId: string): Promise<string> {
 }
 
 export async function createPost(postData: Post, userId: string) {
+  const canManagePosts = await isServerAdmin();
+  if (!canManagePosts) {
+    return {
+      success: false,
+      error: "Unauthorized",
+    };
+  }
+
   try {
     // Validate and sanitize thumbnail URL
     const thumbnailUrl = validateThumbnailUrl(postData.thumbnail ?? defaultThumbnail) || defaultThumbnail;
     const collection = await getPostsCollection();
 
     // Map camelCase form data to hyphenated database field names
+    const existingPost = await collection.findOne({ slug: postData.slug });
+    if (existingPost) {
+      return {
+        success: false,
+        error: "A post with this slug already exists",
+      };
+    }
+
     const documentData: Post = {
       title: postData.title,
       shortDescription: postData.shortDescription,
@@ -162,6 +192,14 @@ export async function createPostByFormData(postData: PostFormData, userId: strin
 }
 
 export async function updatePost(postId: string, postData: PostFormData, originalPost?: SerializedPost) {
+  const canManagePosts = await isServerAdmin();
+  if (!canManagePosts) {
+    return {
+      success: false,
+      error: "Unauthorized",
+    };
+  }
+
   try {
     // Validate and sanitize thumbnail URL
     const thumbnailUrl = validateThumbnailUrl(postData.thumbnail);
@@ -197,6 +235,18 @@ export async function updatePost(postId: string, postData: PostFormData, origina
 
     const collection = await getPostsCollection();
 
+    const postWithSameSlug = await collection.findOne({
+      slug: postData.slug,
+      _id: { $ne: new ObjectId(postId) },
+    });
+
+    if (postWithSameSlug) {
+      return {
+        success: false,
+        error: "A post with this slug already exists",
+      };
+    }
+
     const result = await collection.updateOne(
       { _id: new ObjectId(postId) },
       { $set: documentData }
@@ -212,6 +262,14 @@ export async function updatePost(postId: string, postData: PostFormData, origina
 }
 
 export async function deletePost(postId: string) {
+  const canManagePosts = await isServerAdmin();
+  if (!canManagePosts) {
+    return {
+      success: false,
+      error: "Unauthorized",
+    };
+  }
+
   try {
     const collection = await getPostsCollection();
     await collection.deleteOne({ _id: new ObjectId(postId) });
