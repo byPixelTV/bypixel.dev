@@ -79,7 +79,7 @@ const projects: Project[] = [
       "Minecraft minigame network — developed gameplay skripts and managed server infrastructure with Skript.",
     tags: ["Minecraft", "Kotlin", "Skript"],
     startAt: "April 2024",
-    endAt: "Juli 2025",
+    endAt: "Juli 2024",
     url: "https://skydinse.net",
   },
 ];
