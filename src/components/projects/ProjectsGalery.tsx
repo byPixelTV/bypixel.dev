@@ -357,7 +357,7 @@ function ProjectCardItem({
 
           <div className="space-y-3 sm:space-y-4">
             <div className="flex flex-wrap gap-1.5 sm:gap-2">
-              {item.tags?.slice(0, isMobile ? 3 : undefined).map((tag) => (
+              {item.tags?.slice(0, isMobile ? 3 : undefined).map((tag: string) => (
                 <span
                   key={tag}
                   className="rounded-full border border-white/10 bg-white/8 px-2.5 py-1 sm:px-3 sm:py-1.5 text-[10px] sm:text-xs font-medium text-white/82 transition duration-300 sm:group-hover:border-emerald-300/25 sm:group-hover:bg-emerald-300/10 sm:group-hover:text-emerald-50"
