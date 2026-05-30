@@ -16,7 +16,7 @@ export default function PageLoader() {
     if (isFirstRenderRef.current) {
       isFirstRenderRef.current = false;
       prevPathname.current = pathname;
-      return;
+      return undefined;
     }
 
     if (prevPathname.current !== pathname) {
@@ -29,6 +29,7 @@ export default function PageLoader() {
 
       return () => clearTimeout(timer);
     }
+    return undefined;
   }, [pathname, searchParams]);
 
   return (

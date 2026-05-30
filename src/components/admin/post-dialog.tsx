@@ -156,6 +156,9 @@ const previewParserOptions: HTMLReactParserOptions = {
         return null;
       }
     }
+
+    // For any other node, do not replace — return undefined to let parser handle it
+    return undefined;
   },
 };
 

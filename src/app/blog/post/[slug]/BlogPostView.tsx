@@ -69,6 +69,7 @@ const parserOptions: HTMLReactParserOptions = {
         return null;
       }
     }
+    return undefined;
   },
 };
 
