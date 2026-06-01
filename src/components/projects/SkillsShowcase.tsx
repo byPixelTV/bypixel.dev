@@ -108,13 +108,14 @@ function useViewportWidth() {
 export default function SkillsShowcase() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [mounted, setMounted] = useState(false);
+  const [sectionHeight, setSectionHeight] = useState<number | null>(null);
   const viewportWidth = useViewportWidth();
   const isMobile = viewportWidth > 0 && viewportWidth < 768;
 
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
-  const springConfig = { damping: 25, stiffness: 150 };
+  const springConfig = { damping: 35, stiffness: 90 };
   const smoothMouseX = useSpring(mouseX, springConfig);
   const smoothMouseY = useSpring(mouseY, springConfig);
 
@@ -126,10 +127,10 @@ export default function SkillsShowcase() {
   // Move all useTransform hooks to the top level, out of conditional blocks
   const titleOpacity = useTransform(
     scrollYProgress,
-    [0, 0.05, 0.45, 0.5],
+    [0, 0.05, 0.6, 0.65],
     [0, 1, 1, 0],
   );
-  const titleScale = useTransform(scrollYProgress, [0, 0.1], [0.8, 1]);
+  const titleScale = useTransform(scrollYProgress, [0, 0.15], [0.8, 1]);
 
   const kotlinIconOpacity = useTransform(
     scrollYProgress,
@@ -172,7 +173,7 @@ export default function SkillsShowcase() {
   );
   const redisX = useTransform(scrollYProgress, [0.69, 0.74], [50, 0]);
 
-  const progressWidth = useTransform(scrollYProgress, [0, 0.5], ["0%", "100%"]);
+  const progressWidth = useTransform(scrollYProgress, [0, 0.6], ["0%", "100%"]);
 
   useEffect(() => {
     const handle = requestAnimationFrame(() => {
@@ -180,6 +181,23 @@ export default function SkillsShowcase() {
     });
     return () => cancelAnimationFrame(handle);
   }, []);
+
+  useEffect(() => {
+    const compute = () => {
+      const vh = typeof window !== "undefined" ? window.innerHeight : 800;
+      const perSkillFactor = isMobile ? 0.12 : 0.08; // smaller multiplier to avoid huge lengths
+      const baseMultiplier = isMobile ? 2 : 2; // minimum viewport multiples
+      const maxMultiplier = 4; // cap the total viewport multiples (increased for longer scroll)
+      const estimated = Math.min(
+        maxMultiplier,
+        Math.max(baseMultiplier, Math.ceil(skills.length * perSkillFactor)),
+      );
+      setSectionHeight(Math.round(vh * estimated));
+    };
+    compute();
+    window.addEventListener("resize", compute);
+    return () => window.removeEventListener("resize", compute);
+  }, [isMobile]);
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!containerRef.current) return;
@@ -221,7 +239,8 @@ export default function SkillsShowcase() {
   return (
     <section
       ref={containerRef}
-      className={`relative w-dvw left-[50%] -translate-x-1/2 ${isMobile ? "h-[600vh]" : "h-[1200vh]"} overflow-visible`}
+      className={`relative w-dvw left-[50%] -translate-x-1/2 overflow-visible`}
+      style={{ height: sectionHeight ? `${sectionHeight}px` : (isMobile ? "200vh" : "400vh") }}
       onMouseMove={isMobile ? undefined : handleMouseMove}
     >
       <div className="sticky top-0 flex h-screen w-full flex-col items-center justify-center overflow-hidden">
@@ -242,118 +261,6 @@ export default function SkillsShowcase() {
                 the constellation.
               </p>
             </motion.div>
-
-            <div className="pointer-events-none absolute inset-0 z-30 flex flex-col items-center justify-center p-4 sm:p-6">
-              <motion.div
-                style={{
-                  opacity: kotlinIconOpacity,
-                  scale: isMobile ? 0.7 : kotlinIconScale,
-                  y: kotlinIconY,
-                }}
-                className="relative mb-6 sm:mb-8"
-              >
-                <div className="absolute inset-0 bg-linear-to-tr from-[#7F52FF] via-[#C757BC] to-[#F78C40] opacity-30 blur-[80px] sm:blur-[120px] rounded-full" />
-                <Icon
-                  icon="vscode-icons:file-type-kotlin"
-                  className="h-24 w-24 sm:h-48 sm:w-48 relative z-10"
-                />
-                <motion.h3
-                  className="absolute -bottom-10 sm:-bottom-12 left-1/2 -translate-x-1/2 text-xl sm:text-2xl font-black text-white italic whitespace-nowrap"
-                  style={{ opacity: kotlinCoreTitleOpacity }}
-                >
-                  ALL THINGS KOTLIN
-                </motion.h3>
-              </motion.div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-6 max-w-5xl w-full overflow-y-auto max-h-[70vh] sm:max-h-none sm:overflow-visible pr-2">
-                <motion.div
-                  style={{ opacity: ktorOpacity, x: ktorX }}
-                  className="bg-white/3 border border-white/10 backdrop-blur-xl p-4 sm:p-6 rounded-2xl sm:rounded-3xl text-left"
-                >
-                  <div className="flex items-center gap-3 mb-3 sm:mb-4">
-                    <div className="p-1.5 sm:p-2 rounded-lg bg-blue-500/10 border border-blue-500/20">
-                      <Icon icon="devicon:ktor" className="h-5 w-5 sm:h-6 sm:w-6" />
-                    </div>
-                    <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.2em] text-blue-400">
-                      Application Layer
-                    </span>
-                  </div>
-                  <h4 className="text-lg sm:text-xl font-bold text-white mb-1 sm:mb-2">
-                    Ktor Engine
-                  </h4>
-                  <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
-                    Asynchronous microservices designed for maximum throughput.
-                    Non-blocking IO pipelines tailored for high-performance
-                    server logic.
-                  </p>
-                </motion.div>
-
-                <motion.div
-                  style={{ opacity: serialOpacity, x: serialX }}
-                  className="bg-white/3 border border-white/10 backdrop-blur-xl p-4 sm:p-6 rounded-2xl sm:rounded-3xl text-left"
-                >
-                  <div className="flex items-center gap-3 mb-3 sm:mb-4">
-                    <div className="p-1.5 sm:p-2 rounded-lg bg-violet-500/10 border border-violet-500/20">
-                      <Icon icon="logos:kotlin-icon" className="h-4 w-4 sm:h-5 sm:w-5" />
-                    </div>
-                    <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.2em] text-violet-400">
-                      Data Integrity
-                    </span>
-                  </div>
-                  <h4 className="text-lg sm:text-xl font-bold text-white mb-1 sm:mb-2">
-                    Serialization
-                  </h4>
-                  <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
-                    Type-safe encoding/decoding. kotlinx.serialization ensures
-                    robust data contracts between Minecraft clients and backend
-                    services.
-                  </p>
-                </motion.div>
-
-                <motion.div
-                  style={{ opacity: mongoOpacity, x: mongoX }}
-                  className="bg-white/3 border border-white/10 backdrop-blur-xl p-4 sm:p-6 rounded-2xl sm:rounded-3xl text-left"
-                >
-                  <div className="flex items-center gap-3 mb-3 sm:mb-4">
-                    <div className="p-1.5 sm:p-2 rounded-lg bg-green-500/10 border border-green-500/20">
-                      <Icon icon="logos:mongodb-icon" className="h-5 w-5 sm:h-6 sm:w-6" />
-                    </div>
-                    <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.2em] text-green-400">
-                      Deep Storage
-                    </span>
-                  </div>
-                  <h4 className="text-lg sm:text-xl font-bold text-white mb-1 sm:mb-2">
-                    MongoDB Persistence
-                  </h4>
-                  <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
-                    Scaling massive player data. Utilizing the KMongo/Coroutine
-                    driver for seamless integration with reactive backend flows.
-                  </p>
-                </motion.div>
-
-                <motion.div
-                  style={{ opacity: redisOpacity, x: redisX }}
-                  className="bg-white/3 border border-white/10 backdrop-blur-xl p-4 sm:p-6 rounded-2xl sm:rounded-3xl text-left"
-                >
-                  <div className="flex items-center gap-3 mb-3 sm:mb-4">
-                    <div className="p-1.5 sm:p-2 rounded-lg bg-red-500/10 border border-red-500/20">
-                      <Icon icon="logos:redis" className="h-4 w-4 sm:h-5 sm:w-5" />
-                    </div>
-                    <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.2em] text-red-400">
-                      Real-Time Sync
-                    </span>
-                  </div>
-                  <h4 className="text-lg sm:text-xl font-bold text-white mb-1 sm:mb-2">
-                    Redis Pub/Sub
-                  </h4>
-                  <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
-                    Global state synchronization. Low-latency caching and
-                    inter-server communication for horizontally scaled
-                    infrastructures.
-                  </p>
-                </motion.div>
-              </div>
-            </div>
 
             <div className="absolute inset-0 z-10 perspective-1000">
               {skills.map((skill, i) => (
@@ -409,7 +316,7 @@ function SkillItem({
   const [isHovered, setIsHovered] = useState(false);
 
   const zProgress = useTransform(scrollYProgress, (val) => {
-    const universeProgress = Math.min(val / 0.5, 1);
+    const universeProgress = Math.min(val / 0.8, 1);
     return (universeProgress + pos.offset) % 1;
   });
 
@@ -418,9 +325,9 @@ function SkillItem({
   const baseScale = useTransform(
     zProgress,
     [0, 0.2, 0.6, 0.9, 1],
-    [isMobile ? 0.4 : 0.6, isMobile ? 0.7 : 0.9, isMobile ? 1 : 1.4, isMobile ? 1.8 : 2.8, isMobile ? 2.5 : 4],
+    [isMobile ? 0.45 : 0.7, isMobile ? 0.85 : 1.0, isMobile ? 1.1 : 1.6, isMobile ? 2.2 : 3.4, isMobile ? 3.2 : 6],
   );
-  const hoverScale = useTransform(baseScale, (s) => (s as number) * 1.3);
+  const hoverScale = useTransform(baseScale, (s) => (s as number) * 1.4);
 
   const opacity = useTransform<number | number[], number>(
     [zProgress, universeOpacity],

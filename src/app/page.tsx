@@ -63,9 +63,6 @@ export default async function About() {
           </section>
           <section id="projects" className="space-y-10 scroll-mt-28 md:space-y-20">
             <HorizontalGallery />
-            <div id="eramc" className="scroll-mt-28">
-              <EraMCShowcase />
-            </div>
             <div id="skills" className="scroll-mt-28">
               <SkillsShowcase />
             </div>
