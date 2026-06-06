@@ -78,6 +78,21 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
 
     rafId = requestAnimationFrame(raf);
 
+    // expose Lenis instance so other components can use the same smooth-scroller
+    try {
+      // eslint-disable-next-line no-extra-parens, @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      (window as any).lenis = lenis;
+      // notify other code that Lenis is ready
+      try {
+        window.dispatchEvent(new CustomEvent("lenis-ready", { detail: { lenis } }));
+      } catch (e) {
+        // ignore
+      }
+    } catch (e) {
+      // ignore
+    }
+
     return () => {
       root.classList.remove("is-scrolling");
       if (hideTimer) clearTimeout(hideTimer);
@@ -89,6 +104,23 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
       window.removeEventListener("scroll", onNativeScroll);
       cancelAnimationFrame(rafId);
       lenis.destroy();
+      try {
+        // notify listeners that Lenis is destroyed
+        try {
+          window.dispatchEvent(new CustomEvent("lenis-destroyed"));
+        } catch (e) {
+          // ignore
+        }
+      } catch (e) {
+        // ignore
+      }
+      try {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        if ((window as any).lenis === lenis) delete (window as any).lenis;
+      } catch (e) {
+        // ignore
+      }
     };
   }, []);
 

@@ -22,10 +22,81 @@ export default function ScrollToTop() {
   }, []);
 
   const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
+    const w = window as any;
+    const lenis = w?.lenis;
+
+    const methodsTried: string[] = [];
+
+    const tryLenis = (arg: any) => {
+      try {
+        if (lenis && typeof lenis.scrollTo === "function") {
+          lenis.scrollTo(arg);
+          methodsTried.push(`lenis:${String(arg)}`);
+          return true;
+        }
+      } catch (e) {
+        // ignore
+      }
+      return false;
+    };
+
+    // 1) Try Lenis with numeric target
+    if (tryLenis(0)) return;
+    // 2) Try Lenis with 'top' keyword
+    if (tryLenis("top")) return;
+
+    // If Lenis isn't available yet, listen for the ready event and call it once it initializes
+    if (!(window as any)?.lenis) {
+      const onLenisReady = (e: Event) => {
+        try {
+          const l = (window as any)?.lenis;
+          if (l && typeof l.scrollTo === "function") {
+            try {
+              l.scrollTo(0, { immediate: false });
+            } catch (err) {
+              // ignore
+            }
+          }
+        } catch (err) {
+          // ignore
+        }
+      };
+      window.addEventListener("lenis-ready", onLenisReady, { once: true });
+    }
+
+    // 3) Native smooth scroll (should provide immediate feedback)
+    try {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      methodsTried.push("native:smooth");
+    } catch (e) {
+      // ignore
+    }
+
+    // 4) Try element-based scroll as a last-resort
+    try {
+      const docEl = document.documentElement || document.body;
+      if (docEl && typeof (docEl as any).scrollTo === "function") {
+        (docEl as any).scrollTo({ top: 0, behavior: "smooth" });
+        methodsTried.push("docEl:smooth");
+      }
+    } catch (e) {
+      // ignore
+    }
+
+    // 5) Hard set - immediate
+    try {
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+      methodsTried.push("direct:setScrollTop");
+    } catch (e) {
+      // ignore
+    }
+
+    // If nothing seems to run (debug), log methods tried for developer inspection
+    if (process.env.NODE_ENV === "development") {
+      // eslint-disable-next-line no-console
+      console.debug("ScrollToTop methods tried:", methodsTried);
+    }
   };
 
   return (

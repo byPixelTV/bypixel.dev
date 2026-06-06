@@ -47,6 +47,45 @@ const Navbar = () => {
   const sectionHref = (hash: string) => (pathname === "/" ? hash : `/${hash}`);
   const showSectionsNavigation = pathname === "/";
 
+  const handleSectionClick = async (hash: string, event?: React.MouseEvent) => {
+    if (event) event.preventDefault();
+    const id = hash.replace("#", "");
+
+    const scrollToSelector = (selector: string) => {
+      const el = document.getElementById(id) || document.querySelector(selector);
+      if (el) {
+        (el as Element).scrollIntoView({ behavior: "smooth", block: "start" });
+        return true;
+      }
+      return false;
+    };
+
+    if (pathname === "/") {
+      // Same page: smooth scroll directly
+      if (!scrollToSelector(hash)) {
+        // Fallback to setting location.hash so browser can try
+        window.location.hash = hash;
+      }
+    } else {
+      // Navigate to home without auto-scrolling, then smooth-scroll when element exists
+      router.push(`/#${id}`, { scroll: false });
+      // try immediate scroll, otherwise wait a bit for content to mount
+      if (!scrollToSelector(hash)) {
+        const maxAttempts = 12;
+        let attempts = 0;
+        const interval = setInterval(() => {
+          attempts += 1;
+          if (scrollToSelector(hash) || attempts >= maxAttempts) {
+            clearInterval(interval);
+          }
+        }, 50);
+      }
+    }
+
+    setIsSectionsMenuOpen(false);
+    setIsMobileMenuOpen(false);
+  };
+
   // Prefetch all pages on mount
   useEffect(() => {
     headerNavLinks.forEach(({ url }) => {
@@ -246,7 +285,7 @@ const Navbar = () => {
                             key={section.hash}
                             href={sectionHref(section.hash)}
                             className="block rounded-lg px-3 py-2 text-sm text-white/88 transition hover:bg-white/10"
-                            onClick={() => setIsSectionsMenuOpen(false)}
+                            onClick={(e) => handleSectionClick(section.hash, e)}
                           >
                             {section.title}
                           </Link>
@@ -330,7 +369,7 @@ const Navbar = () => {
                           <Link
                             href={sectionHref(section.hash)}
                             className="block rounded-lg px-3 py-2 text-sm tracking-wider text-white transition duration-300 ease-in-out hover:bg-white/5"
-                            onClick={() => setIsMobileMenuOpen(false)}
+                            onClick={(e) => handleSectionClick(section.hash, e)}
                           >
                             {section.title}
                           </Link>
