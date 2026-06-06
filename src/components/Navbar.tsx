@@ -31,7 +31,7 @@ const sectionLinks = [
   { title: "EraMC", hash: "#eramc" },
   { title: "Skills", hash: "#skills" },
   { title: "Journey", hash: "#journey" },
-  { title: "Contact", hash: "#contact" },
+  { title: "Sourcecode", hash: "#sourcecode" },
 ];
 
 const Navbar = () => {
