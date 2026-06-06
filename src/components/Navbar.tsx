@@ -28,7 +28,6 @@ const headerNavLinks = [
 const sectionLinks = [
   { title: "Top", hash: "#top" },
   { title: "Projects", hash: "#projects" },
-  { title: "EraMC", hash: "#eramc" },
   { title: "Skills", hash: "#skills" },
   { title: "Journey", hash: "#journey" },
   { title: "Sourcecode", hash: "#sourcecode" },
