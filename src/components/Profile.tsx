@@ -184,6 +184,7 @@ const Profile = () => {
   }, [targetBlobColors, isMobile]);
 
   const renderedBlobColors = isMobile ? targetBlobColors : blobColors;
+  const heroAccentGradient = `linear-gradient(90deg, ${renderedBlobColors[0]}, ${renderedBlobColors[1]} 52%, ${renderedBlobColors[2]})`;
 
   const handleNowPlayingChange = (result: NowPlayingResult | null) => {
     if (isMobile) {
@@ -209,55 +210,72 @@ const Profile = () => {
       >
         <motion.div
           aria-hidden="true"
-          className="pointer-events-none absolute -inset-x-16 -inset-y-16 overflow-visible opacity-70 sm:-inset-x-28 sm:-inset-y-24 sm:opacity-100"
+          className="pointer-events-none absolute -inset-x-20 -inset-y-20 overflow-visible opacity-80 sm:-inset-x-32 sm:-inset-y-28 sm:opacity-100"
           initial={false}
-          animate={{ opacity: isMobile ? 0.68 : albumAmbience ? 1 : 0.86 }}
+          animate={{ opacity: isMobile ? 0.76 : albumAmbience ? 1 : 0.92 }}
           transition={{ duration: 0.55, ease: "easeInOut" }}
         >
           <>
             <motion.div
-              className="absolute -left-28 -top-14 h-88 w-88 rounded-full blur-[74px] saturate-[1.6] sm:-left-36 sm:-top-20 sm:h-136 sm:w-136 sm:blur-[92px] sm:saturate-[1.75]"
+              className="absolute -left-32 -top-20 h-104 w-104 rounded-full blur-[84px] saturate-[1.75] sm:-left-44 sm:-top-28 sm:h-[38rem] sm:w-[38rem] sm:blur-[128px] sm:saturate-[1.95]"
               style={{
-                background: `radial-gradient(circle, ${renderedBlobColors[0]} 0%, transparent 58%)`,
-                mixBlendMode: "plus-lighter",
+                background: `radial-gradient(circle, color-mix(in srgb, ${renderedBlobColors[0]} 92%, white) 0%, ${renderedBlobColors[0]} 22%, transparent 68%)`,
+                mixBlendMode: "screen",
               }}
-              animate={isMobile ? { x: 0, y: 0, scale: 1 } : { x: [0, 38, -30, 0], y: [0, -32, 18, 0], scale: [1, 1.18, 0.9, 1] }}
-              transition={isMobile ? { duration: 0 } : { duration: 10, ease: "easeInOut", repeat: Infinity }}
+              animate={isMobile ? { x: 0, y: 0, scale: 1 } : { x: [0, 54, -40, 0], y: [0, -40, 22, 0], scale: [1, 1.28, 0.92, 1] }}
+              transition={isMobile ? { duration: 0 } : { duration: 12, ease: "easeInOut", repeat: Infinity }}
             />
             <motion.div
-              className="absolute -right-20 top-12 h-80 w-xs rounded-full blur-[72px] saturate-[1.65] sm:-right-32 sm:top-8 sm:h-lg sm:w-lg sm:blur-[94px] sm:saturate-[1.8]"
+              className="absolute -right-24 top-10 h-96 w-96 rounded-full blur-[88px] saturate-[1.8] sm:-right-40 sm:top-4 sm:h-[34rem] sm:w-[34rem] sm:blur-[126px] sm:saturate-[2]"
               style={{
-                background: `radial-gradient(circle, ${renderedBlobColors[1]} 0%, transparent 58%)`,
-                mixBlendMode: "plus-lighter",
+                background: `radial-gradient(circle, color-mix(in srgb, ${renderedBlobColors[1]} 88%, white) 0%, ${renderedBlobColors[1]} 24%, transparent 66%)`,
+                mixBlendMode: "screen",
               }}
-              animate={isMobile ? { x: 0, y: 0, scale: 1 } : { x: [0, -32, 22, 0], y: [0, 30, -20, 0], scale: [1, 0.88, 1.16, 1] }}
-              transition={isMobile ? { duration: 0 } : { duration: 9, ease: "easeInOut", repeat: Infinity }}
+              animate={isMobile ? { x: 0, y: 0, scale: 1 } : { x: [0, -44, 30, 0], y: [0, 38, -28, 0], scale: [1, 0.9, 1.22, 1] }}
+              transition={isMobile ? { duration: 0 } : { duration: 11, ease: "easeInOut", repeat: Infinity }}
             />
             <motion.div
-              className="absolute -bottom-32 left-[20%] hidden h-120 w-120 rounded-full blur-[96px] saturate-[1.8] sm:block"
+              className="absolute -bottom-36 left-[18%] hidden h-[34rem] w-[34rem] rounded-full blur-[112px] saturate-[1.85] sm:block"
               style={{
-                background: `radial-gradient(circle, ${renderedBlobColors[2]} 0%, transparent 60%)`,
-                mixBlendMode: "plus-lighter",
+                background: `radial-gradient(circle, color-mix(in srgb, ${renderedBlobColors[2]} 90%, white) 0%, ${renderedBlobColors[2]} 26%, transparent 70%)`,
+                mixBlendMode: "screen",
               }}
-              animate={{ x: [0, 20, -24, 0], y: [0, -24, 18, 0], scale: [1, 1.2, 0.88, 1] }}
-              transition={{ duration: 12, ease: "easeInOut", repeat: Infinity }}
+              animate={{ x: [0, 26, -30, 0], y: [0, -26, 20, 0], scale: [1, 1.25, 0.9, 1] }}
+              transition={{ duration: 13, ease: "easeInOut", repeat: Infinity }}
             />
             <motion.div
-              className="absolute left-[48%] top-[18%] hidden h-sm w-sm -translate-x-1/2 rounded-full blur-[86px] saturate-[1.85] sm:block"
+              className="absolute left-[50%] top-[16%] hidden h-[18rem] w-[18rem] -translate-x-1/2 rounded-full blur-[92px] saturate-[1.9] sm:block"
               style={{
-                background: `radial-gradient(circle, ${renderedBlobColors[1]} 0%, transparent 60%)`,
-                mixBlendMode: "plus-lighter",
+                background: `radial-gradient(circle, color-mix(in srgb, ${renderedBlobColors[1]} 82%, white) 0%, ${renderedBlobColors[1]} 20%, transparent 64%)`,
+                mixBlendMode: "screen",
               }}
-              animate={{ x: [0, 14, -14, 0], y: [0, -14, 16, 0], scale: [0.9, 1.16, 0.9] }}
-              transition={{ duration: 8.5, ease: "easeInOut", repeat: Infinity }}
+              animate={{ x: [0, 18, -16, 0], y: [0, -18, 18, 0], scale: [0.92, 1.2, 0.94] }}
+              transition={{ duration: 9.5, ease: "easeInOut", repeat: Infinity }}
+            />
+            <div
+              aria-hidden="true"
+              className="absolute inset-0"
+              style={{
+                background: `radial-gradient(circle at center, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 22%, rgba(0,0,0,0) 55%), radial-gradient(circle at 50% 48%, color-mix(in srgb, ${renderedBlobColors[1]} 22%, transparent) 0%, transparent 46%)`,
+                filter: "blur(18px)",
+                mixBlendMode: "overlay",
+              }}
             />
           </>
         </motion.div>
 
         <div className="relative z-10 flex min-h-[calc(100vh-8.25rem)] items-center justify-center px-6 py-14 sm:px-8 lg:px-10">
           <div className="w-full max-w-300 text-center text-white">
+            <div
+              aria-hidden="true"
+              className="absolute left-1/2 top-1/2 -z-10 h-[34rem] w-[34rem] -translate-x-1/2 -translate-y-[54%] rounded-full blur-3xl"
+              style={{
+                background: `radial-gradient(circle, ${renderedBlobColors[1]} 0%, transparent 68%)`,
+                opacity: albumAmbience ? 0.18 : 0.12,
+              }}
+            />
             <motion.p
-              className="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/65 sm:text-xs"
+              className="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/72 sm:text-xs"
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.45 }}
@@ -272,11 +290,16 @@ const Profile = () => {
               transition={{ duration: 0.5, delay: 0.1 }}
             >
               A fullstack developer
-              <span className="block text-purple-400">from Germany.</span>
+              <span
+                className="block bg-clip-text text-transparent"
+                style={{ backgroundImage: heroAccentGradient, textShadow: "0 0 26px rgba(255,255,255,0.12)" }}
+              >
+                from Germany.
+              </span>
             </motion.h1>
 
             <motion.p
-              className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed text-white/75 sm:text-lg"
+              className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed text-white/80 sm:text-lg"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
@@ -299,6 +322,7 @@ const Profile = () => {
               <a
                 href="mailto:contact@bypixel.dev"
                 className="rounded-full border border-white/25 bg-transparent px-6 py-2.5 text-xs font-medium text-white transition-colors hover:bg-white/10 sm:px-5 sm:py-2 sm:text-sm"
+                style={{ boxShadow: `0 0 0 1px color-mix(in srgb, ${renderedBlobColors[1]} 18%, transparent)` }}
               >
                 Contact
               </a>
