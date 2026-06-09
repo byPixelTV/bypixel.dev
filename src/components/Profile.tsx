@@ -9,8 +9,8 @@ import { MdEmail } from "react-icons/md";
 import SpotifyNowPlaying from "@/components/SpotifyNowPlaying";
 import type { NowPlayingResult } from "@/lib/actions/spotify";
 
-const ACTIVE_FALLBACK_BLOB_COLORS = ["#1DB954", "#40C7FF", "#A78BFA"];
-const IDLE_BLOB_COLORS = ["#d8dbe2", "#b9bec8", "#8f96a3"];
+const ACTIVE_FALLBACK_BLOB_COLORS = ["#7C3AED", "#A855F7", "#FB7185"];
+const IDLE_BLOB_COLORS = ["#3B0D4A", "#6D28D9", "#B453B6"];
 const BLOB_TRANSITION_MS = 650;
 
 type RGB = [number, number, number];
@@ -212,7 +212,7 @@ const Profile = () => {
           aria-hidden="true"
           className="pointer-events-none absolute -inset-x-20 -inset-y-20 overflow-visible opacity-80 sm:-inset-x-32 sm:-inset-y-28 sm:opacity-100"
           initial={false}
-          animate={{ opacity: isMobile ? 0.76 : albumAmbience ? 1 : 0.92 }}
+          animate={{ opacity: isMobile ? 0.72 : albumAmbience ? 1 : 0.78 }}
           transition={{ duration: 0.55, ease: "easeInOut" }}
         >
           <>

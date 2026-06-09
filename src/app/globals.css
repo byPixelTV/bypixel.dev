@@ -290,14 +290,14 @@ html.is-scrolling .custom-scrollbar-thumb {
   position: absolute;
   border-radius: 50%;
   filter: blur(110px);
-  opacity: 0.32;
+  opacity: 0.22;
   mix-blend-mode: screen;
 }
 
 .background-layout .blob-1 {
   width: 720px;
   height: 720px;
-  background: radial-gradient(circle, #7c3aed, #9333ea, transparent);
+  background: radial-gradient(circle, #3B0D4A 0%, #6D28D9 36%, transparent 68%);
   top: -14%;
   right: -10%;
   animation: float1 18s ease-in-out infinite, pulse1 10s ease-in-out infinite;
@@ -306,7 +306,7 @@ html.is-scrolling .custom-scrollbar-thumb {
 .background-layout .blob-2 {
   width: 680px;
   height: 680px;
-  background: radial-gradient(circle, #a855f7, #c026d3, transparent);
+  background: radial-gradient(circle, #6D28D9 0%, #B453B6 40%, transparent 72%);
   bottom: -18%;
   left: -14%;
   animation: float2 22s ease-in-out infinite reverse, pulse2 13s ease-in-out infinite;
@@ -315,7 +315,7 @@ html.is-scrolling .custom-scrollbar-thumb {
 .background-layout .blob-3 {
   width: 620px;
   height: 620px;
-  background: radial-gradient(circle, #6d28d9, #7c3aed, transparent);
+  background: radial-gradient(circle, #B453B6 0%, #6D28D9 40%, transparent 72%);
   top: 36%;
   left: 46%;
   animation: float3 20s ease-in-out infinite, pulse3 15s ease-in-out infinite;
@@ -324,7 +324,7 @@ html.is-scrolling .custom-scrollbar-thumb {
 .background-layout .blob-4 {
   width: 540px;
   height: 540px;
-  background: radial-gradient(circle, #4c1d95, #9333ea, transparent);
+  background: radial-gradient(circle, #2b0733 0%, #3B0D4A 36%, transparent 70%);
   top: 62%;
   right: 20%;
   animation: float2 28s ease-in-out 5s infinite, pulse2 18s ease-in-out infinite reverse;
@@ -333,7 +333,7 @@ html.is-scrolling .custom-scrollbar-thumb {
 @media (max-width: 640px) {
   .background-layout .gradient-blob {
     filter: blur(72px);
-    opacity: 0.14;
+    opacity: 0.12;
     animation: none !important;
     transform: none !important;
   }
