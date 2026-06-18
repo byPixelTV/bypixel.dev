@@ -17,11 +17,12 @@ import {
   useScroll,
   useMotionValueEvent,
 } from "framer-motion";
-import { LuEqual, LuBook, LuUser, LuX } from "react-icons/lu";
+import { LuEqual, LuBook, LuClock, LuUser, LuX } from "react-icons/lu";
 import type { Variants } from "framer-motion";
 
 const headerNavLinks = [
   { title: "About", url: "/", icon: <LuUser color="#FFFFFF" /> },
+  { title: "Now", url: "/now", icon: <LuClock color="#FFFFFF" /> },
   { title: "Blog", url: "/blog", icon: <LuBook color="#FFFFFF" /> },
 ];
 

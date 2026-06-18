@@ -175,15 +175,10 @@ const SpotifyNowPlaying = ({ onNowPlayingChange }: SpotifyNowPlayingProps) => {
     try {
       const result = await getNowPlaying();
 
-      if (
-        result.isPlaying &&
-        result.trackId &&
-        prevTrackId.current !== null &&
-        result.trackId !== prevTrackId.current
-      ) {
+      if (result.trackId && prevTrackId.current !== null && result.trackId !== prevTrackId.current) {
         setDirection(1);
       }
-      if (result.isPlaying && result.trackId) {
+      if (result.trackId) {
         prevTrackId.current = result.trackId;
       }
 
@@ -229,7 +224,7 @@ const SpotifyNowPlaying = ({ onNowPlayingChange }: SpotifyNowPlayingProps) => {
     let disposed = false;
     let fallbackRaf: number | null = null;
 
-    if (isMobile || !data?.isPlaying || !data.albumImageUrl) {
+    if (isMobile || !data?.albumImageUrl) {
       fallbackRaf = requestAnimationFrame(() => {
         setTargetCardColors(FALLBACK_CARD_COLORS);
       });
@@ -284,7 +279,8 @@ const SpotifyNowPlaying = ({ onNowPlayingChange }: SpotifyNowPlayingProps) => {
 
   const renderedCardColors = isMobile ? targetCardColors : cardColors;
 
-  const show = data?.isPlaying && data.title;
+  const show = Boolean(data?.title);
+  const statusLabel = data?.isPlaying ? "Now Playing" : "Last Played";
   const progressPercent = data?.durationMs
     ? Math.min((progressMs / data.durationMs) * 100, 100)
     : 0;
@@ -370,12 +366,16 @@ const SpotifyNowPlaying = ({ onNowPlayingChange }: SpotifyNowPlayingProps) => {
                         style={{ fontSize: "13px" }}
                       />
                       <span className="text-[10px] uppercase tracking-widest text-white/50 font-semibold truncate">
-                        Now Playing
+                        {statusLabel}
                       </span>
                     </div>
-                    <div className="shrink-0">
-                      <MusicBars />
-                    </div>
+                    {data!.isPlaying ? (
+                      <div className="shrink-0">
+                        <MusicBars />
+                      </div>
+                    ) : (
+                      <span className="h-2 w-2 shrink-0 rounded-full bg-white/35" />
+                    )}
                   </div>
                   <p className="text-sm font-semibold text-white truncate leading-tight group-hover:text-white/90">
                     {data!.title}
@@ -390,25 +390,34 @@ const SpotifyNowPlaying = ({ onNowPlayingChange }: SpotifyNowPlayingProps) => {
               </div>
 
               <div className="px-4 pb-3">
-                <div className="h-1 w-full bg-white/10 rounded-full overflow-hidden">
-                  <div
-                    key={data!.trackId}
-                    className="h-full bg-[#1DB954] rounded-full"
-                    style={{
-                      width: `${progressPercent}%`,
-                      transition: "width 1s linear",
-                    }}
-                  />
-                </div>
+                {data!.isPlaying ? (
+                  <>
+                    <div className="h-1 w-full bg-white/10 rounded-full overflow-hidden">
+                      <div
+                        key={data!.trackId}
+                        className="h-full bg-[#1DB954] rounded-full"
+                        style={{
+                          width: `${progressPercent}%`,
+                          transition: "width 1s linear",
+                        }}
+                      />
+                    </div>
 
-                <div className="flex justify-between items-center mt-1.5">
-                  <span className="text-[10px] text-white/40 tabular-nums font-medium">
-                    {formatMs(progressMs)}
-                  </span>
-                  <span className="text-[10px] text-white/40 tabular-nums font-medium">
-                    {data!.durationMs ? formatMs(data!.durationMs) : ""}
-                  </span>
-                </div>
+                    <div className="flex justify-between items-center mt-1.5">
+                      <span className="text-[10px] text-white/40 tabular-nums font-medium">
+                        {formatMs(progressMs)}
+                      </span>
+                      <span className="text-[10px] text-white/40 tabular-nums font-medium">
+                        {data!.durationMs ? formatMs(data!.durationMs) : ""}
+                      </span>
+                    </div>
+                  </>
+                ) : (
+                  <div className="mt-1.5 flex items-center justify-between text-[10px] font-medium uppercase tracking-widest text-white/38">
+                    <span>Recently played</span>
+                    <span>{data!.playedAt ? new Date(data!.playedAt).toLocaleDateString("en", { month: "short", day: "numeric" }) : ""}</span>
+                  </div>
+                )}
               </div>
             </motion.div>
           </AnimatePresence>
