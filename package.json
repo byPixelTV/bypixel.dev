@@ -27,7 +27,7 @@
     "mongodb": "^7.2.0",
     "kysely": "^0.28.0",
     "motion": "^12.40.0",
-    "next": "16.2.9",
+    "next": "16.2.10",
     "radix-ui": "^1.4.3",
     "react": "19.2.7",
     "react-dom": "19.2.7",
@@ -46,7 +46,7 @@
     "@types/react-dom": "^19.2.3",
     "babel-plugin-react-compiler": "1.0.0",
     "eslint": "^10.4.1",
-    "eslint-config-next": "16.2.9",
+    "eslint-config-next": "16.2.10",
     "tailwindcss": "^4.3.0",
     "typescript": "^6.0.3"
   },
