@@ -25,7 +25,7 @@
     "marked": "^18.0.4",
     "marked-gfm-heading-id": "^4.1.4",
     "mongodb": "^7.2.0",
-    "kysely": "^0.28.0",
+    "kysely": "^0.29.0",
     "motion": "^12.40.0",
     "next": "16.2.10",
     "radix-ui": "^1.4.3",
@@ -59,6 +59,6 @@
     "unrs-resolver"
   ],
   "overrides": {
-    "kysely": "0.28.17"
+    "kysely": "0.29.3"
   }
 }
