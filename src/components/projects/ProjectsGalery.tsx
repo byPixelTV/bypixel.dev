@@ -35,8 +35,7 @@ const projects: Project[] = [
       "Custom Minecraft smp server, pvp server and more coming soon — built bespoke plugins, a web dashboard and the full server infrastructure from scratch.",
     tags: ["Minecraft", "Backend", "Web", "Linux", "Active", "WIP", "Primary"],
     startAt: "May 2025",
-    endAt: "now",
-    url: "https://dc.eramc.net",
+    endAt: "July 2026"
   },
   {
     name: "BetterAttack",
@@ -79,7 +78,7 @@ const projects: Project[] = [
       "Minecraft minigame network — developed gameplay skripts and managed server infrastructure with Skript.",
     tags: ["Minecraft", "Kotlin", "Skript"],
     startAt: "April 2024",
-    endAt: "Juli 2024",
+    endAt: "July 2024",
     url: "https://skydinse.net",
   },
 ];
