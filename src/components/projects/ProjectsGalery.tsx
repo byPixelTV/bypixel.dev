@@ -331,9 +331,11 @@ function ProjectCardItem({
                 {item.name}
               </h3>
             </div>
-            <div className="rounded-full border border-white/15 bg-white/10 px-2.5 py-1.5 sm:px-3 sm:py-2 text-[10px] sm:text-xs font-medium text-white/85 backdrop-blur-md transition duration-300 sm:group-hover:bg-emerald-400/15 sm:group-hover:text-emerald-50">
-              Open
-            </div>
+            {item.url && (
+              <div className="rounded-full border border-white/15 bg-white/10 px-2.5 py-1.5 sm:px-3 sm:py-2 text-[10px] sm:text-xs font-medium text-white/85 backdrop-blur-md transition duration-300 sm:group-hover:bg-emerald-400/15 sm:group-hover:text-emerald-50">
+                Open
+              </div>
+            )}
           </div>
         </div>
 
@@ -369,15 +371,15 @@ function ProjectCardItem({
               )}
             </div>
 
-            <div className="flex items-center justify-between gap-3 border-t border-white/10 pt-3 sm:pt-4 text-xs sm:text-sm text-white/70">
-              <span>
-                {item.url ? "External project link" : "Project showcase"}
-              </span>
-              <span className="inline-flex items-center gap-1.5 text-white/90 transition sm:group-hover:translate-x-0.5 sm:group-hover:text-emerald-100">
-                View project
-                <ArrowUpRight className="size-3.5 sm:size-4" />
-              </span>
-            </div>
+            {item.url && (
+              <div className="flex items-center justify-between gap-3 border-t border-white/10 pt-3 sm:pt-4 text-xs sm:text-sm text-white/70">
+                <span>External project link</span>
+                <span className="inline-flex items-center gap-1.5 text-white/90 transition sm:group-hover:translate-x-0.5 sm:group-hover:text-emerald-100">
+                  View project
+                  <ArrowUpRight className="size-3.5 sm:size-4" />
+                </span>
+              </div>
+            )}
           </div>
         </div>
       </div>
