@@ -28,12 +28,23 @@ type ProjectCard = Project & {
 
 const projects: Project[] = [
   {
+    name: "Dat Bot",
+    imagePath: "/projects/datbot.png",
+    role: "Web Developer",
+    description:
+      "Feature-rich Discord bot paired with a Next.js web dashboard — moderation, stats and integrations.",
+    tags: ["TypeScript", "Next.js", "Discord.js", "Web", "Kotlin", "Active", "JDA", "Primary"],
+    startAt: "October 2024",
+    endAt: "now",
+    url: "https://datbot.xyz",
+  },
+  {
     name: "EraMC",
     imagePath: "/projects/eramc.png",
     role: "Founder, Developer & Sys Admin",
     description:
       "Custom Minecraft smp server, pvp server and more coming soon — built bespoke plugins, a web dashboard and the full server infrastructure from scratch.",
-    tags: ["Minecraft", "Backend", "Web", "Linux", "Active", "WIP", "Primary"],
+    tags: ["Minecraft", "Backend", "Web", "Linux", "Kotlin", "Go"],
     startAt: "May 2025",
     endAt: "July 2026"
   },
@@ -47,17 +58,6 @@ const projects: Project[] = [
     startAt: "October 2025",
     endAt: "now",
     url: "https://discord.gg/betterattack",
-  },
-  {
-    name: "Dat Bot",
-    imagePath: "/projects/datbot.png",
-    role: "Web Developer",
-    description:
-      "Feature-rich Discord bot paired with a Next.js web dashboard — moderation, stats and integrations.",
-    tags: ["TypeScript", "Next.js", "Discord.js", "Web"],
-    startAt: "October 2024",
-    endAt: "January 2026",
-    url: "https://datbot.xyz",
   },
   {
     name: "DaniSMP",
