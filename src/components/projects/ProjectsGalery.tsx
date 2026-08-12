@@ -76,9 +76,9 @@ const projects: Project[] = [
     role: "Developer",
     description:
       "Minecraft minigame network — developed gameplay skripts and managed server infrastructure with Skript.",
-    tags: ["Minecraft", "Kotlin", "Skript"],
-    startAt: "April 2024",
-    endAt: "July 2024",
+    tags: ["Minecraft", "Kotlin", "Skript", "Backend", "Linux", "Next.js", "Web"],
+    startAt: "August 2026",
+    endAt: "now",
     url: "https://skydinse.net",
   },
 ];
