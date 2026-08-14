@@ -3,10 +3,9 @@
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import 'lenis/dist/lenis.css'
+import "lenis/dist/lenis.css";
 import SmoothScroll from "@/components/scroll/SmoothScroll";
 import ScrollToTop from "@/components/scroll/ScrollToTop";
-import { Suspense } from "react";
 
 const fontSans = Inter({
   subsets: ["latin"],
@@ -20,7 +19,8 @@ const fontMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: "bypixel.dev",
-  description: "Welcome to my personal website, a portfolio and blog showcasing my work as a software developer. Explore my projects, tutorials, and insights into the world of programming. Join me on this journey of coding and creativity!",
+  description:
+    "Welcome to my personal website, a portfolio and blog showcasing my work as a software developer. Explore my projects, tutorials, and insights into the world of programming. Join me on this journey of coding and creativity!",
 };
 
 export default function RootLayout({

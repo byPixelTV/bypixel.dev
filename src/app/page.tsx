@@ -2,7 +2,6 @@ import BackgroundLayout from "@/components/BackgroundLayout";
 import Navbar from "@/components/Navbar";
 import Profile from "@/components/Profile";
 import HorizontalGallery from "@/components/projects/ProjectsGalery";
-import EraMCShowcase from "@/components/projects/EraMCShowcase";
 import SkillsShowcase from "@/components/projects/SkillsShowcase";
 import CodingJourney from "@/components/projects/CodingJourney";
 import AIFooter from "@/components/AIFooter";
@@ -13,7 +12,7 @@ export const metadata: Metadata = {
   description: "My personal website used as a portfolio and blog.",
   keywords: [
     "bypixeltv",
-    "bypixel", 
+    "bypixel",
     "software developer",
     "web developer",
     "blog",
@@ -23,7 +22,7 @@ export const metadata: Metadata = {
     "technology",
     "development",
     "nextjs",
-    "bypixel.dev"
+    "bypixel.dev",
   ],
   authors: [{ name: "byPixelTV" }],
   openGraph: {
@@ -33,11 +32,12 @@ export const metadata: Metadata = {
         url: "/assets/logo/256x.png",
         width: 256,
         height: 256,
-        alt: "byPixelTV Logo"
-      }
+        alt: "byPixelTV Logo",
+      },
     ],
     title: "Home",
-    description: "Welcome to my personal website, a portfolio and blog showcasing my work as a software developer. Explore my projects, tutorials, and insights into the world of programming. Join me on this journey of coding and creativity!",
+    description:
+      "Welcome to my personal website, a portfolio and blog showcasing my work as a software developer. Explore my projects, tutorials, and insights into the world of programming. Join me on this journey of coding and creativity!",
     type: "website",
   },
   twitter: {

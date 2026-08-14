@@ -81,9 +81,7 @@ export default function OGPreviewCard({ data, href }: OGPreviewCardProps) {
             </p>
           )}
           {data.description && (
-            <p className="text-gray-400 text-sm leading-snug line-clamp-2">
-              {data.description}
-            </p>
+            <p className="text-gray-400 text-sm leading-snug line-clamp-2">{data.description}</p>
           )}
           <p className="text-[11px] text-gray-500 leading-tight truncate" title={href}>
             {href}
@@ -107,17 +105,13 @@ export default function OGPreviewCard({ data, href }: OGPreviewCardProps) {
             <div className="flex items-center gap-1 text-xs min-w-0 truncate">
               {data.siteName && data.siteName !== displayHostname && (
                 <>
-                  <span className="shrink-0 font-medium text-gray-400">
-                    {data.siteName}
-                  </span>
+                  <span className="shrink-0 font-medium text-gray-400">{data.siteName}</span>
                   <span className="shrink-0 text-gray-600">·</span>
                 </>
               )}
               <span className="truncate">
                 <span className="text-gray-400">{displayHostname}</span>
-                {displayPath && (
-                  <span className="text-gray-600">{displayPath}</span>
-                )}
+                {displayPath && <span className="text-gray-600">{displayPath}</span>}
               </span>
             </div>
           </div>
@@ -140,7 +134,9 @@ export default function OGPreviewCard({ data, href }: OGPreviewCardProps) {
               href={href}
               target="_blank"
               rel="noopener noreferrer"
-              onClick={(e) => { e.stopPropagation(); }}
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
               title="Open link"
               className="flex items-center gap-1.5 px-2 py-1 rounded-md text-xs text-gray-400 hover:text-white hover:bg-white/10 transition-colors"
             >
@@ -153,4 +149,3 @@ export default function OGPreviewCard({ data, href }: OGPreviewCardProps) {
     </div>
   );
 }
-

@@ -11,12 +11,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import {
-  motion,
-  AnimatePresence,
-  useScroll,
-  useMotionValueEvent,
-} from "framer-motion";
+import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
 import { LuEqual, LuBook, LuClock, LuUser, LuX } from "react-icons/lu";
 import type { Variants } from "framer-motion";
 
@@ -94,7 +89,7 @@ const Navbar = () => {
         router.prefetch(url);
       }
     });
-    
+
     // Also prefetch blog posts list aggressively
     if (pathname !== "/blog") {
       router.prefetch("/blog");
@@ -227,11 +222,7 @@ const Navbar = () => {
               transition={{ duration: 0.34, ease: "easeOut" }}
               style={{ pointerEvents: isScrolled ? "none" : "auto" }}
             >
-              <Link
-                href="/"
-                aria-label="Go to homepage"
-                className="nav-logo"
-              >
+              <Link href="/" aria-label="Go to homepage" className="nav-logo">
                 <span className={`nav-logo-core ${isScrolled ? "nav-logo-core-exit" : ""}`}>
                   <Image
                     src="/assets/logo/eramc_base.svg"
@@ -397,9 +388,7 @@ const Navbar = () => {
                       >
                         <div className="flex items-center space-x-3">
                           <div className="p-2 rounded-lg">{item.icon}</div>
-                          <span className="text-sm tracking-wider">
-                            {item.title}
-                          </span>
+                          <span className="text-sm tracking-wider">{item.title}</span>
                         </div>
                       </Link>
                     </motion.li>

@@ -1,9 +1,12 @@
-import React from 'react';
+import React from "react";
 
 export default function BackgroundLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <div className="background-layout fixed inset-0 z-0 overflow-hidden pointer-events-none" style={{ background: '#030305' }}>
+      <div
+        className="background-layout fixed inset-0 z-0 overflow-hidden pointer-events-none"
+        style={{ background: "#030305" }}
+      >
         <div className="gradient-blob blob-1"></div>
         <div className="gradient-blob blob-2"></div>
         <div className="gradient-blob blob-3"></div>
@@ -14,9 +17,7 @@ export default function BackgroundLayout({ children }: { children: React.ReactNo
         </div>
       </div>
 
-      <div className="relative z-10 min-h-screen">
-        {children}
-      </div>
+      <div className="relative z-10 min-h-screen">{children}</div>
     </>
   );
 }

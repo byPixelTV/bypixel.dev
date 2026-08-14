@@ -22,10 +22,11 @@ export default function BlogPage() {
               </h1>
               <div className="h-1 w-20 bg-purple-500 mx-auto rounded-full mb-8 shadow-[0_0_15px_rgba(168,85,247,0.5)]" />
               <p className="text-lg md:text-xl text-white/60 max-w-2xl mx-auto leading-relaxed">
-                Thoughts, tutorials, and deep dives into software development, DevOps, and the future of technology.
+                Thoughts, tutorials, and deep dives into software development, DevOps, and the
+                future of technology.
               </p>
             </motion.div>
-            
+
             {/* Ambient light effect for header */}
             <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-64 h-64 bg-purple-600/10 blur-[100px] rounded-full pointer-events-none" />
           </header>

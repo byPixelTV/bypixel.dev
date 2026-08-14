@@ -58,7 +58,7 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
         return Boolean(
           node.closest("[data-lenis-prevent]") ||
           node.closest("[data-lenis-prevent-wheel]") ||
-          node.closest("[data-slot='dialog-content']")
+          node.closest("[data-slot='dialog-content']"),
         );
       },
     });
@@ -87,10 +87,10 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
       try {
         window.dispatchEvent(new CustomEvent("lenis-ready", { detail: { lenis } }));
       } catch (e) {
-        // ignore
+        console.warn("Failed to dispatch lenis-ready event:", e);
       }
     } catch (e) {
-      // ignore
+      console.warn("Failed to expose Lenis instance on window:", e);
     }
 
     return () => {
@@ -109,17 +109,17 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
         try {
           window.dispatchEvent(new CustomEvent("lenis-destroyed"));
         } catch (e) {
-          // ignore
+          console.warn("Failed to notify lenis-destroyed event:", e);
         }
       } catch (e) {
-        // ignore
+        console.warn("Failed to notify lenis-destroyed event:", e);
       }
       try {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         if ((window as any).lenis === lenis) delete (window as any).lenis;
       } catch (e) {
-        // ignore
+        console.warn("Failed to delete Lenis instance from window:", e);
       }
     };
   }, []);

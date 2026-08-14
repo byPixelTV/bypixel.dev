@@ -1,10 +1,8 @@
 "use server";
 
 const TOKEN_ENDPOINT = "https://accounts.spotify.com/api/token";
-const NOW_PLAYING_ENDPOINT =
-  "https://api.spotify.com/v1/me/player/currently-playing";
-const RECENTLY_PLAYED_ENDPOINT =
-  "https://api.spotify.com/v1/me/player/recently-played";
+const NOW_PLAYING_ENDPOINT = "https://api.spotify.com/v1/me/player/currently-playing";
+const RECENTLY_PLAYED_ENDPOINT = "https://api.spotify.com/v1/me/player/recently-played";
 const TOP_ARTISTS_ENDPOINT = "https://api.spotify.com/v1/me/top/artists";
 
 export interface NowPlayingResult {
@@ -145,13 +143,10 @@ export async function getTopArtists(): Promise<TopArtistResult[]> {
   try {
     const accessToken = await getAccessToken();
 
-    const res = await fetch(
-      `${TOP_ARTISTS_ENDPOINT}?time_range=short_term&limit=5`,
-      {
-        headers: { Authorization: `Bearer ${accessToken}` },
-        cache: "no-store",
-      },
-    );
+    const res = await fetch(`${TOP_ARTISTS_ENDPOINT}?time_range=short_term&limit=5`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+      cache: "no-store",
+    });
 
     if (!res.ok) {
       return [];

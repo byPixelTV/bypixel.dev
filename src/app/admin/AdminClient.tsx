@@ -29,7 +29,7 @@ export default function AdminClient() {
         // Check if user is admin
         const user = session.data?.user;
         const hasAdminLabel = user?.admin === true;
-        
+
         setIsAdmin(hasAdminLabel);
       } catch (error) {
         console.error("Auth check failed:", error);
@@ -52,7 +52,7 @@ export default function AdminClient() {
   }
 
   if (!isAuthenticated) {
-    return null; 
+    return null;
   }
 
   if (!isAdmin) {
@@ -60,20 +60,23 @@ export default function AdminClient() {
       <div className="flex flex-col items-center justify-center h-screen bg-black text-white">
         <h1 className="text-2xl font-bold">No access</h1>
         <p>You do not have permission to view this page.</p>
-        <Button onClick={async () => {
-          try {
-            await authClient.signOut({
-              fetchOptions: {
-                onSuccess: () => {
-                  router.push("/auth/login");
-                }
-              }
-            })
-          } catch (error) {
-            console.error('Logout error:', error);
-          }
-          router.push("/auth/login");
-        }} className="mt-4">
+        <Button
+          onClick={async () => {
+            try {
+              await authClient.signOut({
+                fetchOptions: {
+                  onSuccess: () => {
+                    router.push("/auth/login");
+                  },
+                },
+              });
+            } catch (error) {
+              console.error("Logout error:", error);
+            }
+            router.push("/auth/login");
+          }}
+          className="mt-4"
+        >
           Go back
         </Button>
       </div>

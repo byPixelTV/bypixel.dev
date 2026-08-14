@@ -16,11 +16,7 @@ export function PrefetchLinkButton({ href, children, ...props }: PrefetchLinkBut
   };
 
   return (
-    <button
-      onMouseEnter={onHover}
-      onFocus={onHover}
-      {...props}
-    >
+    <button onMouseEnter={onHover} onFocus={onHover} {...props}>
       {children}
     </button>
   );

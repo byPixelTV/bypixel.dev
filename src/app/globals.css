@@ -88,7 +88,7 @@
   --shadow-md: 0px 4px 20px 0px hsl(0, 0, 0 / 0.08), 0px 2px 4px -1px hsl(0, 0, 0 / 0.08);
   --shadow-lg: 0px 4px 20px 0px hsl(0, 0, 0 / 0.08), 0px 4px 6px -1px hsl(0, 0, 0 / 0.08);
   --shadow-xl: 0px 4px 20px 0px hsl(0, 0, 0 / 0.08), 0px 8px 10px -1px hsl(0, 0, 0 / 0.08);
-  --shadow-2xl: 0px 4px 20px 0px hsl(0, 0, 0 / 0.20);
+  --shadow-2xl: 0px 4px 20px 0px hsl(0, 0, 0 / 0.2);
   --tracking-normal: -0.02em;
   --spacing: 0.25rem;
 }
@@ -136,14 +136,14 @@
   --shadow-spread: 2px;
   --shadow-opacity: 0.6;
   --shadow-color: 0, 0, 0;
-  --shadow-2xs: 0px 12px 40px 2px hsl(0, 0, 0 / 0.30);
-  --shadow-xs: 0px 12px 40px 2px hsl(0, 0, 0 / 0.30);
-  --shadow-sm: 0px 12px 40px 2px hsl(0, 0, 0 / 0.60), 0px 1px 2px 1px hsl(0, 0, 0 / 0.60);
-  --shadow: 0px 12px 40px 2px hsl(0, 0, 0 / 0.60), 0px 1px 2px 1px hsl(0, 0, 0 / 0.60);
-  --shadow-md: 0px 12px 40px 2px hsl(0, 0, 0 / 0.60), 0px 2px 4px 1px hsl(0, 0, 0 / 0.60);
-  --shadow-lg: 0px 12px 40px 2px hsl(0, 0, 0 / 0.60), 0px 4px 6px 1px hsl(0, 0, 0 / 0.60);
-  --shadow-xl: 0px 12px 40px 2px hsl(0, 0, 0 / 0.60), 0px 8px 10px 1px hsl(0, 0, 0 / 0.60);
-  --shadow-2xl: 0px 12px 40px 2px hsl(0, 0, 0 / 1.50);
+  --shadow-2xs: 0px 12px 40px 2px hsl(0, 0, 0 / 0.3);
+  --shadow-xs: 0px 12px 40px 2px hsl(0, 0, 0 / 0.3);
+  --shadow-sm: 0px 12px 40px 2px hsl(0, 0, 0 / 0.6), 0px 1px 2px 1px hsl(0, 0, 0 / 0.6);
+  --shadow: 0px 12px 40px 2px hsl(0, 0, 0 / 0.6), 0px 1px 2px 1px hsl(0, 0, 0 / 0.6);
+  --shadow-md: 0px 12px 40px 2px hsl(0, 0, 0 / 0.6), 0px 2px 4px 1px hsl(0, 0, 0 / 0.6);
+  --shadow-lg: 0px 12px 40px 2px hsl(0, 0, 0 / 0.6), 0px 4px 6px 1px hsl(0, 0, 0 / 0.6);
+  --shadow-xl: 0px 12px 40px 2px hsl(0, 0, 0 / 0.6), 0px 8px 10px 1px hsl(0, 0, 0 / 0.6);
+  --shadow-2xl: 0px 12px 40px 2px hsl(0, 0, 0 / 1.5);
 }
 
 @theme inline {
@@ -282,8 +282,15 @@ html.is-scrolling .custom-scrollbar-thumb {
 }
 
 @keyframes bootPulse {
-  0%, 100% { transform: scale(0.95); opacity: 0.78; }
-  50% { transform: scale(1.04); opacity: 1; }
+  0%,
+  100% {
+    transform: scale(0.95);
+    opacity: 0.78;
+  }
+  50% {
+    transform: scale(1.04);
+    opacity: 1;
+  }
 }
 
 .background-layout .gradient-blob {
@@ -297,37 +304,45 @@ html.is-scrolling .custom-scrollbar-thumb {
 .background-layout .blob-1 {
   width: 720px;
   height: 720px;
-  background: radial-gradient(circle, #3B0D4A 0%, #6D28D9 36%, transparent 68%);
+  background: radial-gradient(circle, #3b0d4a 0%, #6d28d9 36%, transparent 68%);
   top: -14%;
   right: -10%;
-  animation: float1 18s ease-in-out infinite, pulse1 10s ease-in-out infinite;
+  animation:
+    float1 18s ease-in-out infinite,
+    pulse1 10s ease-in-out infinite;
 }
 
 .background-layout .blob-2 {
   width: 680px;
   height: 680px;
-  background: radial-gradient(circle, #6D28D9 0%, #B453B6 40%, transparent 72%);
+  background: radial-gradient(circle, #6d28d9 0%, #b453b6 40%, transparent 72%);
   bottom: -18%;
   left: -14%;
-  animation: float2 22s ease-in-out infinite reverse, pulse2 13s ease-in-out infinite;
+  animation:
+    float2 22s ease-in-out infinite reverse,
+    pulse2 13s ease-in-out infinite;
 }
 
 .background-layout .blob-3 {
   width: 620px;
   height: 620px;
-  background: radial-gradient(circle, #B453B6 0%, #6D28D9 40%, transparent 72%);
+  background: radial-gradient(circle, #b453b6 0%, #6d28d9 40%, transparent 72%);
   top: 36%;
   left: 46%;
-  animation: float3 20s ease-in-out infinite, pulse3 15s ease-in-out infinite;
+  animation:
+    float3 20s ease-in-out infinite,
+    pulse3 15s ease-in-out infinite;
 }
 
 .background-layout .blob-4 {
   width: 540px;
   height: 540px;
-  background: radial-gradient(circle, #2b0733 0%, #3B0D4A 36%, transparent 70%);
+  background: radial-gradient(circle, #2b0733 0%, #3b0d4a 36%, transparent 70%);
   top: 62%;
   right: 20%;
-  animation: float2 28s ease-in-out 5s infinite, pulse2 18s ease-in-out infinite reverse;
+  animation:
+    float2 28s ease-in-out 5s infinite,
+    pulse2 18s ease-in-out infinite reverse;
 }
 
 @media (max-width: 640px) {
@@ -360,40 +375,90 @@ html.is-scrolling .custom-scrollbar-thumb {
 }
 
 @keyframes float1 {
-  0%, 100% { transform: translate(0, 0) rotate(0deg); }
-  20% { transform: translate(-160px, -130px) rotate(72deg); }
-  45% { transform: translate(180px, -100px) rotate(162deg); }
-  70% { transform: translate(-120px, 160px) rotate(252deg); }
-  85% { transform: translate(100px, 80px) rotate(315deg); }
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  20% {
+    transform: translate(-160px, -130px) rotate(72deg);
+  }
+  45% {
+    transform: translate(180px, -100px) rotate(162deg);
+  }
+  70% {
+    transform: translate(-120px, 160px) rotate(252deg);
+  }
+  85% {
+    transform: translate(100px, 80px) rotate(315deg);
+  }
 }
 
 @keyframes float2 {
-  0%, 100% { transform: translate(0, 0) rotate(0deg); }
-  25% { transform: translate(180px, -120px) rotate(90deg); }
-  50% { transform: translate(-150px, 140px) rotate(180deg); }
-  75% { transform: translate(120px, 100px) rotate(270deg); }
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  25% {
+    transform: translate(180px, -120px) rotate(90deg);
+  }
+  50% {
+    transform: translate(-150px, 140px) rotate(180deg);
+  }
+  75% {
+    transform: translate(120px, 100px) rotate(270deg);
+  }
 }
 
 @keyframes float3 {
-  0%, 100% { transform: translate(0, 0) rotate(0deg); }
-  30% { transform: translate(-170px, -140px) rotate(108deg); }
-  60% { transform: translate(160px, -100px) rotate(216deg); }
-  80% { transform: translate(-80px, 150px) rotate(288deg); }
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  30% {
+    transform: translate(-170px, -140px) rotate(108deg);
+  }
+  60% {
+    transform: translate(160px, -100px) rotate(216deg);
+  }
+  80% {
+    transform: translate(-80px, 150px) rotate(288deg);
+  }
 }
 
 @keyframes pulse1 {
-  0%, 100% { opacity: 0.28; transform: scale(1); }
-  50% { opacity: 0.38; transform: scale(1.1); }
+  0%,
+  100% {
+    opacity: 0.28;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.38;
+    transform: scale(1.1);
+  }
 }
 
 @keyframes pulse2 {
-  0%, 100% { opacity: 0.22; transform: scale(1); }
-  50% { opacity: 0.32; transform: scale(1.14); }
+  0%,
+  100% {
+    opacity: 0.22;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.32;
+    transform: scale(1.14);
+  }
 }
 
 @keyframes pulse3 {
-  0%, 100% { opacity: 0.28; transform: scale(1); }
-  50% { opacity: 0.16; transform: scale(0.9); }
+  0%,
+  100% {
+    opacity: 0.28;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.16;
+    transform: scale(0.9);
+  }
 }
 
 .background-layout .grid-pattern {
@@ -413,7 +478,10 @@ html.is-scrolling .custom-scrollbar-thumb {
   border: 1px solid rgba(255, 255, 255, 0.12);
   background: linear-gradient(155deg, rgba(255, 255, 255, 0.11), rgba(124, 58, 237, 0.12));
   backdrop-filter: blur(8px);
-  transition: transform 250ms ease, box-shadow 260ms ease, border-color 240ms ease;
+  transition:
+    transform 250ms ease,
+    box-shadow 260ms ease,
+    border-color 240ms ease;
 }
 
 .brand-mark:hover,
@@ -444,7 +512,9 @@ html.is-scrolling .custom-scrollbar-thumb {
 
 .brand-crumb {
   opacity: 0.9;
-  transition: opacity 220ms ease, transform 220ms ease;
+  transition:
+    opacity 220ms ease,
+    transform 220ms ease;
 }
 
 .brand-crumb:hover {
@@ -453,7 +523,10 @@ html.is-scrolling .custom-scrollbar-thumb {
 }
 
 .nav-logo img {
-  transition: transform 260ms ease, filter 260ms ease, opacity 200ms ease;
+  transition:
+    transform 260ms ease,
+    filter 260ms ease,
+    opacity 200ms ease;
   filter: invert(1) brightness(1.02) saturate(1.05);
   will-change: transform, filter;
   display: block;
@@ -472,7 +545,12 @@ html.is-scrolling .custom-scrollbar-thumb {
   position: absolute;
   inset: -12px;
   border-radius: 999px;
-  background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(124,58,237,0.18) 45%, rgba(124,58,237,0) 72%);
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.2) 0%,
+    rgba(124, 58, 237, 0.18) 45%,
+    rgba(124, 58, 237, 0) 72%
+  );
   filter: blur(6px);
   opacity: 0;
   transform: scale(0.95);
@@ -502,33 +580,35 @@ html.is-scrolling .custom-scrollbar-thumb {
 
 @keyframes logo-flash {
   0% {
-    filter: invert(1) brightness(1) drop-shadow(0 0 0 rgba(255,255,255,0));
+    filter: invert(1) brightness(1) drop-shadow(0 0 0 rgba(255, 255, 255, 0));
   }
   25% {
-    filter: invert(1) brightness(1.6) drop-shadow(0 0 18px rgba(255,255,255,0.95));
+    filter: invert(1) brightness(1.6) drop-shadow(0 0 18px rgba(255, 255, 255, 0.95));
   }
   55% {
-    filter: invert(1) brightness(1.18) drop-shadow(0 0 10px rgba(255,255,255,0.7));
+    filter: invert(1) brightness(1.18) drop-shadow(0 0 10px rgba(255, 255, 255, 0.7));
   }
   100% {
-    filter: invert(1) brightness(1) drop-shadow(0 0 0 rgba(255,255,255,0));
+    filter: invert(1) brightness(1) drop-shadow(0 0 0 rgba(255, 255, 255, 0));
   }
 }
 
 @keyframes logo-flash-exit {
   0% {
-    filter: invert(1) brightness(1.65) drop-shadow(0 0 18px rgba(255,255,255,0.95));
+    filter: invert(1) brightness(1.65) drop-shadow(0 0 18px rgba(255, 255, 255, 0.95));
   }
   45% {
-    filter: invert(1) brightness(1.25) drop-shadow(0 0 12px rgba(255,255,255,0.75));
+    filter: invert(1) brightness(1.25) drop-shadow(0 0 12px rgba(255, 255, 255, 0.75));
   }
   100% {
-    filter: invert(1) brightness(1) drop-shadow(0 0 0 rgba(255,255,255,0));
+    filter: invert(1) brightness(1) drop-shadow(0 0 0 rgba(255, 255, 255, 0));
   }
 }
 
 @keyframes nav-lightning-pulse {
-  0%, 72%, 100% {
+  0%,
+  72%,
+  100% {
     opacity: 0;
     transform: scale(0.94);
   }
@@ -579,27 +659,33 @@ html.is-scrolling .custom-scrollbar-thumb {
 /* nav buttons */
 
 .nav-btn {
-  color: rgba(255,255,255,0.95);
-  background: linear-gradient(170deg, rgba(255,255,255,0.1), rgba(124,58,237,0.06));
-  border: 1px solid rgba(255,255,255,0.12);
+  color: rgba(255, 255, 255, 0.95);
+  background: linear-gradient(170deg, rgba(255, 255, 255, 0.1), rgba(124, 58, 237, 0.06));
+  border: 1px solid rgba(255, 255, 255, 0.12);
   backdrop-filter: blur(6px);
   box-shadow: 0 6px 18px rgba(6, 3, 14, 0.25);
 }
 
 .nav-btn:hover {
   transform: translateY(-4px);
-  box-shadow: 0 10px 30px rgba(255,255,255,0.06), 0 4px 12px rgba(124,58,237,0.08);
+  box-shadow:
+    0 10px 30px rgba(255, 255, 255, 0.06),
+    0 4px 12px rgba(124, 58, 237, 0.08);
 }
 
 .active-nav {
   color: #ffffff;
-  background: linear-gradient(180deg, rgba(124,58,237,0.16), rgba(124,58,237,0.06));
-  box-shadow: 0 16px 48px rgba(124,58,237,0.22), 0 6px 18px rgba(124,58,237,0.14);
-  border: 1px solid rgba(124,58,237,0.28);
+  background: linear-gradient(180deg, rgba(124, 58, 237, 0.16), rgba(124, 58, 237, 0.06));
+  box-shadow:
+    0 16px 48px rgba(124, 58, 237, 0.22),
+    0 6px 18px rgba(124, 58, 237, 0.14);
+  border: 1px solid rgba(124, 58, 237, 0.28);
 }
 
 @media (max-width: 768px) {
-  .nav-logo img { height: 28px; }
+  .nav-logo img {
+    height: 28px;
+  }
 }
 
 .skills-exp-marquee {

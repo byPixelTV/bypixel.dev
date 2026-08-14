@@ -1,7 +1,16 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Check, ChevronDown, Maximize, Minimize, Pause, Play, Volume2, VolumeX } from "lucide-react";
+import {
+  Check,
+  ChevronDown,
+  Maximize,
+  Minimize,
+  Pause,
+  Play,
+  Volume2,
+  VolumeX,
+} from "lucide-react";
 
 interface CustomVideoPlayerProps {
   src: string;
@@ -268,7 +277,9 @@ export default function CustomVideoPlayer({
               aria-label="Playback speed"
             >
               {formatPlaybackRate(playbackRate)}x
-              <ChevronDown className={`h-3.5 w-3.5 transition-transform ${speedMenuOpen ? "rotate-180" : ""}`} />
+              <ChevronDown
+                className={`h-3.5 w-3.5 transition-transform ${speedMenuOpen ? "rotate-180" : ""}`}
+              />
             </button>
 
             {speedMenuOpen && (

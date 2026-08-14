@@ -21,11 +21,10 @@ export default function NotFound() {
             <div className="flex justify-center mb-8">
               <AlertCircle className="h-24 w-24 text-red-400" />
             </div>
-            <h1 className="text-4xl font-bold text-white mb-4">
-              Blog Post Not Found
-            </h1>
+            <h1 className="text-4xl font-bold text-white mb-4">Blog Post Not Found</h1>
             <p className="text-xl text-gray-300 mb-8">
-              The blog post you&apos;re looking for doesn&apos;t exist, has been removed, or is currently a draft.
+              The blog post you&apos;re looking for doesn&apos;t exist, has been removed, or is
+              currently a draft.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button asChild variant="default">

@@ -35,7 +35,7 @@ export default function ScrollToTop() {
           return true;
         }
       } catch (e) {
-        // ignore
+        console.warn("Lenis scrollTo failed:", e);
       }
       return false;
     };
@@ -47,18 +47,18 @@ export default function ScrollToTop() {
 
     // If Lenis isn't available yet, listen for the ready event and call it once it initializes
     if (!(window as any)?.lenis) {
-      const onLenisReady = (e: Event) => {
+      const onLenisReady = () => {
         try {
           const l = (window as any)?.lenis;
           if (l && typeof l.scrollTo === "function") {
             try {
               l.scrollTo(0, { immediate: false });
             } catch (err) {
-              // ignore
+              console.warn("Failed to initialize Lenis scrollTo:", err);
             }
           }
         } catch (err) {
-          // ignore
+          console.warn("Failed to initialize Lenis scrollTo:", err);
         }
       };
       window.addEventListener("lenis-ready", onLenisReady, { once: true });
@@ -69,7 +69,7 @@ export default function ScrollToTop() {
       window.scrollTo({ top: 0, behavior: "smooth" });
       methodsTried.push("native:smooth");
     } catch (e) {
-      // ignore
+      console.warn("Failed to scroll window:", e);
     }
 
     // 4) Try element-based scroll as a last-resort
@@ -80,7 +80,7 @@ export default function ScrollToTop() {
         methodsTried.push("docEl:smooth");
       }
     } catch (e) {
-      // ignore
+      console.warn("Failed to scroll element:", e);
     }
 
     // 5) Hard set - immediate
@@ -89,7 +89,7 @@ export default function ScrollToTop() {
       document.body.scrollTop = 0;
       methodsTried.push("direct:setScrollTop");
     } catch (e) {
-      // ignore
+      console.warn("Failed to set scroll top directly:", e);
     }
 
     // If nothing seems to run (debug), log methods tried for developer inspection

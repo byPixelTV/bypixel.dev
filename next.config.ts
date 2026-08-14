@@ -6,18 +6,18 @@ const nextConfig: NextConfig = {
     qualities: [75, 90],
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: 'cdn.bypixel.dev',
-        pathname: '/raw/**',
+        protocol: "https",
+        hostname: "cdn.bypixel.dev",
+        pathname: "/raw/**",
       },
       {
-        protocol: 'https',
-        hostname: 'i.scdn.co',
+        protocol: "https",
+        hostname: "i.scdn.co",
       },
     ],
   },
   reactCompiler: true,
-  allowedDevOrigins: ['192.168.178.199']
+  allowedDevOrigins: ["192.168.178.199"],
 };
 
 export default nextConfig;

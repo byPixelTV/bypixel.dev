@@ -17,7 +17,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { slug } = await params;
 
   const defaultTitle = "byPixelTV - Software Developer";
-  const defaultDescription = "Software Developer with passion for code. Check out my projects and socials.";
+  const defaultDescription =
+    "Software Developer with passion for code. Check out my projects and socials.";
   const defaultImage = "https://cdn.bypixel.dev/raw/FIwMLM.png";
   const siteUrl = "https://bypixel.dev";
 
@@ -78,7 +79,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         ],
         siteName: "byPixelTV — Software Developer",
         publishedTime: post.creationDate,
-        modifiedTime: post.updateDate || post.updateDate,
+        modifiedTime: post.updateDate,
       },
       robots: {
         index: !post.draft,

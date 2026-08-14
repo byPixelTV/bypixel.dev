@@ -7,9 +7,7 @@ import BlogPostView from "./BlogPostView";
 import { createHighlighter, type Highlighter } from "shiki";
 
 // Define the segment type for the view
-type ContentSegment =
-  | { type: "html"; html: string }
-  | { type: "og"; url: string; data: OGData };
+type ContentSegment = { type: "html"; html: string } | { type: "og"; url: string; data: OGData };
 
 const VIDEO_URL_PATTERN = /\.(mp4|webm|ogg|mov|m4v)(\?[^"']*)?$/i;
 
@@ -46,10 +44,18 @@ function isStandaloneImageParagraph(token: MarkdownToken): token is MarkdownToke
     text: string;
   }>;
 } {
-  return token.type === "paragraph" && Array.isArray(token.tokens) && token.tokens.length === 1 && token.tokens[0]?.type === "image";
+  return (
+    token.type === "paragraph" &&
+    Array.isArray(token.tokens) &&
+    token.tokens.length === 1 &&
+    token.tokens[0]?.type === "image"
+  );
 }
 
-function renderCaptionedImageFigure(imageToken: { href: string; text: string }, captionRaw: string) {
+function renderCaptionedImageFigure(
+  imageToken: { href: string; text: string },
+  captionRaw: string,
+) {
   const imageHtml = renderMediaHtml(imageToken.href, imageToken.text);
   const captionHtml = parseInline(captionRaw);
 
@@ -58,7 +64,9 @@ function renderCaptionedImageFigure(imageToken: { href: string; text: string }, 
     "",
     `<figure class="not-prose my-8 overflow-hidden rounded-3xl border border-white/10 shadow-2xl">`,
     imageHtml,
-    captionHtml ? `<figcaption class="border-t border-white/10 bg-white/[0.03] px-4 py-3 text-left text-xs sm:text-sm leading-relaxed text-white/55">${captionHtml}</figcaption>` : "",
+    captionHtml
+      ? `<figcaption class="border-t border-white/10 bg-white/[0.03] px-4 py-3 text-left text-xs sm:text-sm leading-relaxed text-white/55">${captionHtml}</figcaption>`
+      : "",
     `</figure>`,
     "",
     "",
@@ -102,7 +110,21 @@ const getHighlighter = (() => {
     if (!highlighter) {
       highlighter = await createHighlighter({
         themes: ["github-dark-dimmed"],
-        langs: ["javascript", "typescript", "kotlin", "java", "python", "html", "css", "json", "bash", "rust", "go", "yaml", "markdown"],
+        langs: [
+          "javascript",
+          "typescript",
+          "kotlin",
+          "java",
+          "python",
+          "html",
+          "css",
+          "json",
+          "bash",
+          "rust",
+          "go",
+          "yaml",
+          "markdown",
+        ],
       });
     }
     return highlighter;
@@ -118,7 +140,7 @@ export async function BlogPostContent({ slug }: { slug: string }) {
   await incrementPostViews(post._id.toString());
 
   const highlighter = await getHighlighter();
-  
+
   const marked = new Marked();
   marked.use(gfmHeadingId());
 
@@ -139,7 +161,7 @@ export async function BlogPostContent({ slug }: { slug: string }) {
     },
     code(token: Tokens.Code) {
       const { text, lang } = token;
-      const language = lang === "kt" ? "kotlin" : (lang || "text");
+      const language = lang === "kt" ? "kotlin" : lang || "text";
       try {
         return highlighter.codeToHtml(text, {
           lang: language,
@@ -148,14 +170,14 @@ export async function BlogPostContent({ slug }: { slug: string }) {
       } catch {
         return `<pre><code>${text}</code></pre>`;
       }
-    }
+    },
   };
 
   marked.use({ renderer });
 
   // Normalize content: ensure GFM blocks are recognized
   const rawContent = (post.content || "").replace(/\r\n/g, "\n");
-  
+
   const segments: ContentSegment[] = [];
   const ogRegex = /<og\s+url=["']([^"']+)["']\s*\/?>/gi;
   let lastIndex = 0;
@@ -169,7 +191,7 @@ export async function BlogPostContent({ slug }: { slug: string }) {
         segments.push({ type: "html", html: html as string });
       }
     }
-    
+
     const url = match[1];
     const data = await fetchOGData(url);
     segments.push({ type: "og", url, data });
@@ -186,10 +208,12 @@ export async function BlogPostContent({ slug }: { slug: string }) {
 
   const wordCount = rawContent.split(/\s+/).length || 0;
   const readingTime = Math.ceil(wordCount / 200);
-  const hasMedia = Boolean(post.thumbnail) || segments.some(s => s.type === "html" && s.html.includes('data-post-media="true"'));
+  const hasMedia =
+    Boolean(post.thumbnail) ||
+    segments.some((s) => s.type === "html" && s.html.includes('data-post-media="true"'));
 
   return (
-    <BlogPostView 
+    <BlogPostView
       post={JSON.parse(JSON.stringify(post))}
       authorName={authorName}
       segments={segments}

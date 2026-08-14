@@ -19,7 +19,10 @@ export default function BlogPostCard({ post, authorName }: Props) {
       transition={{ duration: 0.3, ease: "easeOut" }}
       className="group relative flex flex-col h-full bg-white/5 border border-white/10 rounded-2xl overflow-hidden backdrop-blur-md hover:bg-white/10 transition-colors duration-300"
     >
-      <Link href={`/blog/post/${post.slug || post._id.toString()}`} className="flex flex-col h-full">
+      <Link
+        href={`/blog/post/${post.slug || post._id.toString()}`}
+        className="flex flex-col h-full"
+      >
         {/* Thumbnail Container */}
         {post.thumbnail && (
           <div className="relative w-full aspect-video overflow-hidden">
@@ -32,7 +35,7 @@ export default function BlogPostCard({ post, authorName }: Props) {
             />
             {/* Gradient Overlay */}
             <div className="absolute inset-0 bg-linear-to-t from-[#0c0618]/60 to-transparent opacity-60" />
-            
+
             {/* Date Badge */}
             <div className="absolute top-4 left-4 flex gap-2">
               <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/40 backdrop-blur-md border border-white/10 text-[11px] font-medium text-white/90">
@@ -61,7 +64,7 @@ export default function BlogPostCard({ post, authorName }: Props) {
           <h2 className="text-xl font-bold text-white mb-3 group-hover:text-purple-400 transition-colors duration-300 line-clamp-2">
             {post.title}
           </h2>
-          
+
           <p className="text-white/60 text-sm leading-relaxed mb-6 line-clamp-3">
             {post.shortDescription || "No description available."}
           </p>
@@ -78,16 +81,16 @@ export default function BlogPostCard({ post, authorName }: Props) {
                 {post.views || 0}
               </span>
             </div>
-            
+
             <div className="flex items-center gap-1 text-purple-400 group-hover:translate-x-1 transition-transform duration-300 font-semibold uppercase tracking-wider text-[10px]">
               Read More
-              <svg 
-                className="size-3" 
-                viewBox="0 0 24 24" 
-                fill="none" 
-                stroke="currentColor" 
-                strokeWidth="3" 
-                strokeLinecap="round" 
+              <svg
+                className="size-3"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="3"
+                strokeLinecap="round"
                 strokeLinejoin="round"
               >
                 <path d="M5 12h14m-7-7 7 7-7 7" />

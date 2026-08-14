@@ -6,7 +6,5 @@ export const metadata: Metadata = {
 };
 
 export default function AdminPage() {
-  return (
-    <AdminClient />
-  );
+  return <AdminClient />;
 }

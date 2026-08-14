@@ -9,7 +9,8 @@ const milestones = [
   {
     year: "2022",
     title: "The Spark",
-    description: "Started my journey with Python and HTML/CSS. Built my first scripts and websites, discovering the magic of making ideas come to life through code.",
+    description:
+      "Started my journey with Python and HTML/CSS. Built my first scripts and websites, discovering the magic of making ideas come to life through code.",
     tags: ["Python", "HTML", "CSS"],
     icon: "logos:python",
     color: "from-blue-500/20 to-yellow-500/20",
@@ -17,7 +18,8 @@ const milestones = [
   {
     year: "2023",
     title: "Logic & Systems",
-    description: "Dived into Minecraft Skripting which taught me event-driven logic. Simultaneously started my journey into Linux Server Administration, learning the foundations of hosting and system management.",
+    description:
+      "Dived into Minecraft Skripting which taught me event-driven logic. Simultaneously started my journey into Linux Server Administration, learning the foundations of hosting and system management.",
     tags: ["Skript", "Linux", "JavaScript"],
     icon: "logos:linux-tux",
     color: "from-orange-500/20 to-red-500/20",
@@ -25,7 +27,8 @@ const milestones = [
   {
     year: "2024",
     title: "JVM & Infrastructure",
-    description: "Shifted focus to Kotlin and Java for high-performance backend development. Mastered Docker and explored Proxmox to build a more robust and scalable project infrastructure.",
+    description:
+      "Shifted focus to Kotlin and Java for high-performance backend development. Mastered Docker and explored Proxmox to build a more robust and scalable project infrastructure.",
     tags: ["Kotlin", "Java", "Docker", "Proxmox"],
     icon: "vscode-icons:file-type-kotlin",
     color: "from-purple-500/20 to-blue-500/20",
@@ -33,7 +36,8 @@ const milestones = [
   {
     year: "2025",
     title: "Founding EraMC",
-    description: "Founded the EraMC Network. A year of massive growth: deep-diving into Async programming, MongoDB, and TypeScript/Next.js to build a seamless player experience from web to game.",
+    description:
+      "Founded the EraMC Network. A year of massive growth: deep-diving into Async programming, MongoDB, and TypeScript/Next.js to build a seamless player experience from web to game.",
     tags: ["Next.js", "TypeScript", "MongoDB", "Async", "EraMC"],
     icon: "ph:rocket-duotone",
     color: "from-emerald-500/20 to-cyan-500/20",
@@ -41,7 +45,8 @@ const milestones = [
   {
     year: "2026",
     title: "Next-Level Performance",
-    description: "Pushing EraMC to unprecedented levels. Exploring Go for high-performance tooling and continuing to refine the Kotlin ecosystem for maximum efficiency and scale.",
+    description:
+      "Pushing EraMC to unprecedented levels. Exploring Go for high-performance tooling and continuing to refine the Kotlin ecosystem for maximum efficiency and scale.",
     tags: ["Go", "Next.js", "Advanced Kotlin", "Scale"],
     icon: "logos:go",
     color: "from-cyan-400/20 to-blue-600/20",
@@ -77,7 +82,8 @@ export default function CodingJourney() {
           CODING JOURNEY
         </h2>
         <p className="text-slate-400 max-w-md">
-          A timeline of my evolution as a developer, from the first script to high-performance networks.
+          A timeline of my evolution as a developer, from the first script to high-performance
+          networks.
         </p>
       </div>
 
@@ -99,7 +105,7 @@ export default function CodingJourney() {
   );
 }
 
-function TimelineItem({ milestone, index }: { milestone: typeof milestones[0]; index: number }) {
+function TimelineItem({ milestone, index }: { milestone: (typeof milestones)[0]; index: number }) {
   const isEven = index % 2 === 0;
 
   return (
@@ -114,21 +120,39 @@ function TimelineItem({ milestone, index }: { milestone: typeof milestones[0]; i
     >
       {/* Year Circle */}
       <div className="absolute left-4 md:left-1/2 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-slate-950 border-2 border-slate-800 flex items-center justify-center -translate-x-1/2 z-10">
-        <div className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full ${milestone.isCurrent ? 'bg-purple-500 animate-pulse' : 'bg-slate-600'}`} />
+        <div
+          className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full ${milestone.isCurrent ? "bg-purple-500 animate-pulse" : "bg-slate-600"}`}
+        />
       </div>
 
       {/* Content Card */}
-      <div className={`w-full md:w-[45%] pl-10 md:pl-0 ${isEven ? 'md:text-left' : 'md:text-right'} group`}>
-        <div className={`relative p-6 sm:p-8 rounded-4xl sm:rounded-[2.5rem] bg-white/5 border border-white/10 backdrop-blur-xl overflow-hidden transition-all duration-500 group-hover:bg-white/10 group-hover:border-white/20`}>
+      <div
+        className={`w-full md:w-[45%] pl-10 md:pl-0 ${isEven ? "md:text-left" : "md:text-right"} group`}
+      >
+        <div
+          className={`relative p-6 sm:p-8 rounded-4xl sm:rounded-[2.5rem] bg-white/5 border border-white/10 backdrop-blur-xl overflow-hidden transition-all duration-500 group-hover:bg-white/10 group-hover:border-white/20`}
+        >
           {/* Subtle background glow */}
-          <div className={`absolute -right-20 -top-20 w-40 h-40 bg-linear-to-br ${milestone.color} blur-3xl opacity-50 group-hover:opacity-80 transition-opacity`} />
-          
-          <div className={`flex flex-col ${isEven ? 'items-start' : 'md:items-end'} mb-4`}>
-            <span className="text-xs sm:text-sm font-black text-purple-400 tracking-[0.3em] mb-2">{milestone.year}</span>
+          <div
+            className={`absolute -right-20 -top-20 w-40 h-40 bg-linear-to-br ${milestone.color} blur-3xl opacity-50 group-hover:opacity-80 transition-opacity`}
+          />
+
+          <div className={`flex flex-col ${isEven ? "items-start" : "md:items-end"} mb-4`}>
+            <span className="text-xs sm:text-sm font-black text-purple-400 tracking-[0.3em] mb-2">
+              {milestone.year}
+            </span>
             <div className="flex items-center gap-3">
-              <Icon icon={milestone.icon} className={cn("text-2xl sm:text-3xl", isEven ? "block" : "block md:hidden")} />
-              <h3 className="text-xl sm:text-2xl font-bold text-white italic tracking-tight">{milestone.title}</h3>
-              <Icon icon={milestone.icon} className={cn("text-2xl sm:text-3xl", !isEven ? "hidden md:block" : "hidden")} />
+              <Icon
+                icon={milestone.icon}
+                className={cn("text-2xl sm:text-3xl", isEven ? "block" : "block md:hidden")}
+              />
+              <h3 className="text-xl sm:text-2xl font-bold text-white italic tracking-tight">
+                {milestone.title}
+              </h3>
+              <Icon
+                icon={milestone.icon}
+                className={cn("text-2xl sm:text-3xl", !isEven ? "hidden md:block" : "hidden")}
+              />
             </div>
           </div>
 
@@ -136,9 +160,12 @@ function TimelineItem({ milestone, index }: { milestone: typeof milestones[0]; i
             {milestone.description}
           </p>
 
-          <div className={`flex flex-wrap gap-2 ${isEven ? '' : 'md:justify-end'}`}>
+          <div className={`flex flex-wrap gap-2 ${isEven ? "" : "md:justify-end"}`}>
             {milestone.tags.map((tag) => (
-              <span key={tag} className="px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-slate-300">
+              <span
+                key={tag}
+                className="px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-slate-300"
+              >
                 {tag}
               </span>
             ))}

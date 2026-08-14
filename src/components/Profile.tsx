@@ -13,6 +13,13 @@ const ACTIVE_FALLBACK_BLOB_COLORS = ["#7C3AED", "#A855F7", "#FB7185"];
 const IDLE_BLOB_COLORS = ["#3B0D4A", "#6D28D9", "#B453B6"];
 const BLOB_TRANSITION_MS = 650;
 
+// Contrast-safety bounds for colors used as glow / gradient-text color
+// against the near-black page background. Tune these two numbers if you
+// ever want the effect punchier (lower minL) or more muted (higher minL).
+const MIN_LIGHTNESS = 42;
+const MAX_LIGHTNESS = 78;
+const MIN_SATURATION = 30;
+
 type RGB = [number, number, number];
 
 function parseColor(color: string): RGB {
@@ -53,13 +60,90 @@ function easeInOutCubic(t: number): number {
   return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 }
 
+function rgbToHsl(r: number, g: number, b: number): [number, number, number] {
+  const rn = r / 255;
+  const gn = g / 255;
+  const bn = b / 255;
+  const max = Math.max(rn, gn, bn);
+  const min = Math.min(rn, gn, bn);
+  let h = 0;
+  let s = 0;
+  const l = (max + min) / 2;
+
+  if (max !== min) {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    switch (max) {
+      case rn:
+        h = (gn - bn) / d + (gn < bn ? 6 : 0);
+        break;
+      case gn:
+        h = (bn - rn) / d + 2;
+        break;
+      default:
+        h = (rn - gn) / d + 4;
+        break;
+    }
+    h /= 6;
+  }
+
+  return [h * 360, s * 100, l * 100];
+}
+
+function hslToRgb(h: number, s: number, l: number): RGB {
+  const hn = h / 360;
+  const sn = s / 100;
+  const ln = l / 100;
+
+  if (sn === 0) {
+    const v = Math.round(ln * 255);
+    return [v, v, v];
+  }
+
+  const hue2rgb = (p: number, q: number, t: number) => {
+    let tt = t;
+    if (tt < 0) tt += 1;
+    if (tt > 1) tt -= 1;
+    if (tt < 1 / 6) return p + (q - p) * 6 * tt;
+    if (tt < 1 / 2) return q;
+    if (tt < 2 / 3) return p + (q - p) * (2 / 3 - tt) * 6;
+    return p;
+  };
+
+  const q = ln < 0.5 ? ln * (1 + sn) : ln + sn - ln * sn;
+  const p = 2 * ln - q;
+  const r = hue2rgb(p, q, hn + 1 / 3);
+  const g = hue2rgb(p, q, hn);
+  const b = hue2rgb(p, q, hn - 1 / 3);
+
+  return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+}
+
+/**
+ * Clamps a color's lightness (and floors its saturation) so it stays
+ * legible when used as glow / gradient-text color on top of the dark
+ * hero background.
+ *
+ * Without this, a near-black album cover produces near-black gradient
+ * text (invisible on a dark page), and a near-white / greyscale cover
+ * produces a washed-out, low-saturation glow.
+ */
+function clampForDarkUI(rgbStr: string): string {
+  const [r, g, b] = parseColor(rgbStr);
+  const [h, s, l] = rgbToHsl(r, g, b);
+  const clampedL = Math.min(MAX_LIGHTNESS, Math.max(MIN_LIGHTNESS, l));
+  const clampedS = Math.max(MIN_SATURATION, s);
+  const [cr, cg, cb] = hslToRgb(h, clampedS, clampedL);
+  return `rgb(${cr} ${cg} ${cb})`;
+}
+
 function getRegionAverage(
   pixels: Uint8ClampedArray,
   width: number,
   xStart: number,
   xEnd: number,
   yStart: number,
-  yEnd: number
+  yEnd: number,
 ): string {
   let r = 0;
   let g = 0;
@@ -105,7 +189,10 @@ function getAlbumBlobColors(imageUrl: string): Promise<string[]> {
         const mid = getRegionAverage(data, size, 12, 24, 0, size);
         const right = getRegionAverage(data, size, 24, size, 0, size);
 
-        resolve([left, mid, right]);
+        // Clamp every extracted color before it ever reaches state, so
+        // both the glow blobs and the gradient text stay readable
+        // regardless of how dark/light/desaturated the album art is.
+        resolve([left, mid, right].map(clampForDarkUI));
       } catch {
         resolve(ACTIVE_FALLBACK_BLOB_COLORS);
       }
@@ -165,7 +252,7 @@ const Profile = () => {
       const eased = easeInOutCubic(progress);
 
       const next = fromPalette.map((fromColor, index) =>
-        mixColor(fromColor, toPalette[index] ?? fromColor, eased)
+        mixColor(fromColor, toPalette[index] ?? fromColor, eased),
       );
 
       blobColorsRef.current = next;
@@ -222,8 +309,14 @@ const Profile = () => {
                 background: `radial-gradient(circle, color-mix(in srgb, ${renderedBlobColors[0]} 92%, white) 0%, ${renderedBlobColors[0]} 22%, transparent 68%)`,
                 mixBlendMode: "screen",
               }}
-              animate={isMobile ? { x: 0, y: 0, scale: 1 } : { x: [0, 54, -40, 0], y: [0, -40, 22, 0], scale: [1, 1.28, 0.92, 1] }}
-              transition={isMobile ? { duration: 0 } : { duration: 12, ease: "easeInOut", repeat: Infinity }}
+              animate={
+                isMobile
+                  ? { x: 0, y: 0, scale: 1 }
+                  : { x: [0, 54, -40, 0], y: [0, -40, 22, 0], scale: [1, 1.28, 0.92, 1] }
+              }
+              transition={
+                isMobile ? { duration: 0 } : { duration: 12, ease: "easeInOut", repeat: Infinity }
+              }
             />
             <motion.div
               className="absolute -right-24 top-10 h-96 w-96 rounded-full blur-[88px] saturate-[1.8] sm:-right-40 sm:top-4 sm:h-[34rem] sm:w-[34rem] sm:blur-[126px] sm:saturate-[2]"
@@ -231,8 +324,14 @@ const Profile = () => {
                 background: `radial-gradient(circle, color-mix(in srgb, ${renderedBlobColors[1]} 88%, white) 0%, ${renderedBlobColors[1]} 24%, transparent 66%)`,
                 mixBlendMode: "screen",
               }}
-              animate={isMobile ? { x: 0, y: 0, scale: 1 } : { x: [0, -44, 30, 0], y: [0, 38, -28, 0], scale: [1, 0.9, 1.22, 1] }}
-              transition={isMobile ? { duration: 0 } : { duration: 11, ease: "easeInOut", repeat: Infinity }}
+              animate={
+                isMobile
+                  ? { x: 0, y: 0, scale: 1 }
+                  : { x: [0, -44, 30, 0], y: [0, 38, -28, 0], scale: [1, 0.9, 1.22, 1] }
+              }
+              transition={
+                isMobile ? { duration: 0 } : { duration: 11, ease: "easeInOut", repeat: Infinity }
+              }
             />
             <motion.div
               className="absolute -bottom-36 left-[18%] hidden h-[34rem] w-[34rem] rounded-full blur-[112px] saturate-[1.85] sm:block"
@@ -292,7 +391,10 @@ const Profile = () => {
               A fullstack developer
               <span
                 className="block bg-clip-text text-transparent"
-                style={{ backgroundImage: heroAccentGradient, textShadow: "0 0 26px rgba(255,255,255,0.12)" }}
+                style={{
+                  backgroundImage: heroAccentGradient,
+                  textShadow: "0 0 26px rgba(255,255,255,0.12)",
+                }}
               >
                 from Germany.
               </span>
@@ -304,7 +406,8 @@ const Profile = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
             >
-              I build modern, performant software with a focus on clean design and smooth user experience.
+              I build modern, performant software with a focus on clean design and smooth user
+              experience.
             </motion.p>
 
             <motion.div
@@ -322,7 +425,9 @@ const Profile = () => {
               <a
                 href="mailto:contact@bypixel.dev"
                 className="rounded-full border border-white/25 bg-transparent px-6 py-2.5 text-xs font-medium text-white transition-colors hover:bg-white/10 sm:px-5 sm:py-2 sm:text-sm"
-                style={{ boxShadow: `0 0 0 1px color-mix(in srgb, ${renderedBlobColors[1]} 18%, transparent)` }}
+                style={{
+                  boxShadow: `0 0 0 1px color-mix(in srgb, ${renderedBlobColors[1]} 18%, transparent)`,
+                }}
               >
                 Contact
               </a>
@@ -334,7 +439,9 @@ const Profile = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.35 }}
             >
-              <SpotifyNowPlaying onNowPlayingChange={isMobile ? undefined : handleNowPlayingChange} />
+              <SpotifyNowPlaying
+                onNowPlayingChange={isMobile ? undefined : handleNowPlayingChange}
+              />
             </motion.div>
 
             <motion.div

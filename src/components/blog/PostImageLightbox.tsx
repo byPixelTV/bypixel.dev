@@ -45,9 +45,7 @@ export default function PostImageLightbox({ rootId }: PostImageLightboxProps) {
     if (!root) return;
     let rafId: number | null = null;
 
-    const nodes = Array.from(
-      root.querySelectorAll<HTMLElement>("[data-post-media='true']")
-    );
+    const nodes = Array.from(root.querySelectorAll<HTMLElement>("[data-post-media='true']"));
 
     const collected = nodes
       .map((node, index) => {
@@ -142,7 +140,7 @@ export default function PostImageLightbox({ rootId }: PostImageLightboxProps) {
     if (activeIndex === null) return;
 
     const activeThumb = document.querySelector<HTMLButtonElement>(
-      `[data-lightbox-thumb-index='${activeIndex}']`
+      `[data-lightbox-thumb-index='${activeIndex}']`,
     );
 
     activeThumb?.scrollIntoView({
@@ -204,9 +202,7 @@ export default function PostImageLightbox({ rootId }: PostImageLightboxProps) {
         <X className="h-5 w-5 sm:h-6 sm:w-6" />
       </button>
 
-      <div
-        className="absolute inset-0 flex items-center justify-center px-6 pb-28 pt-16 sm:px-12 sm:pb-32 sm:pt-20 pointer-events-none"
-      >
+      <div className="absolute inset-0 flex items-center justify-center px-6 pb-28 pt-16 sm:px-12 sm:pb-32 sm:pt-20 pointer-events-none">
         {activeMedia.type === "image" ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img

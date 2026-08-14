@@ -12,7 +12,7 @@ import {
   Eye,
   Calendar,
   Minus,
-  Users
+  Users,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -88,10 +88,13 @@ export function PostsPage() {
       });
 
       const authorResults = await Promise.all(authorPromises);
-      const authorsMap = authorResults.reduce((acc, { userId, name }) => {
-        acc[userId] = name;
-        return acc;
-      }, {} as Record<string, string>);
+      const authorsMap = authorResults.reduce(
+        (acc, { userId, name }) => {
+          acc[userId] = name;
+          return acc;
+        },
+        {} as Record<string, string>,
+      );
 
       setAuthors(authorsMap);
     } catch (error) {
@@ -109,7 +112,7 @@ export function PostsPage() {
   const filteredPosts = posts.filter(
     (post) =>
       post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      authors[post.userId]?.toLowerCase().includes(searchTerm.toLowerCase())
+      authors[post.userId]?.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   // Calculate stats
@@ -131,7 +134,6 @@ export function PostsPage() {
       setActionError(errorMessage);
       return { success: false, error: errorMessage };
     }
-
   };
 
   const handleEditPost = async (postData: PostFormData): Promise<SaveResult> => {
@@ -152,7 +154,6 @@ export function PostsPage() {
       setActionError(errorMessage);
       return { success: false, error: errorMessage };
     }
-
   };
 
   const dialogSaveHandler = editingPost ? handleEditPost : handleCreatePost;
@@ -186,9 +187,9 @@ export function PostsPage() {
         fetchOptions: {
           onSuccess: () => {
             router.push("/auth/login");
-          }
-        }
-      })
+          },
+        },
+      });
       router.push("/auth/login");
     } catch (error) {
       console.error("Logout error:", error);
@@ -203,9 +204,7 @@ export function PostsPage() {
       draft: "bg-yellow-500/10 text-yellow-500 border-yellow-500/20",
     };
     return (
-      <Badge className={colors[status]}>
-        {status.charAt(0).toUpperCase() + status.slice(1)}
-      </Badge>
+      <Badge className={colors[status]}>{status.charAt(0).toUpperCase() + status.slice(1)}</Badge>
     );
   };
 
@@ -240,22 +239,15 @@ export function PostsPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">
-              Posts Management
-            </h1>
-            <p className="text-muted-foreground">
-              Manage and organize your blog posts
-            </p>
+            <h1 className="text-3xl font-bold tracking-tight">Posts Management</h1>
+            <p className="text-muted-foreground">Manage and organize your blog posts</p>
           </div>
           <div className="flex items-center gap-3">
             <Button onClick={openCreateDialog} className="gap-2">
               <Plus className="h-4 w-4" />
               Create New Post
             </Button>
-            <Button
-              onClick={handleLogout}
-              className="gap-2 bg-red-600 hover:bg-red-700 text-white"
-            >
+            <Button onClick={handleLogout} className="gap-2 bg-red-600 hover:bg-red-700 text-white">
               <Minus className="h-4 w-4" />
               Logout
             </Button>
@@ -271,9 +263,7 @@ export function PostsPage() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{totalPosts}</div>
-              <p className="text-xs text-muted-foreground">
-                All posts in system
-              </p>
+              <p className="text-xs text-muted-foreground">All posts in system</p>
             </CardContent>
           </Card>
 
@@ -305,9 +295,7 @@ export function PostsPage() {
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
-                {totalViews.toLocaleString()}
-              </div>
+              <div className="text-2xl font-bold">{totalViews.toLocaleString()}</div>
               <p className="text-xs text-muted-foreground">All time views</p>
             </CardContent>
           </Card>
@@ -396,9 +384,7 @@ export function PostsPage() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem
-                            onClick={() => openEditDialog(post)}
-                          >
+                          <DropdownMenuItem onClick={() => openEditDialog(post)}>
                             <Edit className="mr-2 h-4 w-4" />
                             Edit
                           </DropdownMenuItem>

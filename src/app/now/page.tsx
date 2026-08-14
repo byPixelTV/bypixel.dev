@@ -9,8 +9,7 @@ export const metadata: Metadata = {
     "A quick snapshot of what byPixelTV is currently listening to, playing, watching, using, and coding with.",
   openGraph: {
     title: "Now | byPixelTV",
-    description:
-      "Music, games, tech, F1 and the languages currently shaping my day-to-day.",
+    description: "Music, games, tech, F1 and the languages currently shaping my day-to-day.",
     images: [
       {
         url: "/assets/logo/256x.png",
@@ -24,8 +23,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary",
     title: "Now | byPixelTV",
-    description:
-      "Music, games, tech, F1 and the languages currently shaping my day-to-day.",
+    description: "Music, games, tech, F1 and the languages currently shaping my day-to-day.",
     images: ["/assets/logo/256x.png"],
   },
   robots: {

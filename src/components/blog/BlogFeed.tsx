@@ -86,7 +86,8 @@ export default function BlogFeed() {
     <div className="max-w-6xl mx-auto">
       {isAdmin && draftCount > 0 && (
         <div className="mb-6 rounded-2xl border border-yellow-500/20 bg-yellow-500/10 px-4 py-3 text-sm text-yellow-100">
-          Admin view enabled. You are seeing {draftCount} draft {draftCount === 1 ? "post" : "posts"} mixed into the feed.
+          Admin view enabled. You are seeing {draftCount} draft{" "}
+          {draftCount === 1 ? "post" : "posts"} mixed into the feed.
         </div>
       )}
 
@@ -106,10 +107,7 @@ export default function BlogFeed() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: index * 0.1 }}
           >
-            <BlogPostCard
-              post={post}
-              authorName={post.authorName || "Unknown"}
-            />
+            <BlogPostCard post={post} authorName={post.authorName || "Unknown"} />
           </motion.div>
         ))}
       </div>

@@ -40,6 +40,14 @@ const POLL_INTERVAL = 5_000;
 const FALLBACK_CARD_COLORS = ["#1DB954", "#4FD1C5", "#A78BFA"];
 const CARD_TRANSITION_MS = 650;
 
+// Contrast-safety bounds for colors used in the card's glow / tint overlay.
+// Keeps the white text on top readable no matter how dark or washed-out
+// the album art is. Should match the bounds used in Profile.tsx so the
+// hero blobs and this card feel like the same "ambience".
+const MIN_LIGHTNESS = 42;
+const MAX_LIGHTNESS = 78;
+const MIN_SATURATION = 30;
+
 type RGB = [number, number, number];
 
 function parseColor(color: string): RGB {
@@ -80,13 +88,89 @@ function easeInOutCubic(t: number): number {
   return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 }
 
+function rgbToHsl(r: number, g: number, b: number): [number, number, number] {
+  const rn = r / 255;
+  const gn = g / 255;
+  const bn = b / 255;
+  const max = Math.max(rn, gn, bn);
+  const min = Math.min(rn, gn, bn);
+  let h = 0;
+  let s = 0;
+  const l = (max + min) / 2;
+
+  if (max !== min) {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    switch (max) {
+      case rn:
+        h = (gn - bn) / d + (gn < bn ? 6 : 0);
+        break;
+      case gn:
+        h = (bn - rn) / d + 2;
+        break;
+      default:
+        h = (rn - gn) / d + 4;
+        break;
+    }
+    h /= 6;
+  }
+
+  return [h * 360, s * 100, l * 100];
+}
+
+function hslToRgb(h: number, s: number, l: number): RGB {
+  const hn = h / 360;
+  const sn = s / 100;
+  const ln = l / 100;
+
+  if (sn === 0) {
+    const v = Math.round(ln * 255);
+    return [v, v, v];
+  }
+
+  const hue2rgb = (p: number, q: number, t: number) => {
+    let tt = t;
+    if (tt < 0) tt += 1;
+    if (tt > 1) tt -= 1;
+    if (tt < 1 / 6) return p + (q - p) * 6 * tt;
+    if (tt < 1 / 2) return q;
+    if (tt < 2 / 3) return p + (q - p) * (2 / 3 - tt) * 6;
+    return p;
+  };
+
+  const q = ln < 0.5 ? ln * (1 + sn) : ln + sn - ln * sn;
+  const p = 2 * ln - q;
+  const r = hue2rgb(p, q, hn + 1 / 3);
+  const g = hue2rgb(p, q, hn);
+  const b = hue2rgb(p, q, hn - 1 / 3);
+
+  return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+}
+
+/**
+ * Clamps a color's lightness (and floors its saturation) so it stays
+ * legible when used as a glow / tint-overlay color behind white text.
+ *
+ * Without this, a near-black album cover produces a near-invisible glow
+ * and a near-white / greyscale cover produces a washed-out overlay that
+ * eats into the white text's contrast.
+ */
+function clampForDarkUI(rgbStr: string): string {
+  const [r, g, b] = parseColor(rgbStr);
+  const [h, s, l] = rgbToHsl(r, g, b);
+  const clampedL = Math.min(MAX_LIGHTNESS, Math.max(MIN_LIGHTNESS, l));
+  const clampedS = Math.max(MIN_SATURATION, s);
+  const [cr, cg, cb] = hslToRgb(h, clampedS, clampedL);
+  return `rgb(${cr} ${cg} ${cb})`;
+}
+
 function getRegionAverage(
   pixels: Uint8ClampedArray,
   width: number,
   xStart: number,
   xEnd: number,
   yStart: number,
-  yEnd: number
+  yEnd: number,
 ): string {
   let r = 0;
   let g = 0;
@@ -128,11 +212,15 @@ function getAlbumCardColors(imageUrl: string): Promise<string[]> {
         ctx.drawImage(img, 0, 0, size, size);
 
         const { data } = ctx.getImageData(0, 0, size, size);
-        resolve([
+        const colors = [
           getRegionAverage(data, size, 0, 10, 0, size),
           getRegionAverage(data, size, 10, 20, 0, size),
           getRegionAverage(data, size, 20, size, 0, size),
-        ]);
+        ];
+
+        // Clamp before it reaches state so the glow/overlay never gets
+        // dark enough to disappear or light enough to wash out the text.
+        resolve(colors.map(clampForDarkUI));
       } catch {
         resolve(FALLBACK_CARD_COLORS);
       }
@@ -175,7 +263,11 @@ const SpotifyNowPlaying = ({ onNowPlayingChange }: SpotifyNowPlayingProps) => {
     try {
       const result = await getNowPlaying();
 
-      if (result.trackId && prevTrackId.current !== null && result.trackId !== prevTrackId.current) {
+      if (
+        result.trackId &&
+        prevTrackId.current !== null &&
+        result.trackId !== prevTrackId.current
+      ) {
         setDirection(1);
       }
       if (result.trackId) {
@@ -259,7 +351,7 @@ const SpotifyNowPlaying = ({ onNowPlayingChange }: SpotifyNowPlayingProps) => {
       const eased = easeInOutCubic(progress);
 
       const next = fromPalette.map((fromColor, index) =>
-        mixColor(fromColor, toPalette[index] ?? fromColor, eased)
+        mixColor(fromColor, toPalette[index] ?? fromColor, eased),
       );
 
       cardColorsRef.current = next;
@@ -313,16 +405,32 @@ const SpotifyNowPlaying = ({ onNowPlayingChange }: SpotifyNowPlayingProps) => {
           <motion.div
             aria-hidden="true"
             className="pointer-events-none absolute -left-10 -top-10 h-40 w-40 rounded-full blur-3xl"
-            style={{ background: `radial-gradient(circle, ${renderedCardColors[0]} 0%, transparent 68%)` }}
-            animate={isMobile ? { x: 0, y: 0, scale: 1 } : { x: [0, 12, -10, 0], y: [0, -8, 10, 0], scale: [1, 1.14, 1] }}
-            transition={isMobile ? { duration: 0 } : { duration: 7.5, ease: "easeInOut", repeat: Infinity }}
+            style={{
+              background: `radial-gradient(circle, ${renderedCardColors[0]} 0%, transparent 68%)`,
+            }}
+            animate={
+              isMobile
+                ? { x: 0, y: 0, scale: 1 }
+                : { x: [0, 12, -10, 0], y: [0, -8, 10, 0], scale: [1, 1.14, 1] }
+            }
+            transition={
+              isMobile ? { duration: 0 } : { duration: 7.5, ease: "easeInOut", repeat: Infinity }
+            }
           />
           <motion.div
             aria-hidden="true"
             className="pointer-events-none absolute -right-12 -bottom-10 h-44 w-44 rounded-full blur-3xl"
-            style={{ background: `radial-gradient(circle, ${renderedCardColors[1]} 0%, transparent 70%)` }}
-            animate={isMobile ? { x: 0, y: 0, scale: 1 } : { x: [0, -10, 8, 0], y: [0, 10, -8, 0], scale: [1, 1.12, 1] }}
-            transition={isMobile ? { duration: 0 } : { duration: 8.2, ease: "easeInOut", repeat: Infinity }}
+            style={{
+              background: `radial-gradient(circle, ${renderedCardColors[1]} 0%, transparent 70%)`,
+            }}
+            animate={
+              isMobile
+                ? { x: 0, y: 0, scale: 1 }
+                : { x: [0, -10, 8, 0], y: [0, 10, -8, 0], scale: [1, 1.12, 1] }
+            }
+            transition={
+              isMobile ? { duration: 0 } : { duration: 8.2, ease: "easeInOut", repeat: Infinity }
+            }
           />
           <div
             aria-hidden="true"
@@ -415,7 +523,14 @@ const SpotifyNowPlaying = ({ onNowPlayingChange }: SpotifyNowPlayingProps) => {
                 ) : (
                   <div className="mt-1.5 flex items-center justify-between text-[10px] font-medium uppercase tracking-widest text-white/38">
                     <span>Recently played</span>
-                    <span>{data!.playedAt ? new Date(data!.playedAt).toLocaleDateString("en", { month: "short", day: "numeric" }) : ""}</span>
+                    <span>
+                      {data!.playedAt
+                        ? new Date(data!.playedAt).toLocaleDateString("en", {
+                            month: "short",
+                            day: "numeric",
+                          })
+                        : ""}
+                    </span>
                   </div>
                 )}
               </div>

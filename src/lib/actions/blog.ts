@@ -34,10 +34,7 @@ function validateThumbnailUrl(url: string): string | undefined {
   } catch {
     // If not a valid URL, try adding https://
     try {
-      if (
-        !trimmedUrl.startsWith("http://") &&
-        !trimmedUrl.startsWith("https://")
-      ) {
+      if (!trimmedUrl.startsWith("http://") && !trimmedUrl.startsWith("https://")) {
         new URL(`https://${trimmedUrl}`);
         return `https://${trimmedUrl}`;
       }
@@ -59,7 +56,7 @@ export async function getPosts() {
 
   try {
     const collection = await getPostsCollection();
-    const posts = await collection.find({ }).toArray();
+    const posts = await collection.find({}).toArray();
 
     // ObjectId → string serialisieren
     const serialized = posts.map((post) => ({
@@ -68,7 +65,7 @@ export async function getPosts() {
     }));
 
     return { posts: serialized, error: null };
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     return { posts: [], error: "Failed to fetch posts" };
   }
@@ -76,7 +73,7 @@ export async function getPosts() {
 
 export async function getPostBySlug(
   slug: string,
-  options?: { includeDraftsForAdmin?: boolean }
+  options?: { includeDraftsForAdmin?: boolean },
 ): Promise<{
   post: Post | null;
   error: string | null;
@@ -85,9 +82,7 @@ export async function getPostBySlug(
     const collection = await getPostsCollection();
     const includeDraftsForAdmin = options?.includeDraftsForAdmin === true;
     const canReadDrafts = includeDraftsForAdmin ? await isServerAdmin() : false;
-    const post = await collection.findOne(
-      canReadDrafts ? { slug } : { slug, draft: false }
-    );
+    const post = await collection.findOne(canReadDrafts ? { slug } : { slug, draft: false });
 
     if (!post) {
       return {
@@ -113,13 +108,9 @@ export async function incrementPostViews(postId: string): Promise<{
 }> {
   try {
     const collection = await getPostsCollection();
-    await collection.updateOne(
-      { _id: new ObjectId(postId) },
-      { $inc: { views: 1 } }
-    );
+    await collection.updateOne({ _id: new ObjectId(postId) }, { $inc: { views: 1 } });
     return { success: true, error: null };
-  }
-  catch (error) {
+  } catch (error) {
     return {
       success: false,
       error: error instanceof Error ? error.message : "Failed to increment views",
@@ -147,7 +138,8 @@ export async function createPost(postData: Post, userId: string) {
 
   try {
     // Validate and sanitize thumbnail URL
-    const thumbnailUrl = validateThumbnailUrl(postData.thumbnail ?? defaultThumbnail) || defaultThumbnail;
+    const thumbnailUrl =
+      validateThumbnailUrl(postData.thumbnail ?? defaultThumbnail) || defaultThumbnail;
     const collection = await getPostsCollection();
 
     // Map camelCase form data to hyphenated database field names
@@ -167,8 +159,8 @@ export async function createPost(postData: Post, userId: string) {
       content: postData.content,
       userId: userId,
       creationDate: new Date().toISOString(),
-      _id: new ObjectId,
-      views: 0
+      _id: new ObjectId(),
+      views: 0,
     };
 
     // Only add thumbnail if it's a valid URL
@@ -191,7 +183,11 @@ export async function createPostByFormData(postData: PostFormData, userId: strin
   return createPost(postData as Post, userId);
 }
 
-export async function updatePost(postId: string, postData: PostFormData, originalPost?: SerializedPost) {
+export async function updatePost(
+  postId: string,
+  postData: PostFormData,
+  originalPost?: SerializedPost,
+) {
   const canManagePosts = await isServerAdmin();
   if (!canManagePosts) {
     return {
@@ -211,7 +207,7 @@ export async function updatePost(postId: string, postData: PostFormData, origina
       const fieldsToCheck = ["title", "shortDescription", "slug", "content", "thumbnail"];
       onlyDraftChanged =
         fieldsToCheck.every(
-          (field) => postData[field as keyof PostFormData] === originalPost[field as keyof Post]
+          (field) => postData[field as keyof PostFormData] === originalPost[field as keyof Post],
         ) && postData.draft !== originalPost.draft;
     }
 
@@ -249,7 +245,7 @@ export async function updatePost(postId: string, postData: PostFormData, origina
 
     const result = await collection.updateOne(
       { _id: new ObjectId(postId) },
-      { $set: documentData }
+      { $set: documentData },
     );
     return { success: true, data: toPlainObject(result) };
   } catch (error) {
@@ -275,7 +271,6 @@ export async function deletePost(postId: string) {
     await collection.deleteOne({ _id: new ObjectId(postId) });
     return { success: true };
   } catch (error) {
-    
     console.error("Error deleting post:", error);
     return {
       success: false,

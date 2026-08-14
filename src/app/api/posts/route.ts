@@ -37,7 +37,7 @@ export async function GET(request: Request) {
           _id: post._id.toString(),
           authorName: resolvedAuthorName,
         };
-      })
+      }),
     );
 
     return NextResponse.json({ posts: serializedPosts });

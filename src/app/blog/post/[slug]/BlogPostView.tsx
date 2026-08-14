@@ -73,7 +73,13 @@ const parserOptions: HTMLReactParserOptions = {
   },
 };
 
-export default function BlogPostView({ post, authorName, segments, readingTime, hasMedia }: BlogPostViewProps) {
+export default function BlogPostView({
+  post,
+  authorName,
+  segments,
+  readingTime,
+  hasMedia,
+}: BlogPostViewProps) {
   // We use the 'article-body' class to target styles even if prose selectors fail due to nesting
   const proseClasses = cn(
     "prose prose-invert prose-purple max-w-none",
@@ -87,20 +93,20 @@ export default function BlogPostView({ post, authorName, segments, readingTime, 
     "prose-code:text-purple-300 prose-code:bg-purple-500/10 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-md prose-code:before:content-none prose-code:after:content-none",
     "prose-pre:bg-transparent prose-pre:p-0 prose-pre:border-none prose-pre:overflow-visible",
     "prose-img:rounded-3xl prose-img:border prose-img:border-white/10 prose-img:shadow-2xl",
-    "prose-blockquote:border-l-purple-500 prose-blockquote:bg-white/5 prose-blockquote:py-4 prose-blockquote:px-8 prose-blockquote:rounded-r-3xl prose-blockquote:text-white/70 prose-blockquote:italic"
+    "prose-blockquote:border-l-purple-500 prose-blockquote:bg-white/5 prose-blockquote:py-4 prose-blockquote:px-8 prose-blockquote:rounded-r-3xl prose-blockquote:text-white/70 prose-blockquote:italic",
   );
 
   return (
     <>
       <ScrollToTop />
       <div className="container mx-auto px-6 py-24 mt-16 min-h-screen">
-        <motion.div 
+        <motion.div
           className="max-w-4xl mx-auto mb-12"
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.4 }}
         >
-          <Link 
+          <Link
             href="/blog"
             className="group inline-flex items-center gap-2 text-white/50 hover:text-white transition-colors text-sm font-medium"
           >
@@ -122,7 +128,7 @@ export default function BlogPostView({ post, authorName, segments, readingTime, 
                 className="text-4xl md:text-6xl font-extrabold text-white mb-8 tracking-tight leading-[1.1]"
                 dangerouslySetInnerHTML={{ __html: post.title }}
               />
-              
+
               <div className="flex flex-wrap items-center justify-center gap-y-3 gap-x-6 text-[13px] font-medium text-white/40 mb-10">
                 <span className="flex items-center gap-2 bg-white/5 px-3 py-1 rounded-full border border-white/5">
                   <LuUser className="size-3.5 text-purple-500" />
@@ -144,7 +150,7 @@ export default function BlogPostView({ post, authorName, segments, readingTime, 
             </motion.div>
 
             {post.thumbnail && (
-              <motion.div 
+              <motion.div
                 className="relative mx-auto w-full aspect-video rounded-3xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-white/10"
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -166,7 +172,7 @@ export default function BlogPostView({ post, authorName, segments, readingTime, 
             )}
 
             {post.shortDescription && (
-              <motion.p 
+              <motion.p
                 className="mt-10 text-xl md:text-2xl text-white/70 font-medium leading-relaxed max-w-3xl mx-auto italic"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -177,7 +183,7 @@ export default function BlogPostView({ post, authorName, segments, readingTime, 
             )}
           </header>
 
-          <motion.div 
+          <motion.div
             className="relative"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -193,7 +199,7 @@ export default function BlogPostView({ post, authorName, segments, readingTime, 
                   Tip: Click media to enlarge
                 </div>
               )}
-              
+
               {segments.map((seg, i) =>
                 seg.type === "html" ? (
                   <React.Fragment key={i}>{parse(seg.html!, parserOptions)}</React.Fragment>
@@ -201,34 +207,47 @@ export default function BlogPostView({ post, authorName, segments, readingTime, 
                   <div key={i} className="not-prose my-12 group">
                     <div className="mb-4 flex items-center gap-2">
                       <div className="h-px grow bg-white/10" />
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-white/20 group-hover:text-purple-500/40 transition-colors">External Preview</span>
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-white/20 group-hover:text-purple-500/40 transition-colors">
+                        External Preview
+                      </span>
                       <div className="h-px grow bg-white/10" />
                     </div>
                     {seg.data && <OGPreviewCard data={seg.data} href={seg.url!} />}
                   </div>
-                )
+                ),
               )}
             </div>
-            
+
             <div className="absolute top-[20%] left-[-20%] w-96 h-96 bg-purple-600/5 blur-[120px] rounded-full pointer-events-none -z-1" />
             <div className="absolute bottom-[20%] right-[-20%] w-96 h-96 bg-blue-600/5 blur-[120px] rounded-full pointer-events-none -z-1" />
           </motion.div>
 
           <footer className="mt-20 pt-10 border-t border-white/10 flex flex-col items-center">
-             <div className="text-center mb-8">
-               <p className="text-white/40 text-sm mb-4 font-medium uppercase tracking-[0.2em]">Thanks for reading</p>
-               <h3 className="text-2xl font-bold text-white mb-2">Want to stay updated?</h3>
-               <p className="text-white/60 text-sm max-w-sm mx-auto">Follow me on social media or reach out via email for collaboration.</p>
-             </div>
-             
-             <div className="flex items-center gap-4">
-               <Button asChild variant="outline" className="rounded-full border-white/10 bg-white/5 hover:bg-white/10">
-                 <Link href="/blog">All Articles</Link>
-               </Button>
-               <Button asChild className="rounded-full bg-purple-600 hover:bg-purple-700 shadow-[0_0_20px_rgba(168,85,247,0.4)]">
-                 <Link href="/#top">Back Home</Link>
-               </Button>
-             </div>
+            <div className="text-center mb-8">
+              <p className="text-white/40 text-sm mb-4 font-medium uppercase tracking-[0.2em]">
+                Thanks for reading
+              </p>
+              <h3 className="text-2xl font-bold text-white mb-2">Want to stay updated?</h3>
+              <p className="text-white/60 text-sm max-w-sm mx-auto">
+                Follow me on social media or reach out via email for collaboration.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-4">
+              <Button
+                asChild
+                variant="outline"
+                className="rounded-full border-white/10 bg-white/5 hover:bg-white/10"
+              >
+                <Link href="/blog">All Articles</Link>
+              </Button>
+              <Button
+                asChild
+                className="rounded-full bg-purple-600 hover:bg-purple-700 shadow-[0_0_20px_rgba(168,85,247,0.4)]"
+              >
+                <Link href="/#top">Back Home</Link>
+              </Button>
+            </div>
           </footer>
         </article>
         <PostImageLightbox rootId="post-content-root" />

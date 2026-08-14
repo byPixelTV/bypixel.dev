@@ -128,8 +128,8 @@ export default function NowExperience({ nextRace }: { nextRace: NextRace }) {
                 The current rotation.
               </h1>
               <p className="mt-6 max-w-2xl text-base leading-relaxed text-slate-300 sm:text-lg">
-                Music, games, racing, devices and code. Not a perfectly curated
-                moodboard, more like the stuff I actually keep coming back to.
+                Music, games, racing, devices and code. Not a perfectly curated moodboard, more like
+                the stuff I actually keep coming back to.
               </p>
             </div>
 
@@ -199,9 +199,7 @@ export default function NowExperience({ nextRace }: { nextRace: NextRace }) {
                       <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-slate-500">
                         #{index + 1}
                       </p>
-                      <h3 className="mt-1 truncate text-lg font-black text-white">
-                        {artist.name}
-                      </h3>
+                      <h3 className="mt-1 truncate text-lg font-black text-white">{artist.name}</h3>
                       <p className="mt-2 line-clamp-2 text-xs leading-5 text-slate-400">
                         {artist.genres.slice(0, 2).join(" / ") || "on repeat"}
                       </p>
@@ -240,9 +238,7 @@ export default function NowExperience({ nextRace }: { nextRace: NextRace }) {
                 <p className="text-xs font-bold uppercase tracking-[0.28em] text-slate-500">
                   Formula 1
                 </p>
-                <h2 className="text-2xl font-black tracking-tight text-white">
-                  Next race
-                </h2>
+                <h2 className="text-2xl font-black tracking-tight text-white">Next race</h2>
               </div>
             </div>
 
@@ -277,9 +273,7 @@ export default function NowExperience({ nextRace }: { nextRace: NextRace }) {
             <p className="text-sm font-semibold uppercase tracking-[0.22em] text-red-200/70">
               Round {nextRace.round}
             </p>
-            <h3 className="mt-2 text-3xl font-black tracking-tight text-white">
-              {nextRace.name}
-            </h3>
+            <h3 className="mt-2 text-3xl font-black tracking-tight text-white">{nextRace.name}</h3>
             <div className="mt-4 flex flex-wrap gap-2 text-sm text-slate-300">
               <span className="rounded-full border border-white/10 bg-white/6 px-3 py-1.5">
                 {nextRace.location}
@@ -290,10 +284,9 @@ export default function NowExperience({ nextRace }: { nextRace: NextRace }) {
               </span>
             </div>
             <p className="mt-5 text-sm leading-6 text-slate-400">
-              I watch F1 for the mix of speed and systems thinking: tire
-              strategy, tiny setup choices, pressure, radio calls and how one
-              decision can flip a whole weekend. It scratches the same part of
-              my brain as debugging a hard problem, just louder.
+              I watch F1 for the mix of speed and systems thinking: tire strategy, tiny setup
+              choices, pressure, radio calls and how one decision can flip a whole weekend. It
+              scratches the same part of my brain as debugging a hard problem, just louder.
             </p>
           </motion.article>
         </section>
@@ -306,7 +299,9 @@ export default function NowExperience({ nextRace }: { nextRace: NextRace }) {
                 className="group relative min-h-64 overflow-hidden rounded-[1.5rem] border border-white/10 bg-white/4 p-6 backdrop-blur-xl transition duration-300 hover:border-purple-300/25 hover:bg-white/7"
                 whileHover={{ y: -5 }}
               >
-                <div className={`absolute inset-0 bg-linear-to-br ${item.accent} opacity-0 transition duration-300 group-hover:opacity-100`} />
+                <div
+                  className={`absolute inset-0 bg-linear-to-br ${item.accent} opacity-0 transition duration-300 group-hover:opacity-100`}
+                />
                 <div className="relative mb-6 flex h-16 w-16 items-center justify-center rounded-2xl border border-white/10 bg-black/28 p-3">
                   <Image
                     src={item.logo}
@@ -333,7 +328,9 @@ export default function NowExperience({ nextRace }: { nextRace: NextRace }) {
               className="group relative min-h-64 overflow-hidden rounded-[1.5rem] border border-white/10 bg-white/4 p-6 backdrop-blur-xl transition duration-300 hover:border-purple-300/25 hover:bg-white/7"
               whileHover={{ y: -5 }}
             >
-              <div className={`absolute inset-0 bg-linear-to-br ${item.accent} opacity-0 transition duration-300 group-hover:opacity-100`} />
+              <div
+                className={`absolute inset-0 bg-linear-to-br ${item.accent} opacity-0 transition duration-300 group-hover:opacity-100`}
+              />
               <div className="relative mb-6 flex h-16 w-16 items-center justify-center rounded-2xl border border-white/10 bg-black/28 p-3">
                 <Image
                   src={item.logo}
@@ -370,9 +367,9 @@ export default function NowExperience({ nextRace }: { nextRace: NextRace }) {
               </div>
             </div>
             <p className="text-sm leading-6 text-slate-400">
-              Kotlin, Java, Go and TypeScript are the languages I spend the most
-              time in right now. Backend systems, Minecraft projects, tools and
-              polished interfaces all live somewhere in that mix.
+              Kotlin, Java, Go and TypeScript are the languages I spend the most time in right now.
+              Backend systems, Minecraft projects, tools and polished interfaces all live somewhere
+              in that mix.
             </p>
           </div>
 
@@ -383,9 +380,7 @@ export default function NowExperience({ nextRace }: { nextRace: NextRace }) {
                 className="relative overflow-hidden rounded-[1.35rem] border border-white/10 bg-black/24 p-5"
                 whileHover={{ y: -4, scale: 1.015 }}
               >
-                <div
-                  className={`absolute inset-x-0 top-0 h-1 bg-linear-to-r ${language.accent}`}
-                />
+                <div className={`absolute inset-x-0 top-0 h-1 bg-linear-to-r ${language.accent}`} />
                 <p className="font-mono text-sm text-slate-500">{language.note}</p>
                 <p className="mt-2 text-3xl font-black tracking-tight text-white">
                   {language.name}

@@ -125,53 +125,8 @@ export default function SkillsShowcase() {
   });
 
   // Move all useTransform hooks to the top level, out of conditional blocks
-  const titleOpacity = useTransform(
-    scrollYProgress,
-    [0, 0.05, 0.6, 0.65],
-    [0, 1, 1, 0],
-  );
+  const titleOpacity = useTransform(scrollYProgress, [0, 0.05, 0.6, 0.65], [0, 1, 1, 0]);
   const titleScale = useTransform(scrollYProgress, [0, 0.15], [0.8, 1]);
-
-  const kotlinIconOpacity = useTransform(
-    scrollYProgress,
-    [0.5, 0.55, 0.95, 1],
-    [0, 1, 1, 0],
-  );
-  const kotlinIconScale = useTransform(scrollYProgress, [0.5, 0.6], [0.4, 1]);
-  const kotlinIconY = useTransform(scrollYProgress, [0.55, 0.65], [0, isMobile ? -100 : -180]);
-  const kotlinCoreTitleOpacity = useTransform(
-    scrollYProgress,
-    [0.55, 0.62],
-    [0, 1],
-  );
-
-  const ktorOpacity = useTransform(
-    scrollYProgress,
-    [0.6, 0.65, 0.95, 1],
-    [0, 1, 1, 0],
-  );
-  const ktorX = useTransform(scrollYProgress, [0.6, 0.65], [-50, 0]);
-
-  const serialOpacity = useTransform(
-    scrollYProgress,
-    [0.63, 0.68, 0.95, 1],
-    [0, 1, 1, 0],
-  );
-  const serialX = useTransform(scrollYProgress, [0.63, 0.68], [50, 0]);
-
-  const mongoOpacity = useTransform(
-    scrollYProgress,
-    [0.66, 0.71, 0.95, 1],
-    [0, 1, 1, 0],
-  );
-  const mongoX = useTransform(scrollYProgress, [0.66, 0.71], [-50, 0]);
-
-  const redisOpacity = useTransform(
-    scrollYProgress,
-    [0.69, 0.74, 0.95, 1],
-    [0, 1, 1, 0],
-  );
-  const redisX = useTransform(scrollYProgress, [0.69, 0.74], [50, 0]);
 
   const progressWidth = useTransform(scrollYProgress, [0, 0.6], ["0%", "100%"]);
 
@@ -202,8 +157,7 @@ export default function SkillsShowcase() {
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!containerRef.current) return;
     const { clientX, clientY } = e;
-    const { left, top, width, height } =
-      containerRef.current.getBoundingClientRect();
+    const { left, top, width, height } = containerRef.current.getBoundingClientRect();
     const x = (clientX - left) / width;
     const y = (clientY - top) / height;
     mouseX.set(x - 0.5);
@@ -240,7 +194,7 @@ export default function SkillsShowcase() {
     <section
       ref={containerRef}
       className={`relative w-dvw left-[50%] -translate-x-1/2 overflow-visible`}
-      style={{ height: sectionHeight ? `${sectionHeight}px` : (isMobile ? "200vh" : "400vh") }}
+      style={{ height: sectionHeight ? `${sectionHeight}px` : isMobile ? "200vh" : "400vh" }}
       onMouseMove={isMobile ? undefined : handleMouseMove}
     >
       <div className="sticky top-0 flex h-screen w-full flex-col items-center justify-center overflow-hidden">
@@ -257,8 +211,7 @@ export default function SkillsShowcase() {
                 Skill Universe
               </h2>
               <p className="mt-4 sm:mt-6 mx-auto max-w-lg text-xs sm:text-base text-slate-400 leading-relaxed">
-                A dynamic journey through my technical stack. Scroll to explore
-                the constellation.
+                A dynamic journey through my technical stack. Scroll to explore the constellation.
               </p>
             </motion.div>
 
@@ -305,14 +258,7 @@ interface SkillItemProps {
   isMobile: boolean;
 }
 
-function SkillItem({
-  skill,
-  pos,
-  mouseX,
-  mouseY,
-  scrollYProgress,
-  isMobile,
-}: SkillItemProps) {
+function SkillItem({ skill, pos, mouseX, mouseY, scrollYProgress, isMobile }: SkillItemProps) {
   const [isHovered, setIsHovered] = useState(false);
 
   const zProgress = useTransform(scrollYProgress, (val) => {
@@ -325,7 +271,13 @@ function SkillItem({
   const baseScale = useTransform(
     zProgress,
     [0, 0.2, 0.6, 0.9, 1],
-    [isMobile ? 0.45 : 0.7, isMobile ? 0.85 : 1.0, isMobile ? 1.1 : 1.6, isMobile ? 2.2 : 3.4, isMobile ? 3.2 : 6],
+    [
+      isMobile ? 0.45 : 0.7,
+      isMobile ? 0.85 : 1.0,
+      isMobile ? 1.1 : 1.6,
+      isMobile ? 2.2 : 3.4,
+      isMobile ? 3.2 : 6,
+    ],
   );
   const hoverScale = useTransform(baseScale, (s) => (s as number) * 1.4);
 
@@ -338,11 +290,7 @@ function SkillItem({
     },
   );
 
-  const blur = useTransform(
-    zProgress,
-    [0, 0.2, 0.7, 0.95],
-    ["1px", "0px", "0px", "2px"],
-  );
+  const blur = useTransform(zProgress, [0, 0.2, 0.7, 0.95], ["1px", "0px", "0px", "2px"]);
 
   const xPos = useTransform(
     zProgress,
@@ -386,10 +334,12 @@ function SkillItem({
       onMouseLeave={() => setIsHovered(false)}
       onClick={() => isMobile && setIsHovered(!isHovered)}
     >
-      <div className={`relative flex items-center justify-center ${isMobile ? 'p-2' : 'p-3 sm:p-4'} rounded-xl sm:rounded-2xl bg-slate-900/40 border border-slate-800/50 backdrop-blur-sm transition-all duration-300 group-hover:bg-blue-500/20 group-hover:border-blue-400/40 group-hover:shadow-[0_0_20px_rgba(59,130,246,0.15)]`}>
+      <div
+        className={`relative flex items-center justify-center ${isMobile ? "p-2" : "p-3 sm:p-4"} rounded-xl sm:rounded-2xl bg-slate-900/40 border border-slate-800/50 backdrop-blur-sm transition-all duration-300 group-hover:bg-blue-500/20 group-hover:border-blue-400/40 group-hover:shadow-[0_0_20px_rgba(59,130,246,0.15)]`}
+      >
         <Icon
           icon={skill.icon}
-          className={`${isMobile ? 'h-5 w-5' : 'h-6 w-6 sm:h-8 sm:w-8'} text-white/70 transition-colors duration-300 group-hover:text-white`}
+          className={`${isMobile ? "h-5 w-5" : "h-6 w-6 sm:h-8 sm:w-8"} text-white/70 transition-colors duration-300 group-hover:text-white`}
         />
         <motion.div
           className="absolute -bottom-10 sm:-bottom-12 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-lg bg-blue-600 px-2 py-1 sm:px-3 sm:py-1.5 text-[8px] sm:text-[10px] font-bold uppercase tracking-wider text-white shadow-2xl pointer-events-none z-50"

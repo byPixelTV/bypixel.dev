@@ -7,31 +7,34 @@
     "type-check": "tsc --noEmit",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "oxlint .",
+    "lint:fix": "oxlint --fix",
+    "fmt": "oxfmt",
+    "fmt:check": "oxfmt --check"
   },
   "dependencies": {
     "@iconify/react": "^6.0.2",
     "@react-three/fiber": "^9.7.0",
     "@tailwindcss/typography": "^0.5.20",
     "@types/three": "^0.185.4",
-    "better-auth": "^1.6.27",
+    "better-auth": "^1.6.28",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dayjs": "^1.11.21",
-    "motion": "^13.1.0",
-    "html-react-parser": "^6.1.5",
+    "html-react-parser": "^6.1.7",
+    "kysely": "^0.29.5",
     "lenis": "^1.3.26",
     "lucide-react": "^1.31.0",
     "marked": "^18.0.9",
     "marked-gfm-heading-id": "^4.1.4",
     "mongodb": "^7.5.0",
-    "kysely": "^0.29.5",
-    "next": "16.3.0",
+    "motion": "^13.1.0",
+    "next": "16.3.1",
     "radix-ui": "^1.6.7",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "react-icons": "^5.7.0",
-    "shadcn": "^4.17.0",
+    "shadcn": "^4.18.0",
     "shiki": "^4.4.3",
     "tailwind-merge": "^3.6.0",
     "three": "^0.185.1",
@@ -44,8 +47,8 @@
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
     "babel-plugin-react-compiler": "1.0.0",
-    "eslint": "^10.8.1",
-    "eslint-config-next": "16.3.0",
+    "oxfmt": "^0.63.0",
+    "oxlint": "^1.78.0",
     "tailwindcss": "^4.3.3",
     "typescript": "^7.0.2"
   },
@@ -56,8 +59,5 @@
   "trustedDependencies": [
     "sharp",
     "unrs-resolver"
-  ],
-  "overrides": {
-    "kysely": "0.29.5"
-  }
+  ]
 }

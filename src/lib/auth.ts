@@ -4,24 +4,19 @@ import { db } from "./mongo";
 
 export const auth = betterAuth({
   database: mongodbAdapter(db),
-    baseURL: {
-        allowedHosts: [
-            "localhost:3000",
-            "bypixel.dev",
-            "*.vercel.app",
-      "www.bypixel.dev",
-        ],
-        protocol: process.env.NODE_ENV === "development" ? "http" : "https",
-    },
+  baseURL: {
+    allowedHosts: ["localhost:3000", "bypixel.dev", "*.vercel.app", "www.bypixel.dev"],
+    protocol: process.env.NODE_ENV === "development" ? "http" : "https",
+  },
   experimental: { joins: true },
   emailAndPassword: {
-    enabled: false
+    enabled: false,
   },
   socialProviders: {
     discord: {
       clientId: process.env.DISCORD_CLIENT_ID || "",
-      clientSecret: process.env.DISCORD_CLIENT_SECRET || ""
-    }
+      clientSecret: process.env.DISCORD_CLIENT_SECRET || "",
+    },
   },
   user: {
     additionalFields: {
@@ -30,8 +25,8 @@ export const auth = betterAuth({
         required: false,
         defaultValue: false,
         input: false,
-      }
-    }
+      },
+    },
   },
   databaseHooks: {
     user: {
@@ -39,7 +34,7 @@ export const auth = betterAuth({
         before: async (user) => {
           if (!user.email) {
             throw new APIError("BAD_REQUEST", {
-              message: "no_email"
+              message: "no_email",
             });
           }
 
@@ -47,18 +42,18 @@ export const auth = betterAuth({
 
           if (!isFirstUser) {
             throw new APIError("FORBIDDEN", {
-              message: "disabled"
+              message: "disabled",
             });
           }
 
           return {
             data: {
               ...user,
-              admin: true
-            }
+              admin: true,
+            },
           };
-        }
-      }
-    }
-  }
-})
+        },
+      },
+    },
+  },
+});

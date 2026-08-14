@@ -78,10 +78,18 @@ function isStandaloneImageParagraph(token: MarkdownToken): token is MarkdownToke
     text: string;
   }>;
 } {
-  return token.type === "paragraph" && Array.isArray(token.tokens) && token.tokens.length === 1 && token.tokens[0]?.type === "image";
+  return (
+    token.type === "paragraph" &&
+    Array.isArray(token.tokens) &&
+    token.tokens.length === 1 &&
+    token.tokens[0]?.type === "image"
+  );
 }
 
-function renderCaptionedImageFigure(imageToken: { href: string; text: string }, captionRaw: string) {
+function renderCaptionedImageFigure(
+  imageToken: { href: string; text: string },
+  captionRaw: string,
+) {
   const imageHtml = renderMediaHtml(imageToken.href, imageToken.text);
   const captionHtml = parseInline(captionRaw);
 
@@ -90,7 +98,9 @@ function renderCaptionedImageFigure(imageToken: { href: string; text: string }, 
     "",
     `<figure class="my-8 overflow-hidden rounded-3xl border border-white/10 shadow-2xl">`,
     imageHtml,
-    captionHtml ? `<figcaption class="border-t border-white/10 bg-white/[0.03] px-4 py-3 text-left text-xs sm:text-sm leading-relaxed text-white/55">${captionHtml}</figcaption>` : "",
+    captionHtml
+      ? `<figcaption class="border-t border-white/10 bg-white/[0.03] px-4 py-3 text-left text-xs sm:text-sm leading-relaxed text-white/55">${captionHtml}</figcaption>`
+      : "",
     `</figure>`,
     "",
     "",
@@ -172,12 +182,7 @@ function slugify(value: string) {
     .replace(/^-+|-+$/g, "");
 }
 
-export function PostDialog({
-  open,
-  onOpenChange,
-  post,
-  onSave,
-}: PostDialogProps) {
+export function PostDialog({ open, onOpenChange, post, onSave }: PostDialogProps) {
   const [formData, setFormData] = useState<PostFormData>({
     title: "",
     shortDescription: "",
@@ -289,10 +294,7 @@ export function PostDialog({
     setIsSaving(false);
   };
 
-  const handleInputChange = (
-    field: keyof PostFormData,
-    value: string | boolean
-  ) => {
+  const handleInputChange = (field: keyof PostFormData, value: string | boolean) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
 
     if (field !== "title" && field !== "slug") {
@@ -323,13 +325,9 @@ export function PostDialog({
         className="w-[96vw] max-w-[96vw] xl:max-w-[1600px] bg-black text-white border border-neutral-800 h-[94vh] max-h-[94vh] flex flex-col overflow-hidden p-5 sm:p-6"
       >
         <DialogHeader>
-          <DialogTitle className="text-white">
-            {post ? "Edit Post" : "Create New Post"}
-          </DialogTitle>
+          <DialogTitle className="text-white">{post ? "Edit Post" : "Create New Post"}</DialogTitle>
           <DialogDescription className="text-neutral-400">
-            {post
-              ? "Make changes to your post here."
-              : "Fill in the details to create a new post."}
+            {post ? "Make changes to your post here." : "Fill in the details to create a new post."}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="flex min-h-0 flex-col flex-1 overflow-hidden">
@@ -346,7 +344,9 @@ export function PostDialog({
             <aside className="min-h-0 overflow-y-auto overscroll-contain rounded-xl border border-neutral-800 bg-neutral-950/40 p-4">
               <div className="mb-4 border-b border-neutral-800 pb-3">
                 <p className="text-sm font-semibold text-white">Post Settings</p>
-                <p className="text-xs text-neutral-400">Configure metadata and publishing options.</p>
+                <p className="text-xs text-neutral-400">
+                  Configure metadata and publishing options.
+                </p>
               </div>
 
               <div className="space-y-4">
@@ -372,9 +372,7 @@ export function PostDialog({
                     id="shortDescription"
                     className="min-h-24 resize-y bg-neutral-900 text-white border-neutral-700 placeholder:text-neutral-500"
                     value={formData.shortDescription}
-                    onChange={(e) =>
-                      handleInputChange("shortDescription", e.target.value)
-                    }
+                    onChange={(e) => handleInputChange("shortDescription", e.target.value)}
                     placeholder="Enter short description..."
                     required
                   />
@@ -413,9 +411,7 @@ export function PostDialog({
                   </Label>
                   <Select
                     value={formData.draft ? "draft" : "published"}
-                    onValueChange={(value) =>
-                      handleInputChange("draft", value === "draft")
-                    }
+                    onValueChange={(value) => handleInputChange("draft", value === "draft")}
                   >
                     <SelectTrigger className="bg-neutral-900 text-white border-neutral-700">
                       <SelectValue placeholder="Select status" />
@@ -446,20 +442,30 @@ export function PostDialog({
               <div className="mb-3 flex items-center justify-between gap-3 border-b border-neutral-800 pb-3">
                 <div>
                   <p className="text-base font-semibold text-white">Editor</p>
-                  <p className="text-xs text-neutral-400">Write your post in Markdown with live preview.</p>
+                  <p className="text-xs text-neutral-400">
+                    Write your post in Markdown with live preview.
+                  </p>
                 </div>
                 <div className="flex gap-2">
                   <Button
                     type="button"
                     onClick={() => setActiveTab("write")}
-                    className={activeTab === "write" ? "h-8 bg-white px-3 text-xs text-black" : "h-8 bg-neutral-900 px-3 text-xs text-neutral-300 hover:bg-neutral-800"}
+                    className={
+                      activeTab === "write"
+                        ? "h-8 bg-white px-3 text-xs text-black"
+                        : "h-8 bg-neutral-900 px-3 text-xs text-neutral-300 hover:bg-neutral-800"
+                    }
                   >
                     Write
                   </Button>
                   <Button
                     type="button"
                     onClick={() => setActiveTab("preview")}
-                    className={activeTab === "preview" ? "h-8 bg-white px-3 text-xs text-black" : "h-8 bg-neutral-900 px-3 text-xs text-neutral-300 hover:bg-neutral-800"}
+                    className={
+                      activeTab === "preview"
+                        ? "h-8 bg-white px-3 text-xs text-black"
+                        : "h-8 bg-neutral-900 px-3 text-xs text-neutral-300 hover:bg-neutral-800"
+                    }
                   >
                     Preview
                   </Button>

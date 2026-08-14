@@ -46,7 +46,7 @@ const projects: Project[] = [
       "Custom Minecraft smp server, pvp server and more coming soon — built bespoke plugins, a web dashboard and the full server infrastructure from scratch.",
     tags: ["Minecraft", "Backend", "Web", "Linux", "Kotlin", "Go"],
     startAt: "May 2025",
-    endAt: "July 2026"
+    endAt: "July 2026",
   },
   {
     name: "BetterAttack",
@@ -185,15 +185,8 @@ export default function HorizontalGallery() {
   const totalWidth =
     Math.max(...responsiveProjectCards.map((card) => card.x + card.width)) + (isMobile ? 100 : 620);
   const travelDistance = Math.max(totalWidth - viewportWidth, 0);
-  const startOffset = Math.max(
-    (viewportWidth - firstItem.width) / 2 - firstItem.x,
-    0,
-  );
-  const x = useTransform(
-    scrollYProgress,
-    [0, 1],
-    [startOffset, -travelDistance],
-  );
+  const startOffset = Math.max((viewportWidth - firstItem.width) / 2 - firstItem.x, 0);
+  const x = useTransform(scrollYProgress, [0, 1], [startOffset, -travelDistance]);
 
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -216,17 +209,14 @@ export default function HorizontalGallery() {
   return (
     <section
       ref={ref}
-      className={`relative left-1/2 right-1/2 w-dvw -translate-x-1/2 ${isMobile ? 'h-[250vh]' : 'h-[400vh]'}`}
+      className={`relative left-1/2 right-1/2 w-dvw -translate-x-1/2 ${isMobile ? "h-[250vh]" : "h-[400vh]"}`}
     >
       <div className="sticky top-0 h-screen w-dvw overflow-hidden">
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
           <div className="absolute left-[12%] top-[18%] h-[22vh] w-[28vw] rounded-full bg-sky-300/8 blur-3xl mix-blend-screen opacity-60" />
           <div className="absolute right-[8%] top-[10%] h-[26vh] w-[22vw] rounded-full bg-emerald-300/8 blur-3xl mix-blend-screen opacity-50" />
         </div>
-        <motion.div
-          style={{ x, width: totalWidth }}
-          className="relative h-full"
-        >
+        <motion.div style={{ x, width: totalWidth }} className="relative h-full">
           {responsiveProjectCards.map((project, index) => (
             <ProjectCardItem
               key={project.name}
@@ -309,7 +299,9 @@ function ProjectCardItem({
       </div>
 
       <div className="relative flex h-full flex-col overflow-hidden">
-        <div className={`relative ${isMobile ? 'h-[40%]' : 'h-[46%]'} min-h-48 sm:min-h-55 overflow-hidden`}>
+        <div
+          className={`relative ${isMobile ? "h-[40%]" : "h-[46%]"} min-h-48 sm:min-h-55 overflow-hidden`}
+        >
           <Image
             src={item.imagePath}
             alt={`${item.name} preview`}
@@ -367,7 +359,9 @@ function ProjectCardItem({
                 </span>
               ))}
               {isMobile && item.tags && item.tags.length > 3 && (
-                <span className="text-[10px] text-white/50 self-center">+{item.tags.length - 3}</span>
+                <span className="text-[10px] text-white/50 self-center">
+                  +{item.tags.length - 3}
+                </span>
               )}
             </div>
 
@@ -406,12 +400,7 @@ function ProjectCardItem({
       className={`absolute ${getVerticalPosition()}`}
     >
       {item.url ? (
-        <Link
-          href={item.url}
-          target="_blank"
-          rel="noreferrer"
-          aria-label={`Open ${item.name}`}
-        >
+        <Link href={item.url} target="_blank" rel="noreferrer" aria-label={`Open ${item.name}`}>
           {content}
         </Link>
       ) : (

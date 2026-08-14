@@ -31,10 +31,16 @@ export default function AIFooter() {
 
           <div className="space-y-6 text-slate-400 text-lg leading-relaxed max-w-2xl mx-auto mb-10">
             <p>
-              I use AI extensively in my workflow—and I&apos;m proud of it. In the modern web ecosystem, AI allows me to be faster, more efficient, and write better code than ever before. 
+              I use AI extensively in my workflow—and I&apos;m proud of it. In the modern web
+              ecosystem, AI allows me to be faster, more efficient, and write better code than ever
+              before.
             </p>
             <p>
-              While my Minecraft server networks are still <span className="text-white/80 font-bold">95% handcrafted</span> logic, I leverage AI to accelerate frontend development and solve repetitive boilerplate. I believe that as long as you <span className="text-white/80 font-bold">understand the code</span> you ship, AI is the ultimate multiplier for any engineer.
+              While my Minecraft server networks are still{" "}
+              <span className="text-white/80 font-bold">95% handcrafted</span> logic, I leverage AI
+              to accelerate frontend development and solve repetitive boilerplate. I believe that as
+              long as you <span className="text-white/80 font-bold">understand the code</span> you
+              ship, AI is the ultimate multiplier for any engineer.
             </p>
           </div>
 
@@ -47,9 +53,12 @@ export default function AIFooter() {
             >
               <Icon icon="mdi:github" className="text-2xl" />
               VIEW SOURCE CODE
-              <Icon icon="ph:arrow-up-right-bold" className="text-sm transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
+              <Icon
+                icon="ph:arrow-up-right-bold"
+                className="text-sm transition-transform group-hover:translate-x-1 group-hover:-translate-y-1"
+              />
             </a>
-            
+
             <div className="text-sm text-slate-500 flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
               Transparency first
