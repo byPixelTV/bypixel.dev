@@ -18,7 +18,6 @@ const BLOB_TRANSITION_MS = 650;
 // ever want the effect punchier (lower minL) or more muted (higher minL).
 const MIN_LIGHTNESS = 42;
 const MAX_LIGHTNESS = 78;
-const MIN_SATURATION = 30;
 
 type RGB = [number, number, number];
 
@@ -131,9 +130,15 @@ function hslToRgb(h: number, s: number, l: number): RGB {
 function clampForDarkUI(rgbStr: string): string {
   const [r, g, b] = parseColor(rgbStr);
   const [h, s, l] = rgbToHsl(r, g, b);
+
+  // Keep the original saturation.
+  // This is important for grayscale album art:
+  // s = 0 must stay s = 0, otherwise HSL's default hue (0 = red)
+  // would turn gray colors into red.
   const clampedL = Math.min(MAX_LIGHTNESS, Math.max(MIN_LIGHTNESS, l));
-  const clampedS = Math.max(MIN_SATURATION, s);
-  const [cr, cg, cb] = hslToRgb(h, clampedS, clampedL);
+
+  const [cr, cg, cb] = hslToRgb(h, s, clampedL);
+
   return `rgb(${cr} ${cg} ${cb})`;
 }
 
@@ -174,6 +179,7 @@ function getAlbumBlobColors(imageUrl: string): Promise<string[]> {
       try {
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d", { willReadFrequently: true });
+
         if (!ctx) {
           resolve(ACTIVE_FALLBACK_BLOB_COLORS);
           return;
@@ -185,13 +191,11 @@ function getAlbumBlobColors(imageUrl: string): Promise<string[]> {
         ctx.drawImage(img, 0, 0, size, size);
 
         const { data } = ctx.getImageData(0, 0, size, size);
+
         const left = getRegionAverage(data, size, 0, 12, 0, size);
         const mid = getRegionAverage(data, size, 12, 24, 0, size);
         const right = getRegionAverage(data, size, 24, size, 0, size);
 
-        // Clamp every extracted color before it ever reaches state, so
-        // both the glow blobs and the gradient text stay readable
-        // regardless of how dark/light/desaturated the album art is.
         resolve([left, mid, right].map(clampForDarkUI));
       } catch {
         resolve(ACTIVE_FALLBACK_BLOB_COLORS);

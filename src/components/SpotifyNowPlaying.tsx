@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import { getNowPlaying, type NowPlayingResult } from "@/lib/actions/spotify";
@@ -45,8 +44,6 @@ const CARD_TRANSITION_MS = 650;
 // the album art is. Should match the bounds used in Profile.tsx so the
 // hero blobs and this card feel like the same "ambience".
 const MIN_LIGHTNESS = 42;
-const MAX_LIGHTNESS = 78;
-const MIN_SATURATION = 30;
 
 type RGB = [number, number, number];
 
@@ -158,9 +155,24 @@ function hslToRgb(h: number, s: number, l: number): RGB {
 function clampForDarkUI(rgbStr: string): string {
   const [r, g, b] = parseColor(rgbStr);
   const [h, s, l] = rgbToHsl(r, g, b);
-  const clampedL = Math.min(MAX_LIGHTNESS, Math.max(MIN_LIGHTNESS, l));
-  const clampedS = Math.max(MIN_SATURATION, s);
-  const [cr, cg, cb] = hslToRgb(h, clampedS, clampedL);
+
+  // Keep grayscale colors grayscale.
+  // Never artificially increase saturation, otherwise gray becomes red.
+  if (s < 18) {
+    const clampedL = Math.min(78, Math.max(MIN_LIGHTNESS, l));
+    const value = Math.round((clampedL / 100) * 255);
+
+    return `rgb(${value} ${value} ${value})`;
+  }
+
+  // Bright colors can be used directly.
+  if (l >= MIN_LIGHTNESS) {
+    return rgbStr;
+  }
+
+  // Lift only genuinely dark colors while preserving their hue/saturation.
+  const [cr, cg, cb] = hslToRgb(h, s, MIN_LIGHTNESS);
+
   return `rgb(${cr} ${cg} ${cb})`;
 }
 
@@ -395,7 +407,11 @@ const SpotifyNowPlaying = ({ onNowPlayingChange }: SpotifyNowPlayingProps) => {
           style={{
             boxShadow: isMobile
               ? "0 6px 26px rgba(16, 18, 30, 0.34)"
-              : `0 0 42px color-mix(in srgb, ${renderedCardColors[0]} 40%, transparent), 0 0 72px color-mix(in srgb, ${renderedCardColors[2]} 26%, transparent)`,
+              : `
+                0 0 28px color-mix(in srgb, ${renderedCardColors[0]} 42%, transparent),
+                0 0 60px color-mix(in srgb, ${renderedCardColors[1]} 28%, transparent),
+                0 0 100px color-mix(in srgb, ${renderedCardColors[2]} 18%, transparent)
+              `,
           }}
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
@@ -436,7 +452,14 @@ const SpotifyNowPlaying = ({ onNowPlayingChange }: SpotifyNowPlayingProps) => {
             aria-hidden="true"
             className="pointer-events-none absolute inset-0"
             style={{
-              background: `linear-gradient(110deg, color-mix(in srgb, ${renderedCardColors[0]} 24%, transparent), color-mix(in srgb, ${renderedCardColors[1]} 18%, transparent) 48%, color-mix(in srgb, ${renderedCardColors[2]} 22%, transparent))`,
+              background: `
+                linear-gradient(
+                  110deg,
+                  color-mix(in srgb, ${renderedCardColors[0]} 28%, transparent),
+                  color-mix(in srgb, ${renderedCardColors[1]} 20%, transparent) 48%,
+                  color-mix(in srgb, ${renderedCardColors[2]} 24%, transparent)
+                )
+              `,
             }}
           />
 
