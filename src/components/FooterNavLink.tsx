@@ -9,10 +9,7 @@ interface FooterNavLinkProps {
   children: string;
 }
 
-export default function FooterNavLink({
-  href,
-  children,
-}: FooterNavLinkProps) {
+export default function FooterNavLink({ href, children }: FooterNavLinkProps) {
   const pathname = usePathname();
   const router = useRouter();
 
