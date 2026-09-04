@@ -1,48 +1,17 @@
 import { NextResponse } from "next/server";
-import { ObjectId } from "mongodb";
-import { db, getPostsCollection } from "@/lib/mongo";
+import { getPostSummaries } from "@/lib/blog-data";
 import { isAdminFromHeaders } from "@/lib/session";
 
 export async function GET(request: Request) {
   try {
     const isAdmin = await isAdminFromHeaders(new Headers(request.headers));
-
-    const collection = await getPostsCollection();
-    const posts = await collection
-      .find(isAdmin ? {} : { draft: false })
-      .sort({ creationDate: -1 })
-      .toArray();
-
-    const authorNameCache = new Map<string, string>();
-
-    const serializedPosts = await Promise.all(
-      posts.map(async (post) => {
-        let authorName: string | undefined = authorNameCache.get(post.userId);
-
-        if (!authorName) {
-          try {
-            const user = await db.collection("user").findOne({ _id: new ObjectId(post.userId) });
-            authorName = user?.name || "Unknown";
-          } catch {
-            authorName = "Unknown";
-          }
-          const cachedAuthorName = authorName ?? "Unknown";
-          authorNameCache.set(post.userId, cachedAuthorName);
-        }
-
-        const resolvedAuthorName = authorName ?? "Unknown";
-
-        return {
-          ...post,
-          _id: post._id.toString(),
-          authorName: resolvedAuthorName,
-        };
-      }),
-    );
-
-    return NextResponse.json({ posts: serializedPosts });
+    const posts = await getPostSummaries(isAdmin);
+    return NextResponse.json({ posts }, { headers: { "Cache-Control": "private, no-store" } });
   } catch (error) {
     console.error("Error loading posts:", error);
-    return NextResponse.json({ posts: [], error: "Failed to load posts" }, { status: 500 });
+    return NextResponse.json(
+      { posts: [], error: "Failed to load posts" },
+      { status: 500, headers: { "Cache-Control": "private, no-store" } },
+    );
   }
 }

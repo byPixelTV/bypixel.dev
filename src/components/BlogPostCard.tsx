@@ -8,7 +8,7 @@ import { Post } from "@/lib/mongo";
 import { LuCalendar, LuEye, LuUser } from "react-icons/lu";
 
 interface Props {
-  post: Omit<Post, "_id"> & { _id: string };
+  post: Omit<Post, "_id" | "content"> & { _id: string };
   authorName: string;
 }
 
@@ -21,6 +21,7 @@ export default function BlogPostCard({ post, authorName }: Props) {
     >
       <Link
         href={`/blog/post/${post.slug || post._id.toString()}`}
+        prefetch={true}
         className="flex flex-col h-full"
       >
         {/* Thumbnail Container */}

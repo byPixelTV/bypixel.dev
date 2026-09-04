@@ -4,8 +4,9 @@ import Profile from "@/components/Profile";
 import HorizontalGallery from "@/components/projects/ProjectsGalery";
 import SkillsShowcase from "@/components/projects/SkillsShowcase";
 import CodingJourney from "@/components/projects/CodingJourney";
-import AIFooter from "@/components/AIFooter";
+import SiteFooter from "@/components/SiteFooter";
 import { Metadata } from "next";
+import Reveal from "@/components/portfolio/Reveal";
 
 export const metadata: Metadata = {
   title: "Home | byPixelTV - Software Developer",
@@ -57,7 +58,7 @@ export default async function About() {
     <BackgroundLayout>
       <Navbar />
       <main className="relative z-10 w-full pb-14 pt-22 md:pt-26">
-        <div className="mx-auto w-full max-w-395 space-y-10 px-4 sm:px-7 md:space-y-20 lg:px-12">
+        <Reveal className="home-experience mx-auto w-full max-w-395 space-y-10 px-4 sm:px-7 md:space-y-20 lg:px-12">
           <section id="top" className="py-2 scroll-mt-28">
             <Profile />
           </section>
@@ -66,13 +67,13 @@ export default async function About() {
             <div id="skills" className="scroll-mt-28">
               <SkillsShowcase />
             </div>
-            <div id="journey" className="scroll-mt-28">
+            <div id="journey" className="scroll-mt-28" data-enter>
               <CodingJourney />
             </div>
           </section>
-        </div>
+        </Reveal>
       </main>
-      <AIFooter />
+      <SiteFooter />
     </BackgroundLayout>
   );
 }

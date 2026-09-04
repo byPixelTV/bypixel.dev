@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useSyncExternalStore } from "react";
+import { useMemo, useRef, useSyncExternalStore } from "react";
 import {
   motion,
   useMotionValue,
@@ -18,6 +18,7 @@ import type { Project } from "@/lib/schema/project";
 type ImagePosition = "top" | "center" | "bottom" | "full";
 
 type ProjectCard = Project & {
+  active: boolean;
   x: number;
   width: number;
   height: number;
@@ -26,6 +27,13 @@ type ProjectCard = Project & {
   scrollShift: number;
 };
 
+function isActiveProject(project: Project) {
+  return (
+    project.endAt?.trim().toLowerCase() === "now" ||
+    project.tags?.some((tag) => tag.toLowerCase() === "active") === true
+  );
+}
+
 const projects: Project[] = [
   {
     name: "Dat Bot",
@@ -33,7 +41,7 @@ const projects: Project[] = [
     role: "Web Developer",
     description:
       "Feature-rich Discord bot paired with a Next.js web dashboard — moderation, stats and integrations.",
-    tags: ["TypeScript", "Next.js", "Discord.js", "Web", "Kotlin", "Active", "JDA", "Primary"],
+    tags: ["TypeScript", "Next.js", "Discord.js", "Web", "Kotlin", "Active", "JDA"],
     startAt: "October 2024",
     endAt: "now",
     url: "https://datbot.xyz",
@@ -133,12 +141,17 @@ const projectLayouts = [
   scrollShift: number;
 }>;
 
-const projectCards: ProjectCard[] = projects.map((project, index) => {
+const orderedProjects = [...projects].sort(
+  (projectA, projectB) => Number(isActiveProject(projectB)) - Number(isActiveProject(projectA)),
+);
+
+const projectCards: ProjectCard[] = orderedProjects.map((project, index) => {
   const layout = projectLayouts[index];
 
   return {
     ...project,
     ...layout,
+    active: isActiveProject(project),
   };
 });
 
@@ -188,33 +201,39 @@ export default function HorizontalGallery() {
   const startOffset = Math.max((viewportWidth - firstItem.width) / 2 - firstItem.x, 0);
   const x = useTransform(scrollYProgress, [0, 1], [startOffset, -travelDistance]);
 
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-
-  const smoothX = useSpring(mouseX, { stiffness: 50, damping: 20 });
-  const smoothY = useSpring(mouseY, { stiffness: 50, damping: 20 });
-
-  useEffect(() => {
-    if (isMobile) return;
-
-    const handleMouseMove = (e: MouseEvent) => {
-      mouseX.set(e.clientX / window.innerWidth - 0.5);
-      mouseY.set(e.clientY / window.innerHeight - 0.5);
-    };
-
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, [isMobile, mouseX, mouseY]);
+  const pointerX = useMotionValue(0);
+  const pointerY = useMotionValue(0);
+  const smoothPointerX = useSpring(pointerX, { stiffness: 70, damping: 24, mass: 0.55 });
+  const smoothPointerY = useSpring(pointerY, { stiffness: 70, damping: 24, mass: 0.55 });
+  const ambientX = useTransform(smoothPointerX, [-0.5, 0.5], [-22, 22]);
+  const ambientY = useTransform(smoothPointerY, [-0.5, 0.5], [-14, 14]);
+  const ambientXInverse = useTransform(smoothPointerX, [-0.5, 0.5], [18, -18]);
+  const ambientYInverse = useTransform(smoothPointerY, [-0.5, 0.5], [10, -10]);
 
   return (
     <section
       ref={ref}
+      onPointerMove={(event) => {
+        if (isMobile || event.pointerType !== "mouse") return;
+        pointerX.set(event.clientX / window.innerWidth - 0.5);
+        pointerY.set(event.clientY / window.innerHeight - 0.5);
+      }}
+      onPointerLeave={() => {
+        pointerX.set(0);
+        pointerY.set(0);
+      }}
       className={`relative left-1/2 right-1/2 w-dvw -translate-x-1/2 ${isMobile ? "h-[250vh]" : "h-[400vh]"}`}
     >
       <div className="sticky top-0 h-screen w-dvw overflow-hidden">
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
-          <div className="absolute left-[12%] top-[18%] h-[22vh] w-[28vw] rounded-full bg-sky-300/8 blur-3xl mix-blend-screen opacity-60" />
-          <div className="absolute right-[8%] top-[10%] h-[26vh] w-[22vw] rounded-full bg-emerald-300/8 blur-3xl mix-blend-screen opacity-50" />
+          <motion.div
+            style={{ x: ambientX, y: ambientY }}
+            className="absolute left-[12%] top-[18%] h-[22vh] w-[28vw] rounded-full bg-sky-300/8 blur-3xl mix-blend-screen opacity-60"
+          />
+          <motion.div
+            style={{ x: ambientXInverse, y: ambientYInverse }}
+            className="absolute right-[8%] top-[10%] h-[26vh] w-[22vw] rounded-full bg-emerald-300/8 blur-3xl mix-blend-screen opacity-50"
+          />
         </div>
         <motion.div style={{ x, width: totalWidth }} className="relative h-full">
           {responsiveProjectCards.map((project, index) => (
@@ -222,9 +241,8 @@ export default function HorizontalGallery() {
               key={project.name}
               item={project}
               index={index}
-              progress={scrollYProgress}
-              mouseX={smoothX}
-              mouseY={smoothY}
+              mouseX={smoothPointerX}
+              mouseY={smoothPointerY}
               isMobile={isMobile}
             />
           ))}
@@ -237,30 +255,30 @@ export default function HorizontalGallery() {
 function ProjectCardItem({
   item,
   index,
-  progress,
   mouseX,
   mouseY,
   isMobile,
 }: {
   item: ProjectCard;
   index: number;
-  progress: MotionValue<number>;
   mouseX: MotionValue<number>;
   mouseY: MotionValue<number>;
   isMobile: boolean;
 }) {
-  const depth = item.depth;
-  const yScroll = useTransform(progress, [0, 1], [0, item.scrollShift]);
-  const xMouse = useTransform(mouseX, [-0.5, 0.5], [-48 * depth, 48 * depth]);
-  const yMouse = useTransform(mouseY, [-0.5, 0.5], [-48 * depth, 48 * depth]);
-  const tilt = useTransform(mouseX, [-0.5, 0.5], [7, -7]);
-  const cardTone = [
-    "from-emerald-300/25 via-cyan-300/10 to-slate-950/90",
-    "from-sky-300/25 via-emerald-300/10 to-slate-950/90",
-    "from-cyan-300/20 via-slate-300/10 to-slate-950/90",
-    "from-emerald-400/20 via-teal-300/10 to-slate-950/90",
-    "from-sky-400/20 via-cyan-300/10 to-slate-950/90",
-  ][index];
+  const cardTone = item.active
+    ? "from-violet-400/30 via-fuchsia-300/12 to-slate-950/90"
+    : [
+        "from-emerald-300/25 via-cyan-300/10 to-slate-950/90",
+        "from-sky-300/25 via-emerald-300/10 to-slate-950/90",
+        "from-cyan-300/20 via-slate-300/10 to-slate-950/90",
+        "from-emerald-400/20 via-teal-300/10 to-slate-950/90",
+        "from-sky-400/20 via-cyan-300/10 to-slate-950/90",
+      ][index];
+  const visibleTags = item.tags?.filter((tag) => tag.toLowerCase() !== "active");
+  const xMouse = useTransform(mouseX, [-0.5, 0.5], [-32 * item.depth, 32 * item.depth]);
+  const yMouse = useTransform(mouseY, [-0.5, 0.5], [-22 * item.depth, 22 * item.depth]);
+  const rotateX = useTransform(mouseY, [-0.5, 0.5], [4 * item.depth, -4 * item.depth]);
+  const rotateY = useTransform(mouseX, [-0.5, 0.5], [-5 * item.depth, 5 * item.depth]);
 
   const getVerticalPosition = () => {
     if (isMobile) return "top-1/2 -translate-y-1/2";
@@ -280,16 +298,27 @@ function ProjectCardItem({
 
   const content = (
     <motion.div
+      data-active={item.active}
       style={{
         x: isMobile ? 0 : xMouse,
         y: isMobile ? 0 : yMouse,
+        rotateX: isMobile ? 0 : rotateX,
+        rotateY: isMobile ? 0 : rotateY,
+        transformPerspective: 1400,
         width: item.width,
         height: item.height,
       }}
-      whileHover={isMobile ? {} : { y: -10, scale: 1.02 }}
+      whileHover={isMobile ? {} : { scale: 1.01 }}
       transition={{ type: "spring", stiffness: 220, damping: 26 }}
-      className={`group relative overflow-hidden rounded-4xl sm:rounded-[2.5rem] bg-slate-950/45 shadow-[0_30px_90px_rgba(2,6,23,0.42)] backdrop-blur-2xl will-change-transform`}
+      className={`group relative overflow-hidden rounded-4xl sm:rounded-[2.5rem] border bg-slate-950/45 backdrop-blur-2xl will-change-transform ${
+        item.active
+          ? "border-violet-300/35 shadow-[0_30px_100px_rgba(2,6,23,0.5),0_0_52px_rgba(139,92,246,0.2)]"
+          : "border-white/8 shadow-[0_30px_90px_rgba(2,6,23,0.42)]"
+      }`}
     >
+      {item.active && (
+        <div className="pointer-events-none absolute inset-x-12 top-0 z-30 h-px bg-linear-to-r from-transparent via-violet-300/90 to-transparent shadow-[0_0_18px_rgba(196,181,253,0.8)]" />
+      )}
       <div className="pointer-events-none absolute inset-0">
         <div
           className={`absolute left-[9%] top-[7%] h-[44%] w-[58%] rounded-full blur-3xl opacity-85 bg-linear-to-br ${cardTone}`}
@@ -310,10 +339,19 @@ function ProjectCardItem({
             className="object-cover transition duration-700 ease-out sm:group-hover:scale-110"
           />
           <div className="absolute inset-0 bg-linear-to-t from-slate-950 via-slate-950/35 to-transparent" />
-          <div className="absolute left-4 top-4 sm:left-5 sm:top-5 flex items-center gap-2 rounded-full border border-white/15 bg-slate-950/55 px-2.5 py-1 sm:px-3 sm:py-1 text-[10px] sm:text-xs font-medium text-white/90 backdrop-blur-md">
+          <div className="project-timeline-badge absolute left-4 top-4 sm:left-5 sm:top-5 flex items-center gap-2 rounded-full border border-white/15 bg-slate-950/55 px-2.5 py-1 sm:px-3 sm:py-1 text-[10px] sm:text-xs font-medium text-white/90 backdrop-blur-md">
             <Sparkles className="size-3 sm:size-3.5 text-emerald-300" />
             {item.startAt} - {item.endAt ?? "now"}
           </div>
+          {item.active && (
+            <div className="project-active-badge absolute right-4 top-4 sm:right-5 sm:top-5 flex items-center gap-2 rounded-full border border-violet-300/30 bg-violet-950/65 px-2.5 py-1 sm:px-3 sm:py-1 text-[9px] sm:text-[11px] font-semibold uppercase tracking-[0.16em] text-violet-100 backdrop-blur-md">
+              <span
+                className="project-active-dot size-1.5 rounded-full bg-violet-300"
+                aria-hidden="true"
+              />
+              Active
+            </div>
+          )}
           <div className="absolute bottom-4 left-4 right-4 sm:bottom-5 sm:left-5 sm:right-5 flex items-end justify-between gap-3">
             <div className="space-y-1 sm:space-y-1.5">
               <p className="text-[10px] sm:text-xs font-medium uppercase tracking-[0.32em] text-white/65">
@@ -350,7 +388,7 @@ function ProjectCardItem({
 
           <div className="space-y-3 sm:space-y-4">
             <div className="flex flex-wrap gap-1.5 sm:gap-2">
-              {item.tags?.slice(0, isMobile ? 3 : undefined).map((tag: string) => (
+              {visibleTags?.slice(0, isMobile ? 3 : undefined).map((tag: string) => (
                 <span
                   key={tag}
                   className="rounded-full border border-white/10 bg-white/8 px-2.5 py-1 sm:px-3 sm:py-1.5 text-[10px] sm:text-xs font-medium text-white/82 transition duration-300 sm:group-hover:border-emerald-300/25 sm:group-hover:bg-emerald-300/10 sm:group-hover:text-emerald-50"
@@ -358,9 +396,9 @@ function ProjectCardItem({
                   {tag}
                 </span>
               ))}
-              {isMobile && item.tags && item.tags.length > 3 && (
+              {isMobile && visibleTags && visibleTags.length > 3 && (
                 <span className="text-[10px] text-white/50 self-center">
-                  +{item.tags.length - 3}
+                  +{visibleTags.length - 3}
                 </span>
               )}
             </div>
@@ -379,10 +417,7 @@ function ProjectCardItem({
       </div>
 
       {!isMobile && (
-        <motion.div
-          style={{ rotate: tilt }}
-          className="pointer-events-none absolute inset-0 opacity-0 transition duration-300 group-hover:opacity-100"
-        >
+        <motion.div className="pointer-events-none absolute inset-0 opacity-0 transition duration-300 group-hover:opacity-100">
           <div className="absolute left-[14%] top-[14%] h-[52%] w-[42%] rounded-full bg-white/10 blur-3xl" />
           <div className="absolute right-[14%] bottom-[10%] h-[30%] w-[30%] rounded-full bg-emerald-300/12 blur-3xl" />
           <div className="absolute inset-x-[24%] top-[18%] h-10 rounded-full bg-white/8 blur-2xl" />
@@ -395,7 +430,7 @@ function ProjectCardItem({
     <motion.div
       style={{
         x: item.x,
-        y: isMobile ? 0 : yScroll,
+        y: 0,
       }}
       className={`absolute ${getVerticalPosition()}`}
     >

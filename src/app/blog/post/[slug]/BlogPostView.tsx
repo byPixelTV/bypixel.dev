@@ -9,7 +9,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import dayjs from "dayjs";
 import { Button } from "@/components/ui/button";
-import ScrollToTop from "@/components/scroll/ScrollToTop";
+
 import PostImageLightbox from "@/components/blog/PostImageLightbox";
 import parse, { HTMLReactParserOptions, Element } from "html-react-parser";
 import { Post } from "@/lib/mongo";
@@ -29,6 +29,7 @@ interface BlogPostViewProps {
   segments: ContentSegment[];
   readingTime: number;
   hasMedia: boolean;
+  previews?: React.ReactNode[];
 }
 
 const parserOptions: HTMLReactParserOptions = {
@@ -79,10 +80,11 @@ export default function BlogPostView({
   segments,
   readingTime,
   hasMedia,
+  previews,
 }: BlogPostViewProps) {
   // We use the 'article-body' class to target styles even if prose selectors fail due to nesting
   const proseClasses = cn(
-    "prose prose-invert prose-purple max-w-none",
+    "article-body prose prose-invert prose-purple max-w-none",
     "prose-headings:text-white prose-headings:font-bold prose-headings:tracking-tight",
     "prose-h1:text-4xl sm:text-5xl prose-h1:mt-12 prose-h1:mb-8",
     "prose-h2:text-3xl sm:text-4xl prose-h2:mt-10 prose-h2:mb-6",
@@ -98,12 +100,11 @@ export default function BlogPostView({
 
   return (
     <>
-      <ScrollToTop />
-      <div className="container mx-auto px-6 py-24 mt-16 min-h-screen">
+      <div className="article-page container mx-auto px-6 pt-40 pb-24 min-h-screen">
         <motion.div
           className="max-w-4xl mx-auto mb-12"
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
           transition={{ duration: 0.4 }}
         >
           <Link
@@ -120,16 +121,21 @@ export default function BlogPostView({
         <article id="post-content-root" className="max-w-4xl mx-auto">
           <header className="mb-16 text-center">
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
             >
               <h1
                 className="text-4xl md:text-6xl font-extrabold text-white mb-8 tracking-tight leading-[1.1]"
                 dangerouslySetInnerHTML={{ __html: post.title }}
               />
 
-              <div className="flex flex-wrap items-center justify-center gap-y-3 gap-x-6 text-[13px] font-medium text-white/40 mb-10">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="flex flex-wrap items-center justify-center gap-y-3 gap-x-6 text-[13px] font-medium text-white/40 mb-10"
+              >
                 <span className="flex items-center gap-2 bg-white/5 px-3 py-1 rounded-full border border-white/5">
                   <LuUser className="size-3.5 text-purple-500" />
                   {authorName}
@@ -146,7 +152,7 @@ export default function BlogPostView({
                   <LuEye className="size-3.5 text-purple-500" />
                   {post.views || 0} views
                 </span>
-              </div>
+              </motion.div>
             </motion.div>
 
             {post.thumbnail && (
@@ -154,7 +160,7 @@ export default function BlogPostView({
                 className="relative mx-auto w-full aspect-video rounded-3xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-white/10"
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
               >
                 <Image
                   src={post.thumbnail}
@@ -185,8 +191,8 @@ export default function BlogPostView({
 
           <motion.div
             className="relative"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.5 }}
           >
             <div className={proseClasses}>
@@ -212,7 +218,8 @@ export default function BlogPostView({
                       </span>
                       <div className="h-px grow bg-white/10" />
                     </div>
-                    {seg.data && <OGPreviewCard data={seg.data} href={seg.url!} />}
+                    {previews?.[i] ??
+                      (seg.data && <OGPreviewCard data={seg.data} href={seg.url!} />)}
                   </div>
                 ),
               )}
@@ -229,7 +236,7 @@ export default function BlogPostView({
               </p>
               <h3 className="text-2xl font-bold text-white mb-2">Want to stay updated?</h3>
               <p className="text-white/60 text-sm max-w-sm mx-auto">
-                Follow me on social media or reach out via email for collaboration.
+                Follow what I am building, or say hi on Discord.
               </p>
             </div>
 

@@ -1,568 +1,208 @@
 "use client";
 
-import { getNowPlaying, type NowPlayingResult } from "@/lib/actions/spotify";
-import { Icon } from "@iconify/react";
-import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
-import { useCallback, useEffect, useRef, useState } from "react";
-
-const MusicBars = () => (
-  <div className="flex items-end gap-0.5 h-3.5">
-    {[0.55, 0.7, 0.6].map((dur, i) => (
-      <span
-        key={i}
-        className="w-0.75 rounded-full bg-[#1DB954]"
-        style={{
-          animation: `spotifyBar ${dur}s ease-in-out infinite alternate`,
-          animationDelay: `${i * 0.12}s`,
-        }}
-      />
-    ))}
-    <style>{`
-      @keyframes spotifyBar {
-        from { height: 3px; }
-        to   { height: 14px; }
-      }
-    `}</style>
-  </div>
-);
-
-function formatMs(ms: number): string {
-  const totalSeconds = Math.floor(ms / 1000);
-  const minutes = Math.floor(totalSeconds / 60);
-  const seconds = totalSeconds % 60;
-  return `${minutes}:${seconds.toString().padStart(2, "0")}`;
-}
-
-const POLL_INTERVAL = 5_000;
-
-const FALLBACK_CARD_COLORS = ["#1DB954", "#4FD1C5", "#A78BFA"];
-const CARD_TRANSITION_MS = 650;
-
-// Contrast-safety bounds for colors used in the card's glow / tint overlay.
-// Keeps the white text on top readable no matter how dark or washed-out
-// the album art is. Should match the bounds used in Profile.tsx so the
-// hero blobs and this card feel like the same "ambience".
-const MIN_LIGHTNESS = 42;
-
-type RGB = [number, number, number];
-
-function parseColor(color: string): RGB {
-  const hex = color.trim();
-  if (hex.startsWith("#")) {
-    const value = hex.slice(1);
-    if (value.length === 3) {
-      return [
-        Number.parseInt(value[0] + value[0], 16),
-        Number.parseInt(value[1] + value[1], 16),
-        Number.parseInt(value[2] + value[2], 16),
-      ];
-    }
-    if (value.length === 6) {
-      return [
-        Number.parseInt(value.slice(0, 2), 16),
-        Number.parseInt(value.slice(2, 4), 16),
-        Number.parseInt(value.slice(4, 6), 16),
-      ];
-    }
-  }
-
-  const values = color.match(/\d+/g)?.map(Number) ?? [255, 255, 255];
-  return [values[0] ?? 255, values[1] ?? 255, values[2] ?? 255];
-}
-
-function mixColor(from: string, to: string, t: number): string {
-  const a = parseColor(from);
-  const b = parseColor(to);
-  const x = Math.max(0, Math.min(1, t));
-  const r = Math.round(a[0] + (b[0] - a[0]) * x);
-  const g = Math.round(a[1] + (b[1] - a[1]) * x);
-  const bCh = Math.round(a[2] + (b[2] - a[2]) * x);
-  return `rgb(${r} ${g} ${bCh})`;
-}
-
-function easeInOutCubic(t: number): number {
-  return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-}
-
-function rgbToHsl(r: number, g: number, b: number): [number, number, number] {
-  const rn = r / 255;
-  const gn = g / 255;
-  const bn = b / 255;
-  const max = Math.max(rn, gn, bn);
-  const min = Math.min(rn, gn, bn);
-  let h = 0;
-  let s = 0;
-  const l = (max + min) / 2;
-
-  if (max !== min) {
-    const d = max - min;
-    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-    switch (max) {
-      case rn:
-        h = (gn - bn) / d + (gn < bn ? 6 : 0);
-        break;
-      case gn:
-        h = (bn - rn) / d + 2;
-        break;
-      default:
-        h = (rn - gn) / d + 4;
-        break;
-    }
-    h /= 6;
-  }
-
-  return [h * 360, s * 100, l * 100];
-}
-
-function hslToRgb(h: number, s: number, l: number): RGB {
-  const hn = h / 360;
-  const sn = s / 100;
-  const ln = l / 100;
-
-  if (sn === 0) {
-    const v = Math.round(ln * 255);
-    return [v, v, v];
-  }
-
-  const hue2rgb = (p: number, q: number, t: number) => {
-    let tt = t;
-    if (tt < 0) tt += 1;
-    if (tt > 1) tt -= 1;
-    if (tt < 1 / 6) return p + (q - p) * 6 * tt;
-    if (tt < 1 / 2) return q;
-    if (tt < 2 / 3) return p + (q - p) * (2 / 3 - tt) * 6;
-    return p;
-  };
-
-  const q = ln < 0.5 ? ln * (1 + sn) : ln + sn - ln * sn;
-  const p = 2 * ln - q;
-  const r = hue2rgb(p, q, hn + 1 / 3);
-  const g = hue2rgb(p, q, hn);
-  const b = hue2rgb(p, q, hn - 1 / 3);
-
-  return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
-}
-
-/**
- * Clamps a color's lightness (and floors its saturation) so it stays
- * legible when used as a glow / tint-overlay color behind white text.
- *
- * Without this, a near-black album cover produces a near-invisible glow
- * and a near-white / greyscale cover produces a washed-out overlay that
- * eats into the white text's contrast.
- */
-function clampForDarkUI(rgbStr: string): string {
-  const [r, g, b] = parseColor(rgbStr);
-  const [h, s, l] = rgbToHsl(r, g, b);
-
-  // Keep grayscale colors grayscale.
-  // Never artificially increase saturation, otherwise gray becomes red.
-  if (s < 18) {
-    const clampedL = Math.min(78, Math.max(MIN_LIGHTNESS, l));
-    const value = Math.round((clampedL / 100) * 255);
-
-    return `rgb(${value} ${value} ${value})`;
-  }
-
-  // Bright colors can be used directly.
-  if (l >= MIN_LIGHTNESS) {
-    return rgbStr;
-  }
-
-  // Lift only genuinely dark colors while preserving their hue/saturation.
-  const [cr, cg, cb] = hslToRgb(h, s, MIN_LIGHTNESS);
-
-  return `rgb(${cr} ${cg} ${cb})`;
-}
-
-function getRegionAverage(
-  pixels: Uint8ClampedArray,
-  width: number,
-  xStart: number,
-  xEnd: number,
-  yStart: number,
-  yEnd: number,
-): string {
-  let r = 0;
-  let g = 0;
-  let b = 0;
-  let count = 0;
-
-  for (let y = yStart; y < yEnd; y += 2) {
-    for (let x = xStart; x < xEnd; x += 2) {
-      const i = (y * width + x) * 4;
-      r += pixels[i];
-      g += pixels[i + 1];
-      b += pixels[i + 2];
-      count++;
-    }
-  }
-
-  if (!count) return FALLBACK_CARD_COLORS[0];
-
-  return `rgb(${Math.round(r / count)} ${Math.round(g / count)} ${Math.round(b / count)})`;
-}
-
-function getAlbumCardColors(imageUrl: string): Promise<string[]> {
-  return new Promise((resolve) => {
-    const img = new window.Image();
-    img.crossOrigin = "anonymous";
-
-    img.onload = () => {
-      try {
-        const canvas = document.createElement("canvas");
-        const ctx = canvas.getContext("2d", { willReadFrequently: true });
-        if (!ctx) {
-          resolve(FALLBACK_CARD_COLORS);
-          return;
-        }
-
-        const size = 30;
-        canvas.width = size;
-        canvas.height = size;
-        ctx.drawImage(img, 0, 0, size, size);
-
-        const { data } = ctx.getImageData(0, 0, size, size);
-        const colors = [
-          getRegionAverage(data, size, 0, 10, 0, size),
-          getRegionAverage(data, size, 10, 20, 0, size),
-          getRegionAverage(data, size, 20, size, 0, size),
-        ];
-
-        // Clamp before it reaches state so the glow/overlay never gets
-        // dark enough to disappear or light enough to wash out the text.
-        resolve(colors.map(clampForDarkUI));
-      } catch {
-        resolve(FALLBACK_CARD_COLORS);
-      }
-    };
-
-    img.onerror = () => resolve(FALLBACK_CARD_COLORS);
-    img.src = imageUrl;
-  });
-}
-
-interface SpotifyNowPlayingProps {
-  onNowPlayingChange?: (result: NowPlayingResult | null) => void;
-}
-
-const SpotifyNowPlaying = ({ onNowPlayingChange }: SpotifyNowPlayingProps) => {
-  const [isMobile, setIsMobile] = useState(false);
-  const [data, setData] = useState<NowPlayingResult | null>(null);
-  const [direction, setDirection] = useState<1 | -1>(1);
-  const [progressMs, setProgressMs] = useState(0);
-  const [targetCardColors, setTargetCardColors] = useState<string[]>(FALLBACK_CARD_COLORS);
-  const [cardColors, setCardColors] = useState<string[]>(FALLBACK_CARD_COLORS);
-  const prevTrackId = useRef<string | null>(null);
-  const tickRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const cardColorsRef = useRef<string[]>(FALLBACK_CARD_COLORS);
-  const rafRef = useRef<number | null>(null);
-
-  useEffect(() => {
-    const media = window.matchMedia("(max-width: 767px)");
-    const update = () => setIsMobile(media.matches);
-    update();
-    media.addEventListener("change", update);
-    return () => media.removeEventListener("change", update);
-  }, []);
-
-  useEffect(() => {
-    cardColorsRef.current = cardColors;
-  }, [cardColors]);
-
-  const fetchNowPlaying = useCallback(async () => {
-    try {
-      const result = await getNowPlaying();
-
-      if (
-        result.trackId &&
-        prevTrackId.current !== null &&
-        result.trackId !== prevTrackId.current
-      ) {
-        setDirection(1);
-      }
-      if (result.trackId) {
-        prevTrackId.current = result.trackId;
-      }
-
-      setData(result);
-      onNowPlayingChange?.(result);
-      if (result.isPlaying && result.progressMs !== undefined) {
-        setProgressMs(result.progressMs);
-      }
-    } catch {
-      setData(null);
-      onNowPlayingChange?.(null);
-    }
-  }, []);
-
-  useEffect(() => {
-    const run = () => {
-      void fetchNowPlaying();
-    };
-
-    const initialId = setTimeout(run, 0);
-    const intervalId = setInterval(run, isMobile ? 15_000 : POLL_INTERVAL);
-
-    return () => {
-      clearTimeout(initialId);
-      clearInterval(intervalId);
-    };
-  }, [fetchNowPlaying, isMobile]);
-
-  // Tick progress forward every second between polls
-  useEffect(() => {
-    if (tickRef.current) clearInterval(tickRef.current);
-    if (!data?.isPlaying) return;
-    const duration = data.durationMs ?? Infinity;
-    tickRef.current = setInterval(() => {
-      setProgressMs((prev) => Math.min(prev + 1000, duration));
-    }, 1000);
-    return () => {
-      if (tickRef.current) clearInterval(tickRef.current);
-    };
-  }, [data?.isPlaying, data?.trackId, data?.durationMs]);
-
-  useEffect(() => {
-    let disposed = false;
-    let fallbackRaf: number | null = null;
-
-    if (isMobile || !data?.albumImageUrl) {
-      fallbackRaf = requestAnimationFrame(() => {
-        setTargetCardColors(FALLBACK_CARD_COLORS);
-      });
-      return () => {
-        disposed = true;
-        if (fallbackRaf !== null) cancelAnimationFrame(fallbackRaf);
-      };
-    }
-
-    getAlbumCardColors(data.albumImageUrl).then((colors) => {
-      if (!disposed) setTargetCardColors(colors);
-    });
-
-    return () => {
-      disposed = true;
-      if (fallbackRaf !== null) cancelAnimationFrame(fallbackRaf);
-    };
-  }, [data?.isPlaying, data?.albumImageUrl, data?.trackId, isMobile]);
-
-  useEffect(() => {
-    if (isMobile) return;
-
-    if (rafRef.current) cancelAnimationFrame(rafRef.current);
-
-    const fromPalette = cardColorsRef.current;
-    const toPalette = targetCardColors;
-    const start = performance.now();
-
-    const animate = (now: number) => {
-      const elapsed = now - start;
-      const progress = Math.min(elapsed / CARD_TRANSITION_MS, 1);
-      const eased = easeInOutCubic(progress);
-
-      const next = fromPalette.map((fromColor, index) =>
-        mixColor(fromColor, toPalette[index] ?? fromColor, eased),
-      );
-
-      cardColorsRef.current = next;
-      setCardColors(next);
-
-      if (progress < 1) {
-        rafRef.current = requestAnimationFrame(animate);
-      }
-    };
-
-    rafRef.current = requestAnimationFrame(animate);
-
-    return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    };
-  }, [targetCardColors, isMobile]);
-
-  const renderedCardColors = isMobile ? targetCardColors : cardColors;
-
-  const show = Boolean(data?.title);
-  const statusLabel = data?.isPlaying ? "Now Playing" : "Last Played";
-  const progressPercent = data?.durationMs
-    ? Math.min((progressMs / data.durationMs) * 100, 100)
-    : 0;
-
-  const contentVariants = {
-    enter: (dir: number) => ({ opacity: 0, y: dir * 10 }),
-    center: { opacity: 1, y: 0 },
-    exit: (dir: number) => ({ opacity: 0, y: dir * -10 }),
-  };
-
-  return (
-    <AnimatePresence>
-      {show && (
-        <motion.a
-          key="spotify-container"
-          href={data!.songUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="group relative mt-4 flex flex-col overflow-hidden rounded-2xl border border-white/20 bg-white/10 backdrop-blur-md transition-colors duration-200 hover:bg-white/14"
-          style={{
-            boxShadow: isMobile
-              ? "0 6px 26px rgba(16, 18, 30, 0.34)"
-              : `
-                0 0 28px color-mix(in srgb, ${renderedCardColors[0]} 42%, transparent),
-                0 0 60px color-mix(in srgb, ${renderedCardColors[1]} 28%, transparent),
-                0 0 100px color-mix(in srgb, ${renderedCardColors[2]} 18%, transparent)
-              `,
-          }}
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -8, scale: 0.98 }}
-          transition={{ duration: 0.35, ease: "easeOut" }}
-        >
-          <motion.div
-            aria-hidden="true"
-            className="pointer-events-none absolute -left-10 -top-10 h-40 w-40 rounded-full blur-3xl"
-            style={{
-              background: `radial-gradient(circle, ${renderedCardColors[0]} 0%, transparent 68%)`,
-            }}
-            animate={
-              isMobile
-                ? { x: 0, y: 0, scale: 1 }
-                : { x: [0, 12, -10, 0], y: [0, -8, 10, 0], scale: [1, 1.14, 1] }
-            }
-            transition={
-              isMobile ? { duration: 0 } : { duration: 7.5, ease: "easeInOut", repeat: Infinity }
-            }
-          />
-          <motion.div
-            aria-hidden="true"
-            className="pointer-events-none absolute -right-12 -bottom-10 h-44 w-44 rounded-full blur-3xl"
-            style={{
-              background: `radial-gradient(circle, ${renderedCardColors[1]} 0%, transparent 70%)`,
-            }}
-            animate={
-              isMobile
-                ? { x: 0, y: 0, scale: 1 }
-                : { x: [0, -10, 8, 0], y: [0, 10, -8, 0], scale: [1, 1.12, 1] }
-            }
-            transition={
-              isMobile ? { duration: 0 } : { duration: 8.2, ease: "easeInOut", repeat: Infinity }
-            }
-          />
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0"
-            style={{
-              background: `
-                linear-gradient(
-                  110deg,
-                  color-mix(in srgb, ${renderedCardColors[0]} 28%, transparent),
-                  color-mix(in srgb, ${renderedCardColors[1]} 20%, transparent) 48%,
-                  color-mix(in srgb, ${renderedCardColors[2]} 24%, transparent)
-                )
-              `,
-            }}
-          />
-
-          <AnimatePresence mode="wait" custom={direction}>
-            <motion.div
-              key={data!.trackId ?? data!.title}
-              className="relative z-10 w-full"
-              custom={direction}
-              variants={contentVariants}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{ duration: 0.25, ease: "easeInOut" }}
-            >
-              <div className="flex items-center gap-3 px-4 pt-3 pb-2">
-                {data!.albumImageUrl && (
-                  <div className="relative shrink-0">
-                    <Image
-                      src={data!.albumImageUrl}
-                      alt={data!.title ?? "Album art"}
-                      width={56}
-                      height={56}
-                      className="rounded-xl object-cover"
-                    />
-                    <div className="absolute inset-0 rounded-xl ring-1 ring-white/10" />
-                  </div>
-                )}
-
-                <div className="flex flex-col min-w-0 flex-1 gap-0.5">
-                  <div className="flex items-center justify-between gap-2">
-                    <div className="flex items-center gap-1.5 min-w-0">
-                      <Icon
-                        icon="mdi:spotify"
-                        className="text-[#1DB954] shrink-0"
-                        style={{ fontSize: "13px" }}
-                      />
-                      <span className="text-[10px] uppercase tracking-widest text-white/50 font-semibold truncate">
-                        {statusLabel}
-                      </span>
-                    </div>
-                    {data!.isPlaying ? (
-                      <div className="shrink-0">
-                        <MusicBars />
-                      </div>
-                    ) : (
-                      <span className="h-2 w-2 shrink-0 rounded-full bg-white/35" />
-                    )}
-                  </div>
-                  <p className="text-sm font-semibold text-white truncate leading-tight group-hover:text-white/90">
-                    {data!.title}
-                  </p>
-                  <p className="text-xs text-white/50 truncate">{data!.artist}</p>
-                  {data!.album && (
-                    <p className="text-[11px] text-white/30 truncate italic leading-tight">
-                      {data!.album}
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              <div className="px-4 pb-3">
-                {data!.isPlaying ? (
-                  <>
-                    <div className="h-1 w-full bg-white/10 rounded-full overflow-hidden">
-                      <div
-                        key={data!.trackId}
-                        className="h-full bg-[#1DB954] rounded-full"
-                        style={{
-                          width: `${progressPercent}%`,
-                          transition: "width 1s linear",
-                        }}
-                      />
-                    </div>
-
-                    <div className="flex justify-between items-center mt-1.5">
-                      <span className="text-[10px] text-white/40 tabular-nums font-medium">
-                        {formatMs(progressMs)}
-                      </span>
-                      <span className="text-[10px] text-white/40 tabular-nums font-medium">
-                        {data!.durationMs ? formatMs(data!.durationMs) : ""}
-                      </span>
-                    </div>
-                  </>
-                ) : (
-                  <div className="mt-1.5 flex items-center justify-between text-[10px] font-medium uppercase tracking-widest text-white/38">
-                    <span>Recently played</span>
-                    <span>
-                      {data!.playedAt
-                        ? new Date(data!.playedAt).toLocaleDateString("en", {
-                            month: "short",
-                            day: "numeric",
-                          })
-                        : ""}
-                    </span>
-                  </div>
-                )}
-              </div>
-            </motion.div>
-          </AnimatePresence>
-        </motion.a>
-      )}
-    </AnimatePresence>
-  );
+import RollText from "@/components/portfolio/RollText";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { useAlbumAtmosphere, AmbientBlobs } from "@/components/portfolio/AlbumAtmosphere";
+import { useEffect, useId, useRef, useState } from "react";
+
+const time = (ms: number) => {
+  const seconds = Math.floor(Math.max(0, ms) / 1000);
+  return Math.floor(seconds / 60) + ":" + String(seconds % 60).padStart(2, "0");
 };
 
-export default SpotifyNowPlaying;
+export default function SpotifyNowPlaying() {
+  const { data, loaded } = useAlbumAtmosphere();
+  const reduce = useReducedMotion();
+  const [expanded, setExpanded] = useState(false);
+  const detailId = useId();
+  const [settledTrack, setSettledTrack] = useState<string>();
+  const trackKey = data?.trackId ?? data?.songUrl ?? data?.title;
+  const root = useRef<HTMLDivElement>(null);
+  const progress = useRef<HTMLProgressElement>(null);
+  const elapsed = useRef<HTMLSpanElement>(null);
+  useEffect(() => {
+    let inView = false;
+    const sync = () => {
+      if (root.current) root.current.dataset.active = String(inView && !document.hidden);
+    };
+    const observer = new IntersectionObserver(([entry]) => {
+      inView = entry.isIntersecting;
+      sync();
+    });
+    if (root.current) observer.observe(root.current);
+    document.addEventListener("visibilitychange", sync);
+    return () => {
+      observer.disconnect();
+      document.removeEventListener("visibilitychange", sync);
+    };
+  }, []);
+  useEffect(() => {
+    const received = performance.now();
+    const update = () => {
+      if (document.hidden || root.current?.dataset.active !== "true") return;
+      const value = Math.min(
+        data?.durationMs ?? 0,
+        (data?.progressMs ?? 0) + (data?.isPlaying ? performance.now() - received : 0),
+      );
+      if (progress.current) progress.current.value = value;
+      if (elapsed.current) elapsed.current.textContent = time(value);
+    };
+    update();
+    const timer = setInterval(update, 1000);
+    return () => clearInterval(timer);
+  }, [data]);
+  return (
+    <div ref={root} className="spotify-live" aria-label="Spotify activity">
+      <AmbientBlobs className="spotify-ambience" />
+      {data?.title ? (
+        <div
+          className="spotify-track"
+          data-expanded={expanded}
+          onKeyDown={(event) => {
+            if (event.key === "Escape") setExpanded(false);
+          }}
+        >
+          <button
+            type="button"
+            className="spotify-toggle"
+            aria-expanded={expanded}
+            aria-controls={detailId}
+            onClick={() => setExpanded(!expanded)}
+          >
+            {data.albumImageUrl && (
+              <Image
+                src={data.albumImageUrl}
+                alt=""
+                width={64}
+                height={64}
+                sizes="64px"
+                className="spotify-cover"
+              />
+            )}
+            <span className="spotify-status">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="12" r="11" fill="currentColor" />
+                <path
+                  d="M6 9c4-1.2 8-1 12 1M7 12c3-1 6.5-.7 10 1M8 15c2.8-.6 5-.3 8 1"
+                  fill="none"
+                  stroke="#102416"
+                  strokeWidth="1.6"
+                  strokeLinecap="round"
+                />
+              </svg>
+              {data.isPlaying ? "Now playing" : "Last played"}
+            </span>
+            <span className="spotify-copy" aria-live="polite" aria-atomic="true">
+              <AnimatePresence initial={false} mode="popLayout">
+                <motion.span
+                  key={trackKey}
+                  className="spotify-song-text"
+                  onAnimationComplete={(definition) => {
+                    if (
+                      typeof definition === "object" &&
+                      "opacity" in definition &&
+                      definition.opacity === 1
+                    ) {
+                      setSettledTrack(trackKey);
+                    }
+                  }}
+                  initial={{ y: reduce ? 0 : "100%", opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: reduce ? 0 : "-100%", opacity: 0 }}
+                  transition={{ duration: reduce ? 0 : 0.45, ease: [0.22, 0.75, 0.18, 1] }}
+                >
+                  <strong title={data.title}>
+                    <RollText autoPlay={settledTrack === trackKey}>{data.title}</RollText>
+                  </strong>
+                  <span>
+                    <RollText autoPlay={settledTrack === trackKey}>{data.artist ?? ""}</RollText>
+                  </span>
+                  {data.album && <small>{data.album}</small>}
+                </motion.span>
+              </AnimatePresence>
+            </span>
+            <span className="spotify-indicator" aria-hidden="true">
+              {data.isPlaying ? (
+                <span className="spotify-bars">
+                  <i />
+                  <i />
+                  <i />
+                </span>
+              ) : (
+                "↗"
+              )}
+            </span>
+            {data.isPlaying && data.durationMs && (
+              <span className="spotify-timeline">
+                <progress
+                  ref={progress}
+                  max={data.durationMs}
+                  value={data.progressMs ?? 0}
+                  aria-label="Track progress"
+                />
+                <span className="spotify-times">
+                  <span ref={elapsed}>{time(data.progressMs ?? 0)}</span>
+                  <span>{time(data.durationMs)}</span>
+                </span>
+              </span>
+            )}
+            <span className="spotify-disclosure">
+              {expanded ? "Less detail" : "Track details"}{" "}
+              <span aria-hidden="true">{expanded ? "−" : "+"}</span>
+            </span>
+          </button>
+          <motion.div
+            id={detailId}
+            className="spotify-details"
+            initial={false}
+            animate={{ height: expanded ? "auto" : 0, opacity: expanded ? 1 : 0 }}
+            transition={{ duration: reduce ? 0 : 0.3, ease: [0.22, 0.75, 0.18, 1] }}
+            inert={!expanded}
+            aria-hidden={!expanded}
+          >
+            <div className="spotify-details-inner">
+              <dl>
+                <div>
+                  <dt>Track</dt>
+                  <dd>{data.title}</dd>
+                </div>
+                <div>
+                  <dt>Artist</dt>
+                  <dd>{data.artist}</dd>
+                </div>
+                {data.album && (
+                  <div>
+                    <dt>Album</dt>
+                    <dd>{data.album}</dd>
+                  </div>
+                )}
+                {data.durationMs && (
+                  <div>
+                    <dt>Duration</dt>
+                    <dd>{time(data.durationMs)}</dd>
+                  </div>
+                )}
+              </dl>
+              {data.songUrl && (
+                <a
+                  className="spotify-open"
+                  href={data.songUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <RollText>Open song in Spotify ↗</RollText>
+                </a>
+              )}
+            </div>
+          </motion.div>
+        </div>
+      ) : (
+        <div className="spotify-empty">
+          <span className="spotify-status">Spotify</span>
+          <p>{loaded ? "No track to show right now." : "Checking the current track…"}</p>
+        </div>
+      )}
+    </div>
+  );
+}

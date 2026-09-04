@@ -1,5 +1,9 @@
-import { getAuthorName, getPostBySlug, incrementPostViews } from "@/lib/actions/blog";
-import { fetchOGData, OGData } from "@/lib/og-fetcher";
+import { getAuthorName } from "@/lib/actions/blog";
+import { getReadablePost } from "@/lib/blog-post-data";
+import { Suspense } from "react";
+import PostViewTracker from "@/components/blog/PostViewTracker";
+import StreamedLinkPreview from "@/components/blog/StreamedLinkPreview";
+
 import { Marked, Parser, Tokens, parseInline } from "marked";
 import { gfmHeadingId } from "marked-gfm-heading-id";
 import { notFound } from "next/navigation";
@@ -7,7 +11,7 @@ import BlogPostView from "./BlogPostView";
 import { createHighlighter, type Highlighter } from "shiki";
 
 // Define the segment type for the view
-type ContentSegment = { type: "html"; html: string } | { type: "og"; url: string; data: OGData };
+type ContentSegment = { type: "html"; html: string } | { type: "og"; url: string };
 
 const VIDEO_URL_PATTERN = /\.(mp4|webm|ogg|mov|m4v)(\?[^"']*)?$/i;
 
@@ -105,10 +109,10 @@ function renderMarkdownChunk(marked: Marked, chunk: string) {
 
 // Initialize Shiki highlighter
 const getHighlighter = (() => {
-  let highlighter: Highlighter | null = null;
+  let highlighter: Promise<Highlighter> | null = null;
   return async () => {
     if (!highlighter) {
-      highlighter = await createHighlighter({
+      highlighter = createHighlighter({
         themes: ["github-dark-dimmed"],
         langs: [
           "javascript",
@@ -132,14 +136,12 @@ const getHighlighter = (() => {
 })();
 
 export async function BlogPostContent({ slug }: { slug: string }) {
-  const postData = await getPostBySlug(slug, { includeDraftsForAdmin: true });
+  const postData = await getReadablePost(slug);
   if (!postData || !postData.post) notFound();
   const post = postData.post;
-  const authorName = await getAuthorName(post.userId);
+  const authorPromise = getAuthorName(post.userId);
 
-  await incrementPostViews(post._id.toString());
-
-  const highlighter = await getHighlighter();
+  const highlighter = /(^|\n)\s*(```|~~~)/.test(post.content) ? await getHighlighter() : null;
 
   const marked = new Marked();
   marked.use(gfmHeadingId());
@@ -163,12 +165,12 @@ export async function BlogPostContent({ slug }: { slug: string }) {
       const { text, lang } = token;
       const language = lang === "kt" ? "kotlin" : lang || "text";
       try {
-        return highlighter.codeToHtml(text, {
+        return highlighter!.codeToHtml(text, {
           lang: language,
           theme: "github-dark-dimmed",
         });
       } catch {
-        return `<pre><code>${text}</code></pre>`;
+        return `<pre><code>${text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")}</code></pre>`;
       }
     },
   };
@@ -193,8 +195,7 @@ export async function BlogPostContent({ slug }: { slug: string }) {
     }
 
     const url = match[1];
-    const data = await fetchOGData(url);
-    segments.push({ type: "og", url, data });
+    segments.push({ type: "og", url });
     lastIndex = match.index + match[0].length;
   }
 
@@ -212,13 +213,31 @@ export async function BlogPostContent({ slug }: { slug: string }) {
     Boolean(post.thumbnail) ||
     segments.some((s) => s.type === "html" && s.html.includes('data-post-media="true"'));
 
+  const authorName = await authorPromise;
   return (
-    <BlogPostView
-      post={JSON.parse(JSON.stringify(post))}
-      authorName={authorName}
-      segments={segments}
-      readingTime={readingTime}
-      hasMedia={hasMedia}
-    />
+    <>
+      <PostViewTracker postId={post._id.toString()} />
+      <BlogPostView
+        post={JSON.parse(JSON.stringify(post))}
+        authorName={authorName}
+        segments={segments}
+        previews={segments.map((segment, index) =>
+          segment.type === "og" ? (
+            <Suspense
+              key={index}
+              fallback={
+                <a className="streamed-link-placeholder" href={segment.url}>
+                  {segment.url} ↗
+                </a>
+              }
+            >
+              <StreamedLinkPreview url={segment.url} />
+            </Suspense>
+          ) : null,
+        )}
+        readingTime={readingTime}
+        hasMedia={hasMedia}
+      />
+    </>
   );
 }

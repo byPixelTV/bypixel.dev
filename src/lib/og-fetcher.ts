@@ -28,6 +28,7 @@ export async function fetchOGData(url: string): Promise<OGData> {
         Accept: "text/html,application/xhtml+xml",
       },
       next: { revalidate: 3600 },
+      signal: AbortSignal.timeout(2500),
     });
 
     if (!response.ok) return { url };

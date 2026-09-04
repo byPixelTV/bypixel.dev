@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import BackgroundLayout from "@/components/BackgroundLayout";
 import Navbar from "@/components/Navbar";
+import SiteFooter from "@/components/SiteFooter";
 import NowExperience, { type NextRace } from "@/components/now/NowExperience";
 
 export const metadata: Metadata = {
@@ -40,13 +41,7 @@ interface F1CalendarRace {
   sessions: Record<string, string>;
 }
 
-const fallbackRace: NextRace = {
-  name: "Austrian Grand Prix",
-  location: "Spielberg",
-  round: 8,
-  date: "2026-06-28T13:00:00Z",
-  trackImage: "/assets/f1/spielberg-3.svg",
-};
+const fallbackRace = null;
 
 const trackImages: Record<string, string> = {
   "austrian-grand-prix": "/assets/f1/spielberg-3.svg",
@@ -68,10 +63,11 @@ const trackImages: Record<string, string> = {
 
 export const revalidate = 21600;
 
-async function getNextRace(): Promise<NextRace> {
+async function getNextRace(): Promise<NextRace | null> {
   try {
     const res = await fetch("https://f1calendar.com/api/calendar", {
       next: { revalidate },
+      signal: AbortSignal.timeout(3000),
     });
 
     if (!res.ok) {
@@ -97,7 +93,7 @@ async function getNextRace(): Promise<NextRace> {
       location: next.location,
       round: next.round,
       date: next.date,
-      trackImage: trackImages[next.slug] ?? fallbackRace.trackImage,
+      trackImage: trackImages[next.slug],
     };
   } catch {
     return fallbackRace;
@@ -111,6 +107,7 @@ export default async function NowPage() {
     <BackgroundLayout>
       <Navbar />
       <NowExperience nextRace={nextRace} />
+      <SiteFooter />
     </BackgroundLayout>
   );
 }

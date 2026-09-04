@@ -1,23 +1,23 @@
-import React from "react";
+"use client";
+import { useEffect, useRef, type ReactNode } from "react";
+import { usePathname } from "next/navigation";
 
-export default function BackgroundLayout({ children }: { children: React.ReactNode }) {
+/** Fade only new content; never snapshot or transform the fixed navigation. */
+export default function BackgroundLayout({ children }: { children: ReactNode }) {
+  const root = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const content = root.current?.querySelector("main, .article-page");
+    const animation = content?.animate([{ opacity: 0.6 }, { opacity: 1 }], {
+      duration: 220,
+      easing: "ease-out",
+    });
+    return () => animation?.cancel();
+  }, [pathname]);
   return (
-    <>
-      <div
-        className="background-layout fixed inset-0 z-0 overflow-hidden pointer-events-none"
-        style={{ background: "#030305" }}
-      >
-        <div className="gradient-blob blob-1"></div>
-        <div className="gradient-blob blob-2"></div>
-        <div className="gradient-blob blob-3"></div>
-        <div className="gradient-blob blob-4"></div>
-
-        <div className="absolute inset-0">
-          <div className="grid-pattern"></div>
-        </div>
-      </div>
-
-      <div className="relative z-10 min-h-screen">{children}</div>
-    </>
+    <div ref={root} className="relative z-10 min-h-screen flow-root">
+      {children}
+    </div>
   );
 }

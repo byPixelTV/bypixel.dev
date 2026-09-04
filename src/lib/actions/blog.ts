@@ -81,8 +81,9 @@ export async function getPostBySlug(
   try {
     const collection = await getPostsCollection();
     const includeDraftsForAdmin = options?.includeDraftsForAdmin === true;
-    const canReadDrafts = includeDraftsForAdmin ? await isServerAdmin() : false;
-    const post = await collection.findOne(canReadDrafts ? { slug } : { slug, draft: false });
+    let post = await collection.findOne({ slug, draft: false });
+    if (!post && includeDraftsForAdmin && (await isServerAdmin()))
+      post = await collection.findOne({ slug });
 
     if (!post) {
       return {

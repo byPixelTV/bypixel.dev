@@ -3,7 +3,10 @@
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import "./experience.css";
 import "lenis/dist/lenis.css";
+import AlbumAtmosphere from "@/components/portfolio/AlbumAtmosphere";
+
 import SmoothScroll from "@/components/scroll/SmoothScroll";
 import ScrollToTop from "@/components/scroll/ScrollToTop";
 
@@ -31,10 +34,12 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={`${fontSans.variable} ${fontMono.variable} antialiased`}>
-        <SmoothScroll>
-          {children}
-          <ScrollToTop />
-        </SmoothScroll>
+        <AlbumAtmosphere>
+          <SmoothScroll>
+            {children}
+            <ScrollToTop />
+          </SmoothScroll>
+        </AlbumAtmosphere>
       </body>
     </html>
   );

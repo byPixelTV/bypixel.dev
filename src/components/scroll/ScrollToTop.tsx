@@ -22,81 +22,17 @@ export default function ScrollToTop() {
   }, []);
 
   const scrollToTop = () => {
-    const w = window as any;
-    const lenis = w?.lenis;
-
-    const methodsTried: string[] = [];
-
-    const tryLenis = (arg: any) => {
-      try {
-        if (lenis && typeof lenis.scrollTo === "function") {
-          lenis.scrollTo(arg);
-          methodsTried.push(`lenis:${String(arg)}`);
-          return true;
-        }
-      } catch (e) {
-        console.warn("Lenis scrollTo failed:", e);
-      }
-      return false;
-    };
-
-    // 1) Try Lenis with numeric target
-    if (tryLenis(0)) return;
-    // 2) Try Lenis with 'top' keyword
-    if (tryLenis("top")) return;
-
-    // If Lenis isn't available yet, listen for the ready event and call it once it initializes
-    if (!(window as any)?.lenis) {
-      const onLenisReady = () => {
-        try {
-          const l = (window as any)?.lenis;
-          if (l && typeof l.scrollTo === "function") {
-            try {
-              l.scrollTo(0, { immediate: false });
-            } catch (err) {
-              console.warn("Failed to initialize Lenis scrollTo:", err);
-            }
-          }
-        } catch (err) {
-          console.warn("Failed to initialize Lenis scrollTo:", err);
-        }
-      };
-      window.addEventListener("lenis-ready", onLenisReady, { once: true });
+    const lenis = window.portfolioScroll;
+    if (lenis) {
+      lenis.scrollTo(0);
+      return;
     }
-
-    // 3) Native smooth scroll (should provide immediate feedback)
-    try {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      methodsTried.push("native:smooth");
-    } catch (e) {
-      console.warn("Failed to scroll window:", e);
-    }
-
-    // 4) Try element-based scroll as a last-resort
-    try {
-      const docEl = document.documentElement || document.body;
-      if (docEl && typeof (docEl as any).scrollTo === "function") {
-        (docEl as any).scrollTo({ top: 0, behavior: "smooth" });
-        methodsTried.push("docEl:smooth");
-      }
-    } catch (e) {
-      console.warn("Failed to scroll element:", e);
-    }
-
-    // 5) Hard set - immediate
-    try {
-      document.documentElement.scrollTop = 0;
-      document.body.scrollTop = 0;
-      methodsTried.push("direct:setScrollTop");
-    } catch (e) {
-      console.warn("Failed to set scroll top directly:", e);
-    }
-
-    // If nothing seems to run (debug), log methods tried for developer inspection
-    if (process.env.NODE_ENV === "development") {
-      // eslint-disable-next-line no-console
-      console.debug("ScrollToTop methods tried:", methodsTried);
-    }
+    window.scrollTo({
+      top: 0,
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+        ? "instant"
+        : "smooth",
+    });
   };
 
   return (

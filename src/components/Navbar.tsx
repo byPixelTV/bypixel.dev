@@ -1,11 +1,11 @@
+"use client";
+import RollText from "@/components/portfolio/RollText";
 // This file includes code copied and adapted from:
 // https://github.com/AbhiVarde/abhivarde.in/blob/main/app/components/common/Navbar.jsx
 // Original work by Abhi Varde, licensed under the MIT License:
 // https://github.com/AbhiVarde/abhivarde.in/blob/main/LICENSE
 //
 // Changes have been made to fit this project’s design and functionality.
-
-"use client";
 
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
@@ -26,7 +26,7 @@ const sectionLinks = [
   { title: "Projects", hash: "#projects" },
   { title: "Skills", hash: "#skills" },
   { title: "Journey", hash: "#journey" },
-  { title: "Sourcecode", hash: "#sourcecode" },
+  { title: "Elsewhere", hash: "#contact" },
 ];
 
 const Navbar = () => {
@@ -49,7 +49,17 @@ const Navbar = () => {
     const scrollToSelector = (selector: string) => {
       const el = document.getElementById(id) || document.querySelector(selector);
       if (el) {
-        (el as Element).scrollIntoView({ behavior: "smooth", block: "start" });
+        const lenis = window.portfolioScroll;
+        if (lenis) {
+          lenis.scrollTo(el, { offset: -100 });
+          return true;
+        }
+        (el as Element).scrollIntoView({
+          behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+            ? "instant"
+            : "smooth",
+          block: "start",
+        });
         return true;
       }
       return false;
@@ -80,21 +90,6 @@ const Navbar = () => {
     setIsSectionsMenuOpen(false);
     setIsMobileMenuOpen(false);
   };
-
-  // Prefetch all pages on mount
-  useEffect(() => {
-    headerNavLinks.forEach(({ url }) => {
-      // Prefetch only if different from current path to save bandwidth
-      if (url !== pathname) {
-        router.prefetch(url);
-      }
-    });
-
-    // Also prefetch blog posts list aggressively
-    if (pathname !== "/blog") {
-      router.prefetch("/blog");
-    }
-  }, [pathname, router]);
 
   // Scroll listener for navbar styling
   useMotionValueEvent(scrollY, "change", (latest) => {
@@ -178,7 +173,8 @@ const Navbar = () => {
         animate="visible"
       >
         <motion.nav
-          className="mx-auto mt-3 w-[calc(100%-1.5rem)] rounded-3xl px-3 py-2.5 shadow-lg md:mt-4 md:w-[calc(100%-2rem)]"
+          data-scrolled={isScrolled}
+          className="nav-shell mx-auto mt-3 w-[calc(100%-1.5rem)] rounded-3xl px-3 py-2.5 md:mt-4 md:w-[calc(100%-2rem)]"
           initial="top"
           animate={isScrolled ? "scroll" : "top"}
         >
@@ -243,10 +239,13 @@ const Navbar = () => {
                   <Link
                     href={navLink.url}
                     className={`nav-btn inline-flex min-w-28 items-center justify-center rounded-xl px-5 py-2.5 text-base font-semibold tracking-wide transition-all duration-300 ${
-                      pathname === navLink.url ? "active-nav" : ""
+                      pathname === navLink.url ||
+                      (navLink.url !== "/" && pathname.startsWith(navLink.url + "/"))
+                        ? "active-nav"
+                        : ""
                     }`}
                   >
-                    {navLink.title}
+                    <RollText>{navLink.title}</RollText>
                   </Link>
                 </motion.li>
               ))}

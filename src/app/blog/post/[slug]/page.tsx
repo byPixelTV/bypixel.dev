@@ -1,6 +1,5 @@
-import BackgroundLayout from "@/components/BackgroundLayout";
-import Navbar from "@/components/Navbar";
-import { getPostBySlug } from "@/lib/actions/blog";
+import ArticleLoading from "./loading";
+import { getReadablePost } from "@/lib/blog-post-data";
 import { Metadata } from "next";
 import { Suspense } from "react";
 import { BlogPostContent } from "./content";
@@ -23,7 +22,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const siteUrl = "https://bypixel.dev";
 
   try {
-    const response = await getPostBySlug(slug, { includeDraftsForAdmin: true });
+    const response = await getReadablePost(slug);
 
     const post = response.post;
 
@@ -105,20 +104,9 @@ export default async function BlogPostPage({ params }: PageProps) {
 
   return (
     <>
-      <Navbar />
-      <BackgroundLayout>
-        <Suspense
-          fallback={
-            <div className="container mx-auto px-4 py-16 mt-20">
-              <div className="flex justify-center">
-                <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-600 border-t-white"></div>
-              </div>
-            </div>
-          }
-        >
-          <BlogPostContent slug={slug} />
-        </Suspense>
-      </BackgroundLayout>
+      <Suspense fallback={<ArticleLoading />}>
+        <BlogPostContent slug={slug} />
+      </Suspense>
     </>
   );
 }

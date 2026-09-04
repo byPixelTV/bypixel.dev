@@ -1,10 +1,7 @@
 "use client";
-
-import { useRef } from "react";
-import { motion, useScroll, useSpring } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import { motion, useScroll, useSpring, useReducedMotion } from "motion/react";
 import { Icon } from "@iconify/react";
-import { cn } from "@/lib/utils";
-
 const milestones = [
   {
     year: "2022",
@@ -46,7 +43,7 @@ const milestones = [
     year: "2026",
     title: "Next-Level Performance",
     description:
-      "Pushing EraMC to unprecedented levels. Exploring Go for high-performance tooling and continuing to refine the Kotlin ecosystem for maximum efficiency and scale.",
+      "Pushing EraMC to unprecedented levels. Exploring Go for high-performance tooling and continuing to refine the Kotlin ecosystem for maximum efficiency and scale. Helping other servers and communities with my knowledge and experience to bring the best possible experience to their players.",
     tags: ["Go", "Next.js", "Advanced Kotlin", "Scale"],
     icon: "logos:go",
     color: "from-cyan-400/20 to-blue-600/20",
@@ -55,126 +52,90 @@ const milestones = [
 ];
 
 export default function CodingJourney() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start end", "end start"],
-  });
-
-  const scaleY = useSpring(scrollYProgress, {
-    stiffness: 100,
-    damping: 30,
-    restDelta: 0.001,
-  });
-
+  const root = useRef<HTMLElement>(null);
+  const [active, setActive] = useState(0);
+  const reduce = useReducedMotion();
+  const { scrollYProgress } = useScroll({ target: root, offset: ["start center", "end center"] });
+  const progress = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries.filter((entry) => entry.isIntersecting);
+        if (visible.length)
+          setActive(Number((visible[visible.length - 1].target as HTMLElement).dataset.index));
+      },
+      { rootMargin: "-25% 0px -45% 0px", threshold: 0 },
+    );
+    root.current?.querySelectorAll("[data-index]").forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
   return (
-    <section ref={containerRef} className="relative py-20 px-4 max-w-5xl mx-auto">
-      <div className="flex flex-col items-center mb-20 text-center">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="p-3 rounded-2xl bg-white/5 border border-white/10 mb-6"
-        >
-          <Icon icon="ph:path-bold" className="text-3xl text-purple-400" />
-        </motion.div>
-        <h2 className="text-4xl md:text-6xl font-black text-white italic tracking-tighter mb-4">
-          CODING JOURNEY
+    <section ref={root} className="journey-editorial" aria-labelledby="journey-heading">
+      <div className="journey-overview">
+        <p className="eyebrow">03 / The story so far</p>
+        <h2 id="journey-heading">
+          ONE SPARK.
+          <br />
+          <em>STILL BUILDING.</em>
         </h2>
-        <p className="text-slate-400 max-w-md">
-          A timeline of my evolution as a developer, from the first script to high-performance
-          networks.
+        <p>
+          From the first script to the systems behind it. Five chapters of learning by making
+          things.
         </p>
-      </div>
-
-      <div className="relative">
-        {/* Progress Line */}
-        <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-px bg-white/10 -translate-x-1/2 block" />
-        <motion.div
-          style={{ scaleY, originY: 0 }}
-          className="absolute left-4 md:left-1/2 top-0 bottom-0 w-px bg-linear-to-b from-purple-500 via-blue-500 to-transparent -translate-x-1/2 block"
-        />
-
-        <div className="space-y-12 sm:space-y-24">
+        <div className="journey-current" aria-hidden="true">
+          <span className="eyebrow">
+            Chapter 0{active + 1} / 0{milestones.length}
+          </span>
+          <span key={active} className="journey-year">
+            {milestones[active].year}
+          </span>
+          <span>{milestones[active].title}</span>
+        </div>
+        <nav className="journey-chapters" aria-label="Coding journey years">
           {milestones.map((m, i) => (
-            <TimelineItem key={m.year} milestone={m} index={i} />
+            <a
+              href={"#year-" + m.year}
+              key={m.year}
+              aria-current={active === i ? "step" : undefined}
+            >
+              {m.year}
+            </a>
           ))}
+        </nav>
+        <div className="journey-progress" aria-hidden="true">
+          <motion.div style={{ scaleX: reduce ? scrollYProgress : progress }} />
         </div>
       </div>
-    </section>
-  );
-}
-
-function TimelineItem({ milestone, index }: { milestone: (typeof milestones)[0]; index: number }) {
-  const isEven = index % 2 === 0;
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 50 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-100px" }}
-      transition={{ duration: 0.7, ease: "easeOut" }}
-      className={`relative flex flex-col md:flex-row items-center gap-6 sm:gap-8 ${
-        isEven ? "md:flex-row-reverse" : ""
-      }`}
-    >
-      {/* Year Circle */}
-      <div className="absolute left-4 md:left-1/2 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-slate-950 border-2 border-slate-800 flex items-center justify-center -translate-x-1/2 z-10">
-        <div
-          className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full ${milestone.isCurrent ? "bg-purple-500 animate-pulse" : "bg-slate-600"}`}
-        />
-      </div>
-
-      {/* Content Card */}
-      <div
-        className={`w-full md:w-[45%] pl-10 md:pl-0 ${isEven ? "md:text-left" : "md:text-right"} group`}
-      >
-        <div
-          className={`relative p-6 sm:p-8 rounded-4xl sm:rounded-[2.5rem] bg-white/5 border border-white/10 backdrop-blur-xl overflow-hidden transition-all duration-500 group-hover:bg-white/10 group-hover:border-white/20`}
-        >
-          {/* Subtle background glow */}
-          <div
-            className={`absolute -right-20 -top-20 w-40 h-40 bg-linear-to-br ${milestone.color} blur-3xl opacity-50 group-hover:opacity-80 transition-opacity`}
-          />
-
-          <div className={`flex flex-col ${isEven ? "items-start" : "md:items-end"} mb-4`}>
-            <span className="text-xs sm:text-sm font-black text-purple-400 tracking-[0.3em] mb-2">
-              {milestone.year}
-            </span>
-            <div className="flex items-center gap-3">
-              <Icon
-                icon={milestone.icon}
-                className={cn("text-2xl sm:text-3xl", isEven ? "block" : "block md:hidden")}
-              />
-              <h3 className="text-xl sm:text-2xl font-bold text-white italic tracking-tight">
-                {milestone.title}
-              </h3>
-              <Icon
-                icon={milestone.icon}
-                className={cn("text-2xl sm:text-3xl", !isEven ? "hidden md:block" : "hidden")}
-              />
-            </div>
-          </div>
-
-          <p className="text-slate-400 leading-relaxed mb-6 text-xs sm:text-sm">
-            {milestone.description}
-          </p>
-
-          <div className={`flex flex-wrap gap-2 ${isEven ? "" : "md:justify-end"}`}>
-            {milestone.tags.map((tag) => (
-              <span
-                key={tag}
-                className="px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-slate-300"
-              >
-                {tag}
+      <ol className="journey-chapter-list">
+        {milestones.map((m, i) => (
+          <motion.li
+            key={m.year}
+            id={"year-" + m.year}
+            data-index={i}
+            data-current={active === i}
+            initial={false}
+            whileInView={{ opacity: 1 }}
+            className="journey-chapter"
+          >
+            <div className="journey-chapter-top">
+              <span className="eyebrow">
+                0{i + 1} / {m.year}
               </span>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Spacer for MD screens */}
-      <div className="hidden md:block md:w-[10%]" />
-    </motion.div>
+              <Icon icon={m.icon} width={42} height={42} aria-hidden="true" />
+            </div>
+            <h3>{m.title}</h3>
+            <p>{m.description}</p>
+            <ul className="journey-tags" aria-label="Technologies">
+              {m.tags.map((tag) => (
+                <li key={tag}>{tag}</li>
+              ))}
+            </ul>
+            <span className="journey-chapter-number" aria-hidden="true">
+              0{i + 1}
+            </span>
+          </motion.li>
+        ))}
+      </ol>
+    </section>
   );
 }
