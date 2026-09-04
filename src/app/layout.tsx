@@ -1,7 +1,7 @@
 // For adding custom fonts with other frameworks, see:
 // https://tailwindcss.com/docs/font-family
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
+import { Inter, JetBrains_Mono, Caveat } from "next/font/google";
 import "./globals.css";
 import "./experience.css";
 import "lenis/dist/lenis.css";
@@ -13,6 +13,11 @@ import ScrollToTop from "@/components/scroll/ScrollToTop";
 const fontSans = Inter({
   subsets: ["latin"],
   variable: "--font-sans",
+});
+
+const caveat = Caveat({
+  subsets: ["latin"],
+  variable: "--font-script",
 });
 
 const fontMono = JetBrains_Mono({
@@ -33,7 +38,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      <body className={`${fontSans.variable} ${fontMono.variable} antialiased`}>
+      <head>
+        <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+      </head>
+      <body className={`${fontSans.variable} ${fontMono.variable} ${caveat.variable} antialiased`}>
         <AlbumAtmosphere>
           <SmoothScroll>
             {children}

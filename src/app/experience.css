@@ -3177,6 +3177,51 @@ html {
   line-height: 1.8;
 }
 
+.footer-curiosity-line {
+  position: relative;
+  display: inline-block;
+}
+
+.footer-stay-curious {
+  position: absolute;
+  left: calc(100% + 18px);
+  bottom: 0.08em;
+
+  white-space: nowrap;
+
+  font-family: Georgia, serif;
+  font-size: clamp(14px, 1.35vw, 21px);
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: -0.035em;
+
+  color: #c084fc;
+  opacity: 0.7;
+
+  transform: rotate(-4deg);
+}
+
+@media (max-width: 760px) {
+  .footer-stay-curious {
+    left: auto;
+    right: -4px;
+    bottom: -1.35em;
+
+    font-size: 14px;
+  }
+}
+
+.footer-stay-curious {
+  transition:
+    transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1),
+    opacity 0.25s;
+}
+
+.footer-curiosity-line:hover .footer-stay-curious {
+  transform: rotate(-4deg) translate(4px, -3px);
+  opacity: 1;
+}
+
 /* Active project state */
 .project-active-dot {
   box-shadow: 0 0 0 0 rgb(196 181 253 / 0.5);

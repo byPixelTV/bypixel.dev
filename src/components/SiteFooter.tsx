@@ -27,18 +27,20 @@ export default function SiteFooter() {
             </g>
           </svg>
 
-          <p className="eyebrow footer-signature">
-            byPixelTV / Made with curiosity
-          </p>
+          <p className="eyebrow footer-signature">byPixelTV / Made with curiosity</p>
 
-          <h2>
+          <h2 className="footer-title">
             BUILT OUT OF
             <br />
-            <em>
-              <Link href="/#projects" className="footer-hello">
-                <RollText>CURIOSITY.</RollText>
-              </Link>
-            </em>
+            <span className="footer-curiosity-line">
+              <em>
+                <Link href="/#projects" className="footer-hello">
+                  <RollText>CURIOSITY.</RollText>
+                </Link>
+              </em>
+
+              <span className="footer-stay-curious">#StayCurious</span>
+            </span>
           </h2>
 
           <p className="footer-about">
@@ -67,27 +69,15 @@ export default function SiteFooter() {
             <nav aria-label="Footer social links">
               <p className="eyebrow">Elsewhere</p>
 
-              <a
-                href="https://github.com/bypixeltv"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <a href="https://github.com/bypixeltv" target="_blank" rel="noopener noreferrer">
                 <RollText>GITHUB ↗</RollText>
               </a>
 
-              <a
-                href="https://discord.gg/yVp7Qvhj9k"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <a href="https://discord.gg/yVp7Qvhj9k" target="_blank" rel="noopener noreferrer">
                 <RollText>DISCORD ↗</RollText>
               </a>
 
-              <a
-                href="https://twitter.com/bypixeltv"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <a href="https://twitter.com/bypixeltv" target="_blank" rel="noopener noreferrer">
                 <RollText>X / TWITTER ↗</RollText>
               </a>
 
@@ -103,8 +93,7 @@ export default function SiteFooter() {
             rel="noopener noreferrer"
             className="footer-contact"
           >
-            <RollText>Say hi on Discord</RollText>{" "}
-            <span aria-hidden="true">↗</span>
+            <RollText>Say hi on Discord</RollText> <span aria-hidden="true">↗</span>
           </a>
         </div>
 
