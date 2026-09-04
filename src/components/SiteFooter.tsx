@@ -1,7 +1,9 @@
-import RollText from "@/components/portfolio/RollText";
 import Link from "next/link";
+
+import RollText from "@/components/portfolio/RollText";
 import LightningStory from "@/components/portfolio/LightningStory";
 import Reveal from "@/components/portfolio/Reveal";
+import FooterNavLink from "./FooterNavLink";
 
 export default function SiteFooter() {
   return (
@@ -24,7 +26,11 @@ export default function SiteFooter() {
               ))}
             </g>
           </svg>
-          <p className="eyebrow footer-signature">byPixelTV / Made with curiosity</p>
+
+          <p className="eyebrow footer-signature">
+            byPixelTV / Made with curiosity
+          </p>
+
           <h2>
             BUILT OUT OF
             <br />
@@ -34,21 +40,19 @@ export default function SiteFooter() {
               </Link>
             </em>
           </h2>
+
           <p className="footer-about">
             Personal projects, experiments and ideas I choose to explore.
           </p>
+
           <div className="footer-columns">
             <nav aria-label="Footer pages">
               <p className="eyebrow">Explore</p>
-              <Link href="/">
-                <RollText>HOME</RollText>
-              </Link>
-              <Link href="/now">
-                <RollText>NOW</RollText>
-              </Link>
-              <Link href="/blog">
-                <RollText>BLOG</RollText>
-              </Link>
+
+              <FooterNavLink href="/">HOME</FooterNavLink>
+              <FooterNavLink href="/now">NOW</FooterNavLink>
+              <FooterNavLink href="/blog">BLOG</FooterNavLink>
+
               <a
                 href="https://github.com/byPixelTV/bypixel.dev"
                 target="_blank"
@@ -57,38 +61,58 @@ export default function SiteFooter() {
                 <RollText>SOURCE CODE ↗</RollText>
               </a>
             </nav>
+
             <LightningStory />
+
             <nav aria-label="Footer social links">
               <p className="eyebrow">Elsewhere</p>
-              <a href="https://github.com/bypixeltv" target="_blank" rel="noopener noreferrer">
+
+              <a
+                href="https://github.com/bypixeltv"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <RollText>GITHUB ↗</RollText>
               </a>
-              <a href="https://discord.gg/yVp7Qvhj9k" target="_blank" rel="noopener noreferrer">
+
+              <a
+                href="https://discord.gg/yVp7Qvhj9k"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <RollText>DISCORD ↗</RollText>
               </a>
-              <a href="https://twitter.com/bypixeltv" target="_blank" rel="noopener noreferrer">
+
+              <a
+                href="https://twitter.com/bypixeltv"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <RollText>X / TWITTER ↗</RollText>
-              </a>{" "}
+              </a>
+
               <a href="mailto:contact@bypixel.dev">
                 <RollText>EMAIL ↗</RollText>
               </a>
             </nav>
           </div>
+
           <a
             href="https://discord.gg/yVp7Qvhj9k"
             target="_blank"
             rel="noopener noreferrer"
             className="footer-contact"
           >
-            <RollText>Say hi on Discord</RollText> <span aria-hidden="true">↗</span>
+            <RollText>Say hi on Discord</RollText>{" "}
+            <span aria-hidden="true">↗</span>
           </a>
         </div>
+
         <div className="footer-baseline">
           <span>© {new Date().getFullYear()} byPixelTV</span>
           <span>Software developer. Always curious.</span>
-          <Link href="/">
-            <RollText>Back to home ↗</RollText>
-          </Link>
+
+          <FooterNavLink href="/">Back to home ↗</FooterNavLink>
         </div>
       </Reveal>
     </footer>
