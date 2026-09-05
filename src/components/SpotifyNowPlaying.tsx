@@ -16,7 +16,6 @@ export default function SpotifyNowPlaying() {
   const reduce = useReducedMotion();
   const [expanded, setExpanded] = useState(false);
   const detailId = useId();
-  const [settledTrack, setSettledTrack] = useState<string>();
   const trackKey = data?.trackId ?? data?.songUrl ?? data?.title;
   const hasTrack = Boolean(data?.title);
   const root = useRef<HTMLDivElement>(null);
@@ -109,27 +108,28 @@ export default function SpotifyNowPlaying() {
                 <motion.span
                   key={trackKey}
                   className="spotify-song-text"
-                  onAnimationComplete={(definition) => {
-                    if (
-                      typeof definition === "object" &&
-                      "opacity" in definition &&
-                      definition.opacity === 1
-                    ) {
-                      setSettledTrack(trackKey);
-                    }
-                  }}
-                  initial={{ y: reduce ? 0 : "100%", opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  exit={{ y: reduce ? 0 : "-100%", opacity: 0 }}
-                  transition={{ duration: reduce ? 0 : 0.45, ease: [0.22, 0.75, 0.18, 1] }}
+                  initial="incoming"
+                  animate="visible"
+                  exit="outgoing"
                 >
                   <strong title={data.title}>
-                    <RollText autoPlay={settledTrack === trackKey}>{data.title}</RollText>
+                    <TrackRollText reduce={Boolean(reduce)}>{data.title}</TrackRollText>
                   </strong>
                   <span>
-                    <RollText autoPlay={settledTrack === trackKey}>{data.artist ?? ""}</RollText>
+                    <TrackRollText reduce={Boolean(reduce)}>{data.artist ?? ""}</TrackRollText>
                   </span>
-                  {data.album && <small>{data.album}</small>}
+                  {data.album && (
+                    <motion.small
+                      variants={{
+                        incoming: { opacity: 0 },
+                        visible: { opacity: 1 },
+                        outgoing: { opacity: 0 },
+                      }}
+                      transition={{ duration: reduce ? 0 : 0.56 }}
+                    >
+                      {data.album}
+                    </motion.small>
+                  )}
                 </motion.span>
               </AnimatePresence>
             </span>
@@ -210,5 +210,36 @@ export default function SpotifyNowPlaying() {
         </div>
       ) : null}
     </motion.div>
+  );
+}
+
+/** The old letters roll out as the new ones enter; no second autoplay or hover pass. */
+function TrackRollText({ children, reduce }: { children: string; reduce: boolean }) {
+  return (
+    <span className="roll-text">
+      <span className="sr-only">{children}</span>
+      <span className="roll-visual" aria-hidden="true">
+        {Array.from(children).map((letter, index) => (
+          <span key={index} className="roll-letter">
+            <motion.span
+              className="spotify-roll-glyph"
+              style={{ display: "block", height: "1.2em", lineHeight: 1.2 }}
+              variants={{
+                incoming: { y: reduce ? 0 : "100%", opacity: 0 },
+                visible: { y: 0, opacity: 1 },
+                outgoing: { y: reduce ? 0 : "-100%", opacity: 0 },
+              }}
+              transition={{
+                duration: reduce ? 0 : 0.56,
+                delay: reduce ? 0 : Math.min(index, 22) * 0.012,
+                ease: [0.22, 0.75, 0.18, 1],
+              }}
+            >
+              {letter === " " ? "\u00a0" : letter}
+            </motion.span>
+          </span>
+        ))}
+      </span>
+    </span>
   );
 }

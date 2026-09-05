@@ -1,14 +1,7 @@
 "use client";
 
 import { useMemo, useRef, useSyncExternalStore } from "react";
-import {
-  motion,
-  useReducedMotion,
-  useScroll,
-  useSpring,
-  useTransform,
-  type MotionValue,
-} from "framer-motion";
+import { motion, useReducedMotion, useScroll, useTransform, type MotionValue } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight, Clock3, Sparkles } from "lucide-react";
@@ -195,20 +188,14 @@ export default function HorizontalGallery() {
 
   const { scrollYProgress } = useScroll({
     target: ref,
-    offset: ["start start", "end end"],
+    offset: ["start 15%", "end end"],
   });
 
   const lastItem = responsiveProjectCards[responsiveProjectCards.length - 1];
   const startOffset = (viewportWidth - firstItem.width) / 2 - firstItem.x;
   const endOffset = (viewportWidth - lastItem.width) / 2 - lastItem.x;
-  // Both end cards get a short reading interval while the stage is still pinned.
-  const targetX = useTransform(
-    scrollYProgress,
-    [0, 0.06, 0.94, 1],
-    [startOffset, startOffset, endOffset, endOffset],
-  );
-  const smoothX = useSpring(targetX, { stiffness: 150, damping: 32, mass: 0.6 });
-  const x = reduce || simpleMotion ? targetX : smoothX;
+  // Follow the already-smoothed page scroll directly, with no dead zone or second spring.
+  const x = useTransform(scrollYProgress, [0, 1], [startOffset, endOffset]);
 
   return (
     <section
@@ -316,6 +303,8 @@ function ProjectCardItem({
               alt={`${item.name} preview`}
               fill
               sizes="(max-width: 768px) 90vw, 520px"
+              loading={index < 2 ? "eager" : "lazy"}
+              decoding="async"
               className="object-cover"
             />
           </div>
@@ -335,9 +324,6 @@ function ProjectCardItem({
           )}
           <div className="absolute bottom-4 left-4 right-4 sm:bottom-5 sm:left-5 sm:right-5 flex items-end justify-between gap-3">
             <div className="space-y-1 sm:space-y-1.5">
-              <p className="text-[10px] sm:text-xs font-medium uppercase tracking-[0.32em] text-white/65">
-                Project {index + 1}
-              </p>
               <h3 className="max-w-[12ch] text-2xl sm:text-4xl font-semibold tracking-tight text-white">
                 {item.name}
               </h3>

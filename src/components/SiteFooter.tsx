@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 import RollText from "@/components/portfolio/RollText";
 import LightningStory from "@/components/portfolio/LightningStory";
 import Reveal from "@/components/portfolio/Reveal";
@@ -34,12 +32,10 @@ export default function SiteFooter() {
             <br />
             <span className="footer-curiosity-line">
               <em>
-                <Link href="/#projects" className="footer-hello">
+                <a className="footer-hello">
                   <RollText>CURIOSITY.</RollText>
-                </Link>
+                </a>
               </em>
-
-              <span className="footer-stay-curious">#StayCurious</span>
             </span>
           </h2>
 

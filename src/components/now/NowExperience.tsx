@@ -35,6 +35,7 @@ const setupCards = [
     name: "Nothing Phone",
     label: "Daily driver",
     logo: "/assets/logo/nothing.png",
+    logoClassName: "brightness-0 invert",
     detail:
       "Clean hardware, weird little design choices and a UI that feels different enough to actually have taste.",
     accent: "from-white/18 to-zinc-400/8",
@@ -43,6 +44,7 @@ const setupCards = [
     name: "Windows",
     label: "Main setup",
     logo: "/assets/logo/windows.webp",
+    logoClassName: "",
     detail:
       "Where most of the day happens: code, tools, games, debugging sessions and the occasional desktop cleanup that lasts five minutes.",
     accent: "from-sky-400/22 to-blue-500/10",
@@ -191,7 +193,13 @@ export default function NowExperience({ nextRace }: { nextRace: NextRace | null 
           <div className="now-setup">
             {setupCards.map((item) => (
               <article key={item.name}>
-                <Image src={item.logo} alt="" width={40} height={40} />
+                <Image
+                  src={item.logo}
+                  alt=""
+                  width={40}
+                  height={40}
+                  className={item.logoClassName}
+                />
                 <div>
                   <p className="eyebrow">{item.label}</p>
                   <h3>{item.name}</h3>

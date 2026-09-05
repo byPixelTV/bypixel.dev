@@ -2027,8 +2027,8 @@
 .page-ambience .ambient-blob {
   background: none;
 }
-.page-ambience .ambient-blob::before,
-.page-ambience .ambient-blob::after {
+.page-ambience .ambient-base-light,
+.page-ambience .ambient-album-light {
   content: "";
   position: absolute;
   inset: 0;
@@ -2041,13 +2041,13 @@
     transparent 68%
   );
 }
-.page-ambience .ambient-blob::before {
+.page-ambience .ambient-base-light {
   --light-color: #9454dc;
-  opacity: calc(1 - var(--album-presence, 1));
+  opacity: 0;
 }
-.page-ambience .ambient-blob::after {
+.page-ambience .ambient-album-light {
   --light-color: var(--blob-color);
-  opacity: var(--album-presence, 1);
+  opacity: 1;
 }
 .ambient-chart {
   position: fixed;
@@ -2393,8 +2393,11 @@
 .album-atmosphere {
   display: flow-root;
 }
-.album-atmosphere[data-home="false"] {
-  --album-presence: 0 !important;
+.album-atmosphere[data-home="false"] .ambient-base-light {
+  opacity: 1 !important;
+}
+.album-atmosphere[data-home="false"] .ambient-album-light {
+  opacity: 0 !important;
 }
 .nav-shell {
   background: none;

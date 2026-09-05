@@ -66,8 +66,13 @@ export default function AlbumAtmosphere({ children }: { children: ReactNode }) {
   const [data, setData] = useState<NowPlayingResult | null>(null);
   const [loaded, setLoaded] = useState(false);
   const cover = data?.albumImageUrl ?? null;
-  // Fade the scenery only: the player keeps its album palette.
+  // Scope scroll-driven styles to the scenery, avoiding invalidation of the whole page.
   useEffect(() => {
+    if (pathname !== "/") return;
+    const scenery = root.current?.querySelector<HTMLElement>(".page-ambience");
+    if (!scenery) return;
+    const baseLights = scenery.querySelectorAll<HTMLElement>(".ambient-base-light");
+    const albumLights = scenery.querySelectorAll<HTMLElement>(".ambient-album-light");
     let frame = 0;
     let previousPresence: number | undefined;
     const update = () => {
@@ -76,7 +81,12 @@ export default function AlbumAtmosphere({ children }: { children: ReactNode }) {
       const presence = 1 - progress;
       if (presence === previousPresence) return;
       previousPresence = presence;
-      root.current?.style.setProperty("--album-presence", String(presence));
+      baseLights.forEach((light) => {
+        light.style.opacity = String(1 - presence);
+      });
+      albumLights.forEach((light) => {
+        light.style.opacity = String(presence);
+      });
     };
     const schedule = () => {
       if (!frame) frame = requestAnimationFrame(update);
@@ -89,7 +99,7 @@ export default function AlbumAtmosphere({ children }: { children: ReactNode }) {
       window.removeEventListener("scroll", schedule);
       window.removeEventListener("resize", schedule);
     };
-  }, []);
+  }, [pathname]);
   useEffect(() => {
     let disposed = false;
     let pending = false;
@@ -232,7 +242,14 @@ export function AmbientBlobs({ className = "" }: { className?: string }) {
           key={number}
           className="ambient-blob"
           style={{ "--blob-color": `var(--album-${number})` } as CSSProperties}
-        />
+        >
+          {className === "page-ambience" && (
+            <>
+              <span className="ambient-base-light" />
+              <span className="ambient-album-light" />
+            </>
+          )}
+        </i>
       ))}
     </div>
   );
