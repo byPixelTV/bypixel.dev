@@ -62,36 +62,50 @@ export default function SmoothScroll({ children }: { children: ReactNode }) {
     const thumb = document.getElementById("custom-scrollbar-thumb");
     let frame = 0;
     let hideTimer: ReturnType<typeof setTimeout> | undefined;
+    let scrolling = false;
+    let maxScroll = 0;
+    let thumbTravel = 0;
+    const measure = () => {
+      const height = window.innerHeight;
+      const documentHeight = root.scrollHeight;
+      maxScroll = documentHeight - height;
+      const thumbHeight = Math.min(height, Math.max(56, (height * height) / documentHeight));
+      thumbTravel = height - thumbHeight;
+      if (thumb) thumb.style.height = `${thumbHeight}px`;
+      schedule();
+    };
     const update = () => {
       frame = 0;
       if (!thumb) return;
-      const height = window.innerHeight;
-      const maxScroll = root.scrollHeight - height;
-      const thumbHeight = Math.min(height, Math.max(56, (height * height) / root.scrollHeight));
-      thumb.style.height = `${thumbHeight}px`;
-      thumb.style.transform = `translateY(${maxScroll > 0 ? (window.scrollY / maxScroll) * (height - thumbHeight) : 0}px)`;
+      thumb.style.transform = `translateY(${maxScroll > 0 ? (window.scrollY / maxScroll) * thumbTravel : 0}px)`;
     };
     const schedule = () => {
       if (!frame) frame = requestAnimationFrame(update);
     };
     const onScroll = () => {
       schedule();
-      root.classList.add("is-scrolling");
+      if (!scrolling) {
+        scrolling = true;
+        if (thumb) thumb.dataset.scrolling = "true";
+      }
       clearTimeout(hideTimer);
-      hideTimer = setTimeout(() => root.classList.remove("is-scrolling"), 700);
+      hideTimer = setTimeout(() => {
+        scrolling = false;
+        if (thumb) delete thumb.dataset.scrolling;
+      }, 700);
     };
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", schedule);
-    const observer = new ResizeObserver(schedule);
+    window.addEventListener("resize", measure);
+    const observer = new ResizeObserver(measure);
     observer.observe(document.body);
-    schedule();
+    measure();
     return () => {
       cancelAnimationFrame(frame);
       clearTimeout(hideTimer);
       observer.disconnect();
-      root.classList.remove("is-scrolling");
+      if (thumb) delete thumb.dataset.scrolling;
       window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", schedule);
+      window.removeEventListener("resize", measure);
     };
   }, []);
   return (

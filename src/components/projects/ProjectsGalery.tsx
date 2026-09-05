@@ -3,7 +3,7 @@
 import { useMemo, useRef, useSyncExternalStore } from "react";
 import {
   motion,
-  useMotionValue,
+  useReducedMotion,
   useScroll,
   useSpring,
   useTransform,
@@ -23,7 +23,6 @@ type ProjectCard = Project & {
   width: number;
   height: number;
   position: ImagePosition;
-  depth: number;
   scrollShift: number;
 };
 
@@ -97,7 +96,6 @@ const projectLayouts = [
     width: 430,
     height: 560,
     position: "top",
-    depth: 0.2,
     scrollShift: -90,
   },
   {
@@ -105,7 +103,6 @@ const projectLayouts = [
     width: 500,
     height: 620,
     position: "center",
-    depth: 0.5,
     scrollShift: -140,
   },
   {
@@ -113,7 +110,6 @@ const projectLayouts = [
     width: 420,
     height: 540,
     position: "top",
-    depth: 0.35,
     scrollShift: -110,
   },
   {
@@ -121,7 +117,6 @@ const projectLayouts = [
     width: 460,
     height: 580,
     position: "bottom",
-    depth: 0.45,
     scrollShift: -160,
   },
   {
@@ -129,7 +124,6 @@ const projectLayouts = [
     width: 520,
     height: 620,
     position: "center",
-    depth: 0.55,
     scrollShift: -130,
   },
 ] as const satisfies Array<{
@@ -137,7 +131,6 @@ const projectLayouts = [
   width: number;
   height: number;
   position: ImagePosition;
-  depth: number;
   scrollShift: number;
 }>;
 
@@ -155,20 +148,30 @@ const projectCards: ProjectCard[] = orderedProjects.map((project, index) => {
   };
 });
 
-function useViewportWidth() {
-  return useSyncExternalStore(
-    (onStoreChange) => {
-      window.addEventListener("resize", onStoreChange);
-      return () => window.removeEventListener("resize", onStoreChange);
-    },
-    () => window.innerWidth,
-    () => 0,
-  );
-}
+const subscribeViewport = (notify: () => void) => {
+  window.addEventListener("resize", notify);
+  return () => window.removeEventListener("resize", notify);
+};
+const readViewport = () => window.innerWidth;
+const serverViewport = () => 0;
+const simpleMotionQuery = "(max-width: 767px), (hover: none), (pointer: coarse)";
+const subscribeSimpleMotion = (notify: () => void) => {
+  const media = window.matchMedia(simpleMotionQuery);
+  media.addEventListener("change", notify);
+  return () => media.removeEventListener("change", notify);
+};
+const readSimpleMotion = () => window.matchMedia(simpleMotionQuery).matches;
+const serverSimpleMotion = () => true;
 
 export default function HorizontalGallery() {
   const ref = useRef<HTMLDivElement>(null);
-  const viewportWidth = useViewportWidth();
+  const viewportWidth = useSyncExternalStore(subscribeViewport, readViewport, serverViewport);
+  const simpleMotion = useSyncExternalStore(
+    subscribeSimpleMotion,
+    readSimpleMotion,
+    serverSimpleMotion,
+  );
+  const reduce = useReducedMotion();
   const isMobile = viewportWidth > 0 && viewportWidth < 768;
 
   const responsiveProjectCards = useMemo(() => {
@@ -192,61 +195,42 @@ export default function HorizontalGallery() {
 
   const { scrollYProgress } = useScroll({
     target: ref,
-    offset: ["start start", "end start"],
+    offset: ["start start", "end end"],
   });
 
-  const totalWidth =
-    Math.max(...responsiveProjectCards.map((card) => card.x + card.width)) + (isMobile ? 100 : 620);
-  const travelDistance = Math.max(totalWidth - viewportWidth, 0);
-  const startOffset = Math.max((viewportWidth - firstItem.width) / 2 - firstItem.x, 0);
-  const x = useTransform(scrollYProgress, [0, 1], [startOffset, -travelDistance]);
-
-  const pointerX = useMotionValue(0);
-  const pointerY = useMotionValue(0);
-  const smoothPointerX = useSpring(pointerX, { stiffness: 70, damping: 24, mass: 0.55 });
-  const smoothPointerY = useSpring(pointerY, { stiffness: 70, damping: 24, mass: 0.55 });
-  const ambientX = useTransform(smoothPointerX, [-0.5, 0.5], [-22, 22]);
-  const ambientY = useTransform(smoothPointerY, [-0.5, 0.5], [-14, 14]);
-  const ambientXInverse = useTransform(smoothPointerX, [-0.5, 0.5], [18, -18]);
-  const ambientYInverse = useTransform(smoothPointerY, [-0.5, 0.5], [10, -10]);
+  const lastItem = responsiveProjectCards[responsiveProjectCards.length - 1];
+  const startOffset = (viewportWidth - firstItem.width) / 2 - firstItem.x;
+  const endOffset = (viewportWidth - lastItem.width) / 2 - lastItem.x;
+  // Both end cards get a short reading interval while the stage is still pinned.
+  const targetX = useTransform(
+    scrollYProgress,
+    [0, 0.06, 0.94, 1],
+    [startOffset, startOffset, endOffset, endOffset],
+  );
+  const smoothX = useSpring(targetX, { stiffness: 150, damping: 32, mass: 0.6 });
+  const x = reduce || simpleMotion ? targetX : smoothX;
 
   return (
     <section
       ref={ref}
-      onPointerMove={(event) => {
-        if (isMobile || event.pointerType !== "mouse") return;
-        pointerX.set(event.clientX / window.innerWidth - 0.5);
-        pointerY.set(event.clientY / window.innerHeight - 0.5);
-      }}
-      onPointerLeave={() => {
-        pointerX.set(0);
-        pointerY.set(0);
-      }}
-      className={`relative left-1/2 right-1/2 w-dvw -translate-x-1/2 ${isMobile ? "h-[250vh]" : "h-[400vh]"}`}
+      data-project-gallery
+      className={`relative left-1/2 right-1/2 w-dvw -translate-x-1/2 ${isMobile ? "h-[350svh]" : "h-[450svh]"}`}
     >
-      <div className="sticky top-0 h-screen w-dvw overflow-hidden">
-        <div className="pointer-events-none absolute inset-0 overflow-hidden">
-          <motion.div
-            style={{ x: ambientX, y: ambientY }}
-            className="absolute left-[12%] top-[18%] h-[22vh] w-[28vw] rounded-full bg-sky-300/8 blur-3xl mix-blend-screen opacity-60"
-          />
-          <motion.div
-            style={{ x: ambientXInverse, y: ambientYInverse }}
-            className="absolute right-[8%] top-[10%] h-[26vh] w-[22vw] rounded-full bg-emerald-300/8 blur-3xl mix-blend-screen opacity-50"
-          />
-        </div>
-        <motion.div style={{ x, width: totalWidth }} className="relative h-full">
+      <div className="project-stage sticky top-0 h-screen w-dvw overflow-hidden">
+        <div className="relative h-full">
           {responsiveProjectCards.map((project, index) => (
             <ProjectCardItem
               key={project.name}
               item={project}
               index={index}
-              mouseX={smoothPointerX}
-              mouseY={smoothPointerY}
               isMobile={isMobile}
+              galleryX={x}
+              viewportWidth={viewportWidth}
+              reduce={Boolean(reduce)}
+              simpleMotion={simpleMotion}
             />
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   );
@@ -255,30 +239,47 @@ export default function HorizontalGallery() {
 function ProjectCardItem({
   item,
   index,
-  mouseX,
-  mouseY,
   isMobile,
+  galleryX,
+  viewportWidth,
+  reduce,
+  simpleMotion,
 }: {
   item: ProjectCard;
   index: number;
-  mouseX: MotionValue<number>;
-  mouseY: MotionValue<number>;
   isMobile: boolean;
+  galleryX: MotionValue<number>;
+  viewportWidth: number;
+  reduce: boolean;
+  simpleMotion: boolean;
 }) {
-  const cardTone = item.active
-    ? "from-violet-400/30 via-fuchsia-300/12 to-slate-950/90"
-    : [
-        "from-emerald-300/25 via-cyan-300/10 to-slate-950/90",
-        "from-sky-300/25 via-emerald-300/10 to-slate-950/90",
-        "from-cyan-300/20 via-slate-300/10 to-slate-950/90",
-        "from-emerald-400/20 via-teal-300/10 to-slate-950/90",
-        "from-sky-400/20 via-cyan-300/10 to-slate-950/90",
-      ][index];
   const visibleTags = item.tags?.filter((tag) => tag.toLowerCase() !== "active");
-  const xMouse = useTransform(mouseX, [-0.5, 0.5], [-32 * item.depth, 32 * item.depth]);
-  const yMouse = useTransform(mouseY, [-0.5, 0.5], [-22 * item.depth, 22 * item.depth]);
-  const rotateX = useTransform(mouseY, [-0.5, 0.5], [4 * item.depth, -4 * item.depth]);
-  const rotateY = useTransform(mouseX, [-0.5, 0.5], [-5 * item.depth, 5 * item.depth]);
+  // One transform per card. Offscreen cards stop changing instead of moving a giant layer.
+  const cardTransform = useTransform(galleryX, (offset) => {
+    const x = Math.max(-item.width - 180, Math.min(viewportWidth + 180, offset + item.x));
+    const passage = Math.max(
+      -1,
+      Math.min(
+        1,
+        (x + item.width / 2 - viewportWidth / 2) / Math.max(1, (viewportWidth + item.width) / 2),
+      ),
+    );
+    const direction = index % 2 === 0 ? 1 : -1;
+    const y = reduce
+      ? 0
+      : passage * direction * (simpleMotion ? 22 : Math.abs(item.scrollShift) * 0.65);
+    const rotate = reduce || simpleMotion ? 0 : -passage * direction * 5;
+    // Keep raster size stable: scrolling only translates and rotates an already painted card.
+    return (
+      "translate3d(" +
+      x.toFixed(2) +
+      "px," +
+      y.toFixed(2) +
+      "px,0) rotate(" +
+      rotate.toFixed(2) +
+      "deg)"
+    );
+  });
 
   const getVerticalPosition = () => {
     if (isMobile) return "top-1/2 -translate-y-1/2";
@@ -297,54 +298,34 @@ function ProjectCardItem({
   };
 
   const content = (
-    <motion.div
+    <div
       data-active={item.active}
-      style={{
-        x: isMobile ? 0 : xMouse,
-        y: isMobile ? 0 : yMouse,
-        rotateX: isMobile ? 0 : rotateX,
-        rotateY: isMobile ? 0 : rotateY,
-        transformPerspective: 1400,
-        width: item.width,
-        height: item.height,
-      }}
-      whileHover={isMobile ? {} : { scale: 1.01 }}
-      transition={{ type: "spring", stiffness: 220, damping: 26 }}
-      className={`group relative overflow-hidden rounded-4xl sm:rounded-[2.5rem] border bg-slate-950/45 backdrop-blur-2xl will-change-transform ${
-        item.active
-          ? "border-violet-300/35 shadow-[0_30px_100px_rgba(2,6,23,0.5),0_0_52px_rgba(139,92,246,0.2)]"
-          : "border-white/8 shadow-[0_30px_90px_rgba(2,6,23,0.42)]"
-      }`}
+      style={{ width: item.width, height: item.height }}
+      className="project-surface group relative overflow-hidden rounded-4xl sm:rounded-[2.5rem] border"
     >
       {item.active && (
-        <div className="pointer-events-none absolute inset-x-12 top-0 z-30 h-px bg-linear-to-r from-transparent via-violet-300/90 to-transparent shadow-[0_0_18px_rgba(196,181,253,0.8)]" />
+        <div className="pointer-events-none absolute inset-x-12 top-0 z-30 h-px bg-linear-to-r from-transparent via-violet-300/90 to-transparent" />
       )}
-      <div className="pointer-events-none absolute inset-0">
-        <div
-          className={`absolute left-[9%] top-[7%] h-[44%] w-[58%] rounded-full blur-3xl opacity-85 bg-linear-to-br ${cardTone}`}
-        />
-        <div className="absolute right-[12%] top-[16%] h-[26%] w-[26%] rounded-full bg-white/8 blur-3xl opacity-45" />
-        <div className="absolute inset-x-[18%] bottom-[14%] h-[18%] rounded-full bg-cyan-300/8 blur-3xl opacity-40" />
-      </div>
-
       <div className="relative flex h-full flex-col overflow-hidden">
         <div
           className={`relative ${isMobile ? "h-[40%]" : "h-[46%]"} min-h-48 sm:min-h-55 overflow-hidden`}
         >
-          <Image
-            src={item.imagePath}
-            alt={`${item.name} preview`}
-            fill
-            sizes="(max-width: 768px) 90vw, 520px"
-            className="object-cover transition duration-700 ease-out sm:group-hover:scale-110"
-          />
+          <div className="absolute -inset-x-6 -inset-y-3">
+            <Image
+              src={item.imagePath}
+              alt={`${item.name} preview`}
+              fill
+              sizes="(max-width: 768px) 90vw, 520px"
+              className="object-cover"
+            />
+          </div>
           <div className="absolute inset-0 bg-linear-to-t from-slate-950 via-slate-950/35 to-transparent" />
-          <div className="project-timeline-badge absolute left-4 top-4 sm:left-5 sm:top-5 flex items-center gap-2 rounded-full border border-white/15 bg-slate-950/55 px-2.5 py-1 sm:px-3 sm:py-1 text-[10px] sm:text-xs font-medium text-white/90 backdrop-blur-md">
+          <div className="project-timeline-badge absolute left-4 top-4 sm:left-5 sm:top-5 flex items-center gap-2 rounded-full border border-white/15 bg-slate-950/85 px-2.5 py-1 sm:px-3 sm:py-1 text-[10px] sm:text-xs font-medium text-white/90">
             <Sparkles className="size-3 sm:size-3.5 text-emerald-300" />
             {item.startAt} - {item.endAt ?? "now"}
           </div>
           {item.active && (
-            <div className="project-active-badge absolute right-4 top-4 sm:right-5 sm:top-5 flex items-center gap-2 rounded-full border border-violet-300/30 bg-violet-950/65 px-2.5 py-1 sm:px-3 sm:py-1 text-[9px] sm:text-[11px] font-semibold uppercase tracking-[0.16em] text-violet-100 backdrop-blur-md">
+            <div className="project-active-badge absolute right-4 top-4 sm:right-5 sm:top-5 flex items-center gap-2 rounded-full border border-violet-300/30 bg-violet-950/90 px-2.5 py-1 sm:px-3 sm:py-1 text-[9px] sm:text-[11px] font-semibold uppercase tracking-[0.16em] text-violet-100">
               <span
                 className="project-active-dot size-1.5 rounded-full bg-violet-300"
                 aria-hidden="true"
@@ -357,12 +338,12 @@ function ProjectCardItem({
               <p className="text-[10px] sm:text-xs font-medium uppercase tracking-[0.32em] text-white/65">
                 Project {index + 1}
               </p>
-              <h3 className="max-w-[12ch] text-2xl sm:text-4xl font-semibold tracking-tight text-white drop-shadow-[0_6px_20px_rgba(0,0,0,0.45)]">
+              <h3 className="max-w-[12ch] text-2xl sm:text-4xl font-semibold tracking-tight text-white">
                 {item.name}
               </h3>
             </div>
             {item.url && (
-              <div className="rounded-full border border-white/15 bg-white/10 px-2.5 py-1.5 sm:px-3 sm:py-2 text-[10px] sm:text-xs font-medium text-white/85 backdrop-blur-md transition duration-300 sm:group-hover:bg-emerald-400/15 sm:group-hover:text-emerald-50">
+              <div className="rounded-full border border-white/15 bg-white/10 px-2.5 py-1.5 sm:px-3 sm:py-2 text-[10px] sm:text-xs font-medium text-white/85 transition duration-300 sm:group-hover:bg-emerald-400/15 sm:group-hover:text-emerald-50">
                 Open
               </div>
             )}
@@ -415,23 +396,13 @@ function ProjectCardItem({
           </div>
         </div>
       </div>
-
-      {!isMobile && (
-        <motion.div className="pointer-events-none absolute inset-0 opacity-0 transition duration-300 group-hover:opacity-100">
-          <div className="absolute left-[14%] top-[14%] h-[52%] w-[42%] rounded-full bg-white/10 blur-3xl" />
-          <div className="absolute right-[14%] bottom-[10%] h-[30%] w-[30%] rounded-full bg-emerald-300/12 blur-3xl" />
-          <div className="absolute inset-x-[24%] top-[18%] h-10 rounded-full bg-white/8 blur-2xl" />
-        </motion.div>
-      )}
-    </motion.div>
+    </div>
   );
 
   return (
     <motion.div
-      style={{
-        x: item.x,
-        y: 0,
-      }}
+      style={{ transform: cardTransform }}
+      data-project-card={item.name}
       className={`absolute ${getVerticalPosition()}`}
     >
       {item.url ? (

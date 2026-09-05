@@ -1,6 +1,6 @@
 "use server";
 
-const TOKEN_ENDPOINT = "https://accounts.spotify.com/api/token";
+import { getSpotifyAccessToken, invalidateSpotifyAccessToken } from "@/lib/spotify-token";
 const NOW_PLAYING_ENDPOINT = "https://api.spotify.com/v1/me/player/currently-playing";
 const RECENTLY_PLAYED_ENDPOINT = "https://api.spotify.com/v1/me/player/recently-played";
 const TOP_ARTISTS_ENDPOINT = "https://api.spotify.com/v1/me/top/artists";
@@ -28,28 +28,18 @@ export interface TopArtistResult {
   popularity?: number;
 }
 
-async function getAccessToken(): Promise<string> {
-  const clientId = process.env.SPOTIFY_CLIENT_ID!;
-  const clientSecret = process.env.SPOTIFY_CLIENT_SECRET!;
-  const refreshToken = process.env.SPOTIFY_REFRESH_TOKEN!;
-
-  const basic = Buffer.from(`${clientId}:${clientSecret}`).toString("base64");
-
-  const res = await fetch(TOKEN_ENDPOINT, {
-    method: "POST",
-    headers: {
-      Authorization: `Basic ${basic}`,
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    body: new URLSearchParams({
-      grant_type: "refresh_token",
-      refresh_token: refreshToken,
-    }),
-    cache: "no-store",
-  });
-
-  const data = await res.json();
-  return data.access_token as string;
+async function spotifyFetch(url: string): Promise<Response> {
+  let token = await getSpotifyAccessToken();
+  const request = () =>
+    fetch(url, {
+      headers: { Authorization: "Bearer " + token },
+      cache: "no-store",
+    });
+  const response = await request();
+  if (response.status !== 401) return response;
+  invalidateSpotifyAccessToken(token);
+  token = await getSpotifyAccessToken();
+  return request();
 }
 
 function mapSpotifyTrack(
@@ -78,12 +68,7 @@ function mapSpotifyTrack(
 
 export async function getRecentlyPlayed(): Promise<NowPlayingResult> {
   try {
-    const accessToken = await getAccessToken();
-
-    const res = await fetch(`${RECENTLY_PLAYED_ENDPOINT}?limit=1`, {
-      headers: { Authorization: `Bearer ${accessToken}` },
-      cache: "no-store",
-    });
+    const res = await spotifyFetch(`${RECENTLY_PLAYED_ENDPOINT}?limit=1`);
 
     if (!res.ok) {
       return { isPlaying: false };
@@ -108,12 +93,7 @@ export async function getRecentlyPlayed(): Promise<NowPlayingResult> {
 
 export async function getNowPlaying(): Promise<NowPlayingResult> {
   try {
-    const accessToken = await getAccessToken();
-
-    const res = await fetch(NOW_PLAYING_ENDPOINT, {
-      headers: { Authorization: `Bearer ${accessToken}` },
-      cache: "no-store",
-    });
+    const res = await spotifyFetch(NOW_PLAYING_ENDPOINT);
 
     if (res.status === 204 || res.status === 404) {
       return getRecentlyPlayed();
@@ -141,12 +121,7 @@ export async function getNowPlaying(): Promise<NowPlayingResult> {
 
 export async function getTopArtists(): Promise<TopArtistResult[]> {
   try {
-    const accessToken = await getAccessToken();
-
-    const res = await fetch(`${TOP_ARTISTS_ENDPOINT}?time_range=short_term&limit=5`, {
-      headers: { Authorization: `Bearer ${accessToken}` },
-      cache: "no-store",
-    });
+    const res = await spotifyFetch(`${TOP_ARTISTS_ENDPOINT}?time_range=short_term&limit=5`);
 
     if (!res.ok) {
       return [];

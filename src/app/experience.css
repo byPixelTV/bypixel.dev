@@ -2713,181 +2713,529 @@
 }
 
 .journey-editorial {
+  position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
-  gap: clamp(50px, 8vw, 130px);
-  padding-block: 100px 60px;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: clamp(48px, 6vw, 96px);
   align-items: start;
+  padding-block: 100px 0;
 }
+
+/* Left / sticky timeline overview */
 .journey-overview {
   position: sticky;
   top: 125px;
+  min-width: 0;
+  max-width: 100%;
+  padding-right: clamp(8px, 1.5vw, 24px);
 }
+
 .journey-overview h2 {
-  font-size: clamp(36px, 4.7vw, 70px);
+  max-width: 100%;
+  margin-block: 22px;
+  font-size: clamp(36px, 4.35vw, 66px);
   font-weight: 850;
   letter-spacing: -0.06em;
-  line-height: 1;
-  margin-block: 22px;
+  line-height: 0.98;
+  text-wrap: balance;
 }
+
 .journey-overview h2 em {
+  display: inline-block;
   font-family: Georgia, serif;
+  font-style: italic;
   font-weight: 500;
+  letter-spacing: -0.045em;
   color: #c084fc;
 }
-.journey-overview > p:not(.eyebrow) {
+
+.journey-overview > p:not(.eyebrow),
+.journey-intro {
   max-width: 370px;
   color: #bdb2ca;
-  line-height: 1.8;
   font-size: 14px;
+  line-height: 1.8;
 }
+
+/* Current chapter readout */
 .journey-current {
   display: flex;
+  min-width: 0;
   flex-direction: column;
   gap: 10px;
-  margin-top: 45px;
+  margin-top: clamp(42px, 6vh, 72px);
 }
+
+.journey-current-content {
+  min-width: 0;
+}
+
 .journey-year {
-  font-size: clamp(80px, 10vw, 154px);
-  line-height: 0.95;
-  font-weight: 800;
-  letter-spacing: -0.075em;
+  display: block;
+  width: 100%;
+  max-width: 9.5ch;
+  margin-top: 6px;
   color: #cfa5ee;
+  font-size: clamp(52px, 6vw, 96px);
+  font-weight: 800;
+  line-height: 0.9;
+  letter-spacing: -0.07em;
+  text-wrap: balance;
+  overflow-wrap: break-word;
   animation: focus-arrive 0.35s ease-out;
 }
-.journey-current > span:last-child {
+
+.journey-current > span:last-child,
+.journey-current-tech {
+  display: block;
+  margin-top: 14px;
   color: #bfb0ca;
   font-size: 13px;
+  line-height: 1.5;
 }
+
+/* Year navigation */
 .journey-chapters {
   display: flex;
   flex-wrap: wrap;
   gap: 7px;
   margin-top: 28px;
 }
+
 .journey-chapters a {
-  font-family: var(--font-mono), monospace;
-  font-size: 11px;
-  padding: 10px 13px;
-  color: #b9abc5;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 34px;
+  padding: 9px 11px;
   border: 1px solid #ffffff1a;
   border-radius: 7px;
+  color: #b9abc5;
+  background: #ffffff05;
+  font-family: var(--font-mono), monospace;
+  font-size: 10px;
+  font-weight: 600;
+  text-decoration: none;
   transition:
     background 0.2s,
-    color 0.2s;
+    color 0.2s,
+    border-color 0.2s;
 }
+
+/* Supports both the old <span>/<strong> nav markup and the compact new markup. */
+.journey-chapters a span,
+.journey-chapters a strong {
+  font: inherit;
+}
+
+.journey-chapters a span {
+  color: #887994;
+}
+
+.journey-chapters a[aria-current="step"],
 .journey-chapters a[aria-current],
 .journey-chapters a:hover {
   background: #8047a733;
   color: #ecd8ff;
   border-color: #c084fc66;
 }
+
+.journey-chapters a[aria-current="step"] span,
+.journey-chapters a[aria-current] span {
+  color: #c9abe7;
+}
+
 .journey-chapters a:focus-visible {
   outline: 2px solid #c084fc;
   outline-offset: 3px;
 }
+
 .journey-progress {
+  position: relative;
+  width: min(100%, 38rem);
   height: 2px;
-  background: #ffffff15;
   margin-top: 22px;
+  overflow: hidden;
+  background: #ffffff15;
 }
+
 .journey-progress > div {
+  width: 100%;
   height: 100%;
   background: #c084fc;
-  transform-origin: left;
+  transform-origin: left center;
 }
+
+/* Right timeline. Real scroll slots prevent the final chapter from being skipped. */
 .journey-chapter-list {
+  position: relative;
   display: grid;
-  gap: 24px;
+  gap: 0;
+  min-width: 0;
+  margin: 0;
+  padding: 0 0 38svh 30px;
+  list-style: none;
 }
+
+.journey-chapter-list {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+
+  gap: clamp(22px, 3vh, 34px);
+
+  margin: 0;
+  padding: 0 0 clamp(120px, 16vh, 180px) 34px;
+
+  list-style: none;
+}
+
+/* durchgehende Timeline */
+.journey-chapter-list::before {
+  content: "";
+  position: absolute;
+
+  left: 5px;
+  top: 32px;
+  bottom: clamp(120px, 16vh, 180px);
+
+  width: 1px;
+
+  background: linear-gradient(to bottom, #c084fc55, #c084fc22 70%, transparent);
+}
+
+.journey-chapter-slot {
+  position: relative;
+
+  min-height: 0;
+
+  scroll-margin-top: 125px;
+}
+
+/* WICHTIG:
+   keine künstlichen riesigen Scroll-Spacer mehr */
+.journey-chapter-slot::after {
+  display: none;
+}
+
+.journey-card-frame {
+  position: relative;
+  top: auto;
+
+  width: 100%;
+}
+
+/* Punkt auf der Timeline */
+.journey-card-frame::before {
+  content: "";
+  position: absolute;
+
+  left: -33px;
+  top: 31px;
+
+  width: 9px;
+  height: 9px;
+
+  border: 1px solid #826d91;
+  border-radius: 50%;
+
+  background: #0b0810;
+
+  transition:
+    background 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.journey-chapter-slot[data-current="true"] .journey-card-frame::before {
+  background: #c084fc;
+  border-color: #efd8ff;
+
+  box-shadow: 0 0 0 4px #c084fc12;
+}
+
+/* CARD */
+
 .journey-chapter {
   position: relative;
-  padding: clamp(25px, 3vw, 45px);
-  min-height: 310px;
-  border: 1px solid #ffffff18;
-  border-radius: 22px;
-  background: #130e1bcf;
+
+  width: 100%;
+
+  min-height: 245px;
+
+  padding: clamp(25px, 2.6vw, 40px);
+
   overflow: hidden;
-  scroll-margin-top: 130px;
+
+  border: 1px solid #ffffff14;
+  border-radius: 20px;
+
+  background: linear-gradient(135deg, #23142eaa, #120e19e8 55%, #100c16e8);
+
   transition:
-    border-color 0.35s,
-    background 0.35s;
+    border-color 0.3s ease,
+    background 0.3s ease,
+    opacity 0.3s ease,
+    transform 0.3s ease;
 }
-.journey-chapter[data-current="true"] {
-  border-color: #bc7dee65;
-  background: #24142fcc;
+
+.journey-chapter-slot[data-current="true"] .journey-chapter {
+  border-color: #bc7dee66;
+
+  background: linear-gradient(135deg, #342041dd, #1b1025e8 55%, #130d1ae8);
 }
+
+/* HEADER */
+
 .journey-chapter-top {
+  position: relative;
+  z-index: 2;
+
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 24px;
+
+  margin-bottom: clamp(28px, 3vh, 42px);
+}
+
+.journey-chapter-meta {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 25px;
+  gap: 10px;
 }
+
+.journey-current-badge {
+  display: inline-flex;
+  align-items: center;
+
+  padding: 5px 8px;
+
+  border: 1px solid #c084fc40;
+  border-radius: 999px;
+
+  color: #e8cdff;
+  background: #c084fc12;
+
+  font-family: var(--font-mono), monospace;
+  font-size: 8px;
+  font-weight: 600;
+
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* CONTENT */
+
 .journey-chapter h3 {
   position: relative;
-  z-index: 1;
-  font-size: clamp(23px, 2.4vw, 35px);
+  z-index: 2;
+
+  max-width: 80%;
+
+  margin: 0 0 15px;
+
+  font-size: clamp(25px, 2.4vw, 36px);
   font-weight: 750;
-  letter-spacing: -0.035em;
-  margin-bottom: 15px;
+
+  line-height: 1.05;
+  letter-spacing: -0.04em;
 }
+
 .journey-chapter > p {
   position: relative;
-  z-index: 1;
+  z-index: 2;
+
+  max-width: 56ch;
+
+  margin: 0;
+
   color: #c1b6cc;
-  font-size: 14px;
-  line-height: 1.85;
-  max-width: 52ch;
+
+  font-size: 13px;
+  line-height: 1.75;
 }
+
 .journey-tags {
+  position: relative;
+  z-index: 2;
+
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 24px;
-  position: relative;
-  z-index: 1;
+
+  gap: 7px;
+
+  margin: 22px 0 0;
+  padding: 0;
+
+  list-style: none;
 }
+
 .journey-tags li {
-  font-size: 10px;
-  color: #d0c1dc;
-  border: 1px solid #ffffff1a;
   padding: 5px 9px;
+
+  border: 1px solid #ffffff17;
   border-radius: 5px;
+
+  color: #d0c1dc;
+  background: #ffffff03;
+
+  font-size: 10px;
 }
+
+/* DEKORATIVE NUMMER */
+
 .journey-chapter-number {
   position: absolute;
-  right: 15px;
-  bottom: -30px;
-  color: #c084fc09;
-  font-size: 170px;
+
+  right: 14px;
+  bottom: -24px;
+
+  z-index: 0;
+
+  color: #c084fc08;
+
+  font-size: clamp(115px, 10vw, 165px);
   font-weight: 850;
+
+  line-height: 1;
   letter-spacing: -0.08em;
+
   pointer-events: none;
+  user-select: none;
 }
+
+@media (max-width: 1050px) {
+  .journey-editorial {
+    display: grid;
+
+    grid-template-columns:
+      minmax(360px, 0.88fr)
+      minmax(520px, 1.12fr);
+
+    gap: clamp(60px, 7vw, 110px);
+
+    padding-block: 100px 80px;
+
+    align-items: start;
+  }
+
+  .journey-overview {
+    position: sticky;
+    top: 110px;
+
+    min-width: 0;
+  }
+
+  .journey-year {
+    display: block;
+
+    max-width: 560px;
+
+    font-size: clamp(58px, 6vw, 96px);
+    line-height: 0.92;
+
+    font-weight: 800;
+    letter-spacing: -0.065em;
+
+    color: #cfa5ee;
+
+    text-wrap: balance;
+  }
+}
+
 @media (max-width: 760px) {
   .journey-editorial {
     grid-template-columns: 1fr;
-    gap: 30px;
-    padding-top: 65px;
+    gap: 38px;
+    padding-block: 65px 0;
   }
+
   .journey-overview {
     position: static;
+    padding-right: 0;
   }
+
+  .journey-overview h2 {
+    max-width: 12ch;
+    font-size: clamp(42px, 12vw, 64px);
+  }
+
   .journey-current {
     display: none;
   }
+
+  .journey-chapter-list {
+    padding: 0 0 70px;
+  }
+
+  .journey-chapter-list::before,
+  .journey-card-frame::before {
+    display: none;
+  }
+
+  .journey-chapter-slot,
+  .journey-chapter-slot:last-child {
+    min-height: 0;
+    padding-bottom: 18px;
+  }
+
+  .journey-card-frame {
+    position: relative;
+    top: auto;
+  }
+
   .journey-chapter {
     min-height: 0;
+    padding: 24px;
+  }
+
+  .journey-chapter h3 {
+    max-width: 100%;
+    margin-top: 28px;
+  }
+
+  .journey-chapter-number {
+    font-size: clamp(92px, 30vw, 140px);
   }
 }
+
+@media (max-height: 740px) and (min-width: 761px) {
+  .journey-overview {
+    top: 92px;
+  }
+
+  .journey-card-frame {
+    top: 92px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .journey-card-frame {
+    position: relative;
+    top: auto;
+  }
+
+  .journey-chapter-slot,
+  .journey-chapter-slot:last-child {
+    min-height: 0;
+    padding-bottom: 24px;
+  }
+
+  .journey-chapter-list {
+    padding-bottom: 60px;
+  }
+
   .now-asterisk,
   .journey-year {
     animation: none;
   }
+
   .journey-chapter {
     transition: none;
   }
+
   ::view-transition-group(*),
   ::view-transition-old(*),
   ::view-transition-new(*) {
@@ -3222,25 +3570,65 @@ html {
   opacity: 1;
 }
 
-/* Active project state */
+/* Project cards use painted gradients, with no moving blur/backdrop surfaces. */
+.project-stage {
+  isolation: isolate;
+  contain: layout paint;
+}
+.project-stage-glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 26% 28%, #7dd3fc0c, transparent 40%),
+    radial-gradient(ellipse at 80% 24%, #6ee7b70a, transparent 38%);
+}
+.project-surface {
+  background:
+    radial-gradient(ellipse at 30% 25%, #6ee7b72b, transparent 60%),
+    radial-gradient(ellipse at 78% 78%, #67e8f90d, transparent 55%), #0c1120;
+  border-color: #ffffff14;
+  box-shadow: 0 14px 32px #02061755;
+  contain: layout paint;
+}
+.project-surface[data-active="true"] {
+  background:
+    radial-gradient(ellipse at 30% 25%, #a78bfa40, transparent 60%),
+    radial-gradient(ellipse at 78% 78%, #e879f910, transparent 55%), #100f20;
+  border-color: #c4b5fd59;
+  box-shadow:
+    0 14px 32px #02061755,
+    0 0 20px #8b5cf614;
+}
 .project-active-dot {
-  box-shadow: 0 0 0 0 rgb(196 181 253 / 0.5);
+  position: relative;
+}
+.project-active-dot::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border: 1px solid #c4b5fd80;
+  border-radius: inherit;
   animation: project-active-pulse 2.4s ease-out infinite;
+  animation-play-state: paused;
 }
-
+[data-project-card]:hover .project-active-dot::after,
+[data-project-card]:focus-within .project-active-dot::after {
+  animation-play-state: running;
+}
 @keyframes project-active-pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgb(196 181 253 / 0.5);
+  from {
+    transform: scale(0.4);
+    opacity: 0.8;
   }
-
-  55%,
-  100% {
-    box-shadow: 0 0 0 7px rgb(196 181 253 / 0);
+  to {
+    transform: scale(1.3);
+    opacity: 0;
   }
 }
-
-@media (prefers-reduced-motion: reduce) {
-  .project-active-dot {
+@media (prefers-reduced-motion: reduce), (hover: none), (pointer: coarse) {
+  .project-active-dot::after {
     animation: none;
+    opacity: 0;
   }
 }

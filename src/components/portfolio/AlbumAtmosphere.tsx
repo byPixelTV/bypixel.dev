@@ -69,10 +69,14 @@ export default function AlbumAtmosphere({ children }: { children: ReactNode }) {
   // Fade the scenery only: the player keeps its album palette.
   useEffect(() => {
     let frame = 0;
+    let previousPresence: number | undefined;
     const update = () => {
       frame = 0;
       const progress = Math.min(1, Math.max(0, (window.scrollY / window.innerHeight - 0.2) / 0.8));
-      root.current?.style.setProperty("--album-presence", String(1 - progress));
+      const presence = 1 - progress;
+      if (presence === previousPresence) return;
+      previousPresence = presence;
+      root.current?.style.setProperty("--album-presence", String(presence));
     };
     const schedule = () => {
       if (!frame) frame = requestAnimationFrame(update);
@@ -95,7 +99,19 @@ export default function AlbumAtmosphere({ children }: { children: ReactNode }) {
       pending = true;
       try {
         const result = await getNowPlaying();
-        if (!disposed) setData(result);
+        if (!disposed) {
+          setData((previous) => {
+            if (
+              previous &&
+              !result.isPlaying &&
+              (Object.keys({ ...previous, ...result }) as (keyof NowPlayingResult)[]).every(
+                (key) => previous[key] === result[key],
+              )
+            )
+              return previous;
+            return result;
+          });
+        }
       } catch {
         /* Keep the last known track during temporary network failures. */
       } finally {

@@ -246,7 +246,7 @@
   transition: opacity 180ms ease;
 }
 
-html.is-scrolling .custom-scrollbar-thumb {
+.custom-scrollbar-thumb[data-scrolling="true"] {
   opacity: 1;
 }
 

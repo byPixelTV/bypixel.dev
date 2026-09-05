@@ -1,52 +1,54 @@
 "use client";
+
 import { useEffect, useRef, useState } from "react";
-import { motion, useScroll, useSpring, useReducedMotion } from "motion/react";
+import { motion, useReducedMotion, useScroll, useSpring } from "motion/react";
 import { Icon } from "@iconify/react";
+
 const milestones = [
   {
     year: "2022",
     title: "The Spark",
+    shortTitle: "The Spark",
     description:
-      "Started my journey with Python and HTML/CSS. Built my first scripts and websites, discovering the magic of making ideas come to life through code.",
+      "Started my journey with Python and HTML/CSS. Built my first scripts and websites, discovering the fundamentals of turning ideas into working software.",
     tags: ["Python", "HTML", "CSS"],
     icon: "logos:python",
-    color: "from-blue-500/20 to-yellow-500/20",
   },
   {
     year: "2023",
     title: "Logic & Systems",
+    shortTitle: "Logic & Systems",
     description:
-      "Dived into Minecraft Skripting which taught me event-driven logic. Simultaneously started my journey into Linux Server Administration, learning the foundations of hosting and system management.",
+      "Dived into Minecraft Skripting and event-driven logic while getting deeper into Linux server administration, hosting and system management.",
     tags: ["Skript", "Linux", "JavaScript"],
     icon: "logos:linux-tux",
-    color: "from-orange-500/20 to-red-500/20",
   },
   {
     year: "2024",
     title: "JVM & Infrastructure",
+    shortTitle: "JVM & Infra",
     description:
-      "Shifted focus to Kotlin and Java for high-performance backend development. Mastered Docker and explored Proxmox to build a more robust and scalable project infrastructure.",
+      "Moved into Kotlin and Java for larger backend projects while using Docker, Linux and Proxmox to build and operate more capable infrastructure.",
     tags: ["Kotlin", "Java", "Docker", "Proxmox"],
     icon: "vscode-icons:file-type-kotlin",
-    color: "from-purple-500/20 to-blue-500/20",
   },
   {
     year: "2025",
     title: "Founding EraMC",
+    shortTitle: "EraMC",
     description:
-      "Founded the EraMC Network. A year of massive growth: deep-diving into Async programming, MongoDB, and TypeScript/Next.js to build a seamless player experience from web to game.",
+      "Founded the EraMC Network and connected game servers, backend systems and web applications using Kotlin, MongoDB, TypeScript and Next.js.",
     tags: ["Next.js", "TypeScript", "MongoDB", "Async", "EraMC"],
     icon: "ph:rocket-duotone",
-    color: "from-emerald-500/20 to-cyan-500/20",
   },
   {
     year: "2026",
-    title: "Next-Level Performance",
+    title: "Scale & Performance",
+    shortTitle: "Scale & Performance",
     description:
-      "Pushing EraMC to unprecedented levels. Exploring Go for high-performance tooling and continuing to refine the Kotlin ecosystem for maximum efficiency and scale. Helping other servers and communities with my knowledge and experience to bring the best possible experience to their players.",
-    tags: ["Go", "Next.js", "Advanced Kotlin", "Scale"],
+      "Focused on architecture, performance and reusable infrastructure. Expanded into Go for backend services and tooling while continuing to build scalable Kotlin systems and production infrastructure.",
+    tags: ["Go", "Kotlin", "Backend", "Infrastructure", "Scale"],
     icon: "logos:go",
-    color: "from-cyan-400/20 to-blue-600/20",
     isCurrent: true,
   },
 ];
@@ -54,86 +56,179 @@ const milestones = [
 export default function CodingJourney() {
   const root = useRef<HTMLElement>(null);
   const [active, setActive] = useState(0);
+
   const reduce = useReducedMotion();
-  const { scrollYProgress } = useScroll({ target: root, offset: ["start center", "end center"] });
-  const progress = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
+
+  const { scrollYProgress } = useScroll({
+    target: root,
+    offset: ["start start", "end end"],
+  });
+
+  const progress = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+  });
+
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries.filter((entry) => entry.isIntersecting);
-        if (visible.length)
-          setActive(Number((visible[visible.length - 1].target as HTMLElement).dataset.index));
-      },
-      { rootMargin: "-25% 0px -45% 0px", threshold: 0 },
-    );
-    root.current?.querySelectorAll("[data-index]").forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
+    const element = root.current;
+    if (!element) return;
+
+    const slots = Array.from(element.querySelectorAll<HTMLElement>(".journey-chapter-slot"));
+
+    let frame = 0;
+
+    const update = () => {
+      frame = 0;
+
+      // Switch chapter when its actual scroll slot crosses
+      // the reading line. Do NOT measure the card itself.
+      const readingLine = window.innerHeight * 0.42;
+
+      let next = 0;
+
+      for (let index = 0; index < slots.length; index++) {
+        const rect = slots[index].getBoundingClientRect();
+
+        if (rect.top <= readingLine) {
+          next = index;
+        } else {
+          break;
+        }
+      }
+
+      setActive((current) => (current === next ? current : next));
+    };
+
+    const schedule = () => {
+      if (!frame) {
+        frame = requestAnimationFrame(update);
+      }
+    };
+
+    const resizeObserver = new ResizeObserver(schedule);
+    resizeObserver.observe(element);
+
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+
+    update();
+
+    return () => {
+      cancelAnimationFrame(frame);
+      resizeObserver.disconnect();
+
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+    };
   }, []);
+
+  const current = milestones[active];
+
   return (
     <section ref={root} className="journey-editorial" aria-labelledby="journey-heading">
       <div className="journey-overview">
-        <p className="eyebrow">03 / The story so far</p>
+        <p className="eyebrow">03 / Development timeline</p>
+
         <h2 id="journey-heading">
-          ONE SPARK.
+          FROM SCRIPTS
           <br />
-          <em>STILL BUILDING.</em>
+          <em>TO SYSTEMS.</em>
         </h2>
-        <p>
-          From the first script to the systems behind it. Five chapters of learning by making
-          things.
+
+        <p className="journey-intro">
+          How my development stack evolved from simple scripts and websites into backend systems,
+          infrastructure and scalable services.
         </p>
-        <div className="journey-current" aria-hidden="true">
-          <span className="eyebrow">
-            Chapter 0{active + 1} / 0{milestones.length}
-          </span>
-          <span key={active} className="journey-year">
-            {milestones[active].year}
-          </span>
-          <span>{milestones[active].title}</span>
+
+        <div className="journey-current" aria-live="polite">
+          <span className="eyebrow">{current.year}</span>
+
+          <motion.div
+            key={current.year}
+            className="journey-current-content"
+            initial={reduce ? false : { opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{
+              duration: reduce ? 0 : 0.35,
+              ease: [0.22, 0.75, 0.18, 1],
+            }}
+          >
+            <span className="journey-year">{current.shortTitle}</span>
+
+            <span className="journey-current-tech">{current.tags.slice(0, 3).join(" · ")}</span>
+          </motion.div>
         </div>
-        <nav className="journey-chapters" aria-label="Coding journey years">
-          {milestones.map((m, i) => (
+
+        <nav className="journey-chapters" aria-label="Development timeline">
+          {milestones.map((milestone, index) => (
             <a
-              href={"#year-" + m.year}
-              key={m.year}
-              aria-current={active === i ? "step" : undefined}
+              href={`#year-${milestone.year}`}
+              key={milestone.year}
+              aria-current={active === index ? "step" : undefined}
             >
-              {m.year}
+              {String(index + 1).padStart(2, "0")} / {milestone.year}
             </a>
           ))}
         </nav>
+
         <div className="journey-progress" aria-hidden="true">
-          <motion.div style={{ scaleX: reduce ? scrollYProgress : progress }} />
+          <motion.div
+            style={{
+              scaleX: reduce ? scrollYProgress : progress,
+            }}
+          />
         </div>
       </div>
+
       <ol className="journey-chapter-list">
-        {milestones.map((m, i) => (
-          <motion.li
-            key={m.year}
-            id={"year-" + m.year}
-            data-index={i}
-            data-current={active === i}
-            initial={false}
-            whileInView={{ opacity: 1 }}
-            className="journey-chapter"
+        {milestones.map((milestone, index) => (
+          <li
+            key={milestone.year}
+            id={`year-${milestone.year}`}
+            data-index={index}
+            data-current={active === index}
+            className="journey-chapter-slot"
           >
-            <div className="journey-chapter-top">
-              <span className="eyebrow">
-                0{i + 1} / {m.year}
-              </span>
-              <Icon icon={m.icon} width={42} height={42} aria-hidden="true" />
+            <div className="journey-card-frame">
+              <motion.article
+                className="journey-chapter"
+                initial={false}
+                animate={{
+                  opacity: active === index ? 1 : 0.72,
+                }}
+                transition={{
+                  duration: reduce ? 0 : 0.35,
+                  ease: [0.22, 0.75, 0.18, 1],
+                }}
+              >
+                <div className="journey-chapter-top">
+                  <div className="journey-chapter-meta">
+                    <span className="eyebrow">
+                      {String(index + 1).padStart(2, "0")} / {milestone.year}
+                    </span>
+
+                    {milestone.isCurrent && <span className="journey-current-badge">Current</span>}
+                  </div>
+
+                  <Icon icon={milestone.icon} width={42} height={42} aria-hidden="true" />
+                </div>
+
+                <h3>{milestone.title}</h3>
+
+                <p>{milestone.description}</p>
+
+                <ul className="journey-tags" aria-label="Technologies">
+                  {milestone.tags.map((tag) => (
+                    <li key={tag}>{tag}</li>
+                  ))}
+                </ul>
+
+                <span className="journey-chapter-number" aria-hidden="true">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+              </motion.article>
             </div>
-            <h3>{m.title}</h3>
-            <p>{m.description}</p>
-            <ul className="journey-tags" aria-label="Technologies">
-              {m.tags.map((tag) => (
-                <li key={tag}>{tag}</li>
-              ))}
-            </ul>
-            <span className="journey-chapter-number" aria-hidden="true">
-              0{i + 1}
-            </span>
-          </motion.li>
+          </li>
         ))}
       </ol>
     </section>

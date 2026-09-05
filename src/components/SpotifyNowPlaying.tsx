@@ -12,16 +12,18 @@ const time = (ms: number) => {
 };
 
 export default function SpotifyNowPlaying() {
-  const { data, loaded } = useAlbumAtmosphere();
+  const { data } = useAlbumAtmosphere();
   const reduce = useReducedMotion();
   const [expanded, setExpanded] = useState(false);
   const detailId = useId();
   const [settledTrack, setSettledTrack] = useState<string>();
   const trackKey = data?.trackId ?? data?.songUrl ?? data?.title;
+  const hasTrack = Boolean(data?.title);
   const root = useRef<HTMLDivElement>(null);
   const progress = useRef<HTMLProgressElement>(null);
   const elapsed = useRef<HTMLSpanElement>(null);
   useEffect(() => {
+    if (!hasTrack) return;
     let inView = false;
     const sync = () => {
       if (root.current) root.current.dataset.active = String(inView && !document.hidden);
@@ -36,8 +38,9 @@ export default function SpotifyNowPlaying() {
       observer.disconnect();
       document.removeEventListener("visibilitychange", sync);
     };
-  }, []);
+  }, [hasTrack]);
   useEffect(() => {
+    if (!data?.isPlaying || !data.durationMs) return;
     const received = performance.now();
     const update = () => {
       if (document.hidden || root.current?.dataset.active !== "true") return;
@@ -52,8 +55,16 @@ export default function SpotifyNowPlaying() {
     const timer = setInterval(update, 1000);
     return () => clearInterval(timer);
   }, [data]);
+  if (!hasTrack) return null;
   return (
-    <div ref={root} className="spotify-live" aria-label="Spotify activity">
+    <motion.div
+      ref={root}
+      className="spotify-live"
+      aria-label="Spotify activity"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: reduce ? 0 : 0.5, ease: [0.22, 0.75, 0.18, 1] }}
+    >
       <AmbientBlobs className="spotify-ambience" />
       {data?.title ? (
         <div
@@ -197,12 +208,7 @@ export default function SpotifyNowPlaying() {
             </div>
           </motion.div>
         </div>
-      ) : (
-        <div className="spotify-empty">
-          <span className="spotify-status">Spotify</span>
-          <p>{loaded ? "No track to show right now." : "Checking the current track…"}</p>
-        </div>
-      )}
-    </div>
+      ) : null}
+    </motion.div>
   );
 }
