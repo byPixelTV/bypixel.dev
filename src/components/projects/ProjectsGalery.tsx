@@ -28,6 +28,17 @@ function isActiveProject(project: Project) {
 
 const projects: Project[] = [
   {
+    name: "BetterAttack",
+    imagePath: "/projects/betterattack.webp",
+    role: "Sys Admin, Developer & Administrator",
+    description:
+      "Minecraft CraftAttack like survival server — plugin development, micro-services, infrastructure setup and full administration.",
+    tags: ["Minecraft", "Backend", "Linux", "Moderation", "Administration", "Go", "Kotlin", "Active"],
+    startAt: "October 2025",
+    endAt: "now",
+    url: "https://discord.gg/betterattack",
+  },
+  {
     name: "Dat Bot",
     imagePath: "/projects/datbot.png",
     role: "Web Developer",
@@ -49,17 +60,6 @@ const projects: Project[] = [
     endAt: "July 2026",
   },
   {
-    name: "BetterAttack",
-    imagePath: "/projects/betterattack.webp",
-    role: "Sys Admin, Developer & Administrator",
-    description:
-      "Minecraft CraftAttack like survival server — plugin development, infrastructure setup and full administration.",
-    tags: ["Minecraft", "Backend", "Linux", "Active"],
-    startAt: "October 2025",
-    endAt: "now",
-    url: "https://discord.gg/betterattack",
-  },
-  {
     name: "DaniSMP",
     imagePath: "/projects/danismp.png",
     role: "Sys Admin, Developer & Administrator",
@@ -69,17 +69,6 @@ const projects: Project[] = [
     startAt: "February 2025",
     endAt: "May 2025",
     url: "https://discord.gg/danismp",
-  },
-  {
-    name: "Skydinse",
-    imagePath: "/projects/skydinse.png",
-    role: "Developer",
-    description:
-      "Minecraft minigame network — developed gameplay skripts and managed server infrastructure with Skript.",
-    tags: ["Minecraft", "Kotlin", "Skript", "Backend", "Linux", "Next.js", "Web"],
-    startAt: "August 2026",
-    endAt: "now",
-    url: "https://skydinse.net",
   },
 ];
 
