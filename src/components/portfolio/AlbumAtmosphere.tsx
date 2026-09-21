@@ -12,6 +12,7 @@ import {
 
 import { usePathname } from "next/navigation";
 import { getNowPlaying, type NowPlayingResult } from "@/lib/actions/spotify";
+import { latestSpotifyActivity } from "@/lib/spotify-activity";
 const AlbumContext = createContext<{ data: NowPlayingResult | null; loaded: boolean }>({
   data: null,
   loaded: false,
@@ -111,19 +112,22 @@ export default function AlbumAtmosphere({ children }: { children: ReactNode }) {
         const result = await getNowPlaying();
         if (!disposed) {
           setData((previous) => {
+            const activity = latestSpotifyActivity(previous, result);
             if (
               previous &&
-              !result.isPlaying &&
-              (Object.keys({ ...previous, ...result }) as (keyof NowPlayingResult)[]).every(
-                (key) => previous[key] === result[key],
+              !activity.isPlaying &&
+              (Object.keys({ ...previous, ...activity }) as (keyof NowPlayingResult)[]).every(
+                (key) => previous[key] === activity[key],
               )
             )
               return previous;
-            return result;
+            return activity;
           });
         }
       } catch {
-        /* Keep the last known track during temporary network failures. */
+        if (!disposed) {
+          setData((previous) => latestSpotifyActivity(previous, { isPlaying: false }));
+        }
       } finally {
         pending = false;
         if (!disposed) {

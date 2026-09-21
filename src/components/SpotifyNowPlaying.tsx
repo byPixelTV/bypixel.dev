@@ -87,6 +87,7 @@ export default function SpotifyNowPlaying() {
                 width={64}
                 height={64}
                 sizes="64px"
+                loading="eager"
                 className="spotify-cover"
               />
             )}

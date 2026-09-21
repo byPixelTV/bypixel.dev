@@ -19,6 +19,16 @@ export function invalidateSpotifyAccessToken(token: string) {
 
 async function refreshToken(): Promise<string> {
   const { SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, SPOTIFY_REFRESH_TOKEN } = process.env;
+  const missing = Object.entries({
+    SPOTIFY_CLIENT_ID,
+    SPOTIFY_CLIENT_SECRET,
+    SPOTIFY_REFRESH_TOKEN,
+  })
+    .filter(([, value]) => !value?.trim())
+    .map(([name]) => name);
+  if (missing.length) {
+    throw new Error("Spotify configuration missing: " + missing.join(", "));
+  }
   const started = Date.now();
   const basic = Buffer.from(SPOTIFY_CLIENT_ID + ":" + SPOTIFY_CLIENT_SECRET).toString("base64");
   const res = await fetch("https://accounts.spotify.com/api/token", {
@@ -32,8 +42,27 @@ async function refreshToken(): Promise<string> {
       refresh_token: SPOTIFY_REFRESH_TOKEN ?? "",
     }),
     cache: "no-store",
+    signal: AbortSignal.timeout(10000),
   });
-  if (!res.ok) throw new Error("Spotify token request failed: " + res.status);
+  if (!res.ok) {
+    const details = await res.json().catch(() => null);
+    // Only report known error codes and our own hints, never raw OAuth responses.
+    let hint = "";
+    switch (details?.error) {
+      case "invalid_grant":
+        hint =
+          " (invalid_grant): Reauthorize Spotify and replace SPOTIFY_REFRESH_TOKEN using the same Spotify app.";
+        break;
+      case "invalid_client":
+        hint =
+          " (invalid_client): Check SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET belong to the same Spotify app.";
+        break;
+      case "invalid_request":
+        hint = " (invalid_request): Check the Spotify refresh-token configuration.";
+        break;
+    }
+    throw new Error("Spotify token request failed: " + res.status + hint);
+  }
   const data = await res.json();
   if (typeof data.access_token !== "string" || !data.access_token) {
     throw new Error("Spotify returned no access token");

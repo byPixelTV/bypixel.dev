@@ -1,9 +1,17 @@
 "use server";
 
-import { getSpotifyAccessToken, invalidateSpotifyAccessToken } from "@/lib/spotify-token";
+import { spotifyFetch } from "@/lib/spotify-fetch";
+import { latestSpotifyActivity } from "@/lib/spotify-activity";
 const NOW_PLAYING_ENDPOINT = "https://api.spotify.com/v1/me/player/currently-playing";
 const RECENTLY_PLAYED_ENDPOINT = "https://api.spotify.com/v1/me/player/recently-played";
 const TOP_ARTISTS_ENDPOINT = "https://api.spotify.com/v1/me/top/artists";
+
+let lastKnownTrack: NowPlayingResult | null = null;
+
+function rememberActivity(incoming: NowPlayingResult): NowPlayingResult {
+  lastKnownTrack = latestSpotifyActivity(lastKnownTrack, incoming);
+  return lastKnownTrack;
+}
 
 export interface NowPlayingResult {
   isPlaying: boolean;
@@ -26,20 +34,6 @@ export interface TopArtistResult {
   spotifyUrl?: string;
   genres: string[];
   popularity?: number;
-}
-
-async function spotifyFetch(url: string): Promise<Response> {
-  let token = await getSpotifyAccessToken();
-  const request = () =>
-    fetch(url, {
-      headers: { Authorization: "Bearer " + token },
-      cache: "no-store",
-    });
-  const response = await request();
-  if (response.status !== 401) return response;
-  invalidateSpotifyAccessToken(token);
-  token = await getSpotifyAccessToken();
-  return request();
 }
 
 function mapSpotifyTrack(
@@ -71,23 +65,27 @@ export async function getRecentlyPlayed(): Promise<NowPlayingResult> {
     const res = await spotifyFetch(`${RECENTLY_PLAYED_ENDPOINT}?limit=1`);
 
     if (!res.ok) {
-      return { isPlaying: false };
+      if (res.status !== 429)
+        console.error("[Spotify] Recently played request failed:", res.status);
+      return rememberActivity({ isPlaying: false });
     }
 
     const data = await res.json();
     const item = data.items?.[0];
 
     if (!item?.track) {
-      return { isPlaying: false };
+      return rememberActivity({ isPlaying: false });
     }
 
-    return mapSpotifyTrack(item.track, {
-      isRecent: true,
-      playedAt: item.played_at,
-    });
+    return rememberActivity(
+      mapSpotifyTrack(item.track, {
+        isRecent: true,
+        playedAt: item.played_at,
+      }),
+    );
   } catch (err) {
     console.error("[Spotify] getRecentlyPlayed failed:", err);
-    return { isPlaying: false };
+    return rememberActivity({ isPlaying: false });
   }
 }
 
@@ -95,7 +93,7 @@ export async function getNowPlaying(): Promise<NowPlayingResult> {
   try {
     const res = await spotifyFetch(NOW_PLAYING_ENDPOINT);
 
-    if (res.status === 204 || res.status === 404) {
+    if (res.status === 204 || !res.ok) {
       return getRecentlyPlayed();
     }
 
@@ -106,13 +104,25 @@ export async function getNowPlaying(): Promise<NowPlayingResult> {
     }
 
     if (!song.is_playing) {
+      // Spotify may still expose the paused track before history catches up.
+      // Use its state-change timestamp, not the time of this poll.
+      if (typeof song.timestamp === "number" && Number.isFinite(song.timestamp)) {
+        rememberActivity(
+          mapSpotifyTrack(song.item, {
+            playedAt: new Date(song.timestamp).toISOString(),
+          }),
+        );
+      }
       return getRecentlyPlayed();
     }
 
-    return mapSpotifyTrack(song.item, {
-      isPlaying: true,
-      progressMs: (song.progress_ms ?? 0) as number,
-    });
+    return rememberActivity(
+      mapSpotifyTrack(song.item, {
+        isPlaying: true,
+        progressMs: (song.progress_ms ?? 0) as number,
+        playedAt: new Date().toISOString(),
+      }),
+    );
   } catch (err) {
     console.error("[Spotify] getNowPlaying failed:", err);
     return getRecentlyPlayed();
@@ -124,6 +134,12 @@ export async function getTopArtists(): Promise<TopArtistResult[]> {
     const res = await spotifyFetch(`${TOP_ARTISTS_ENDPOINT}?time_range=short_term&limit=5`);
 
     if (!res.ok) {
+      if (res.status !== 429)
+        console.error(
+          "[Spotify] Top artists request failed:",
+          res.status,
+          res.status === 403 ? "Check that Spotify authorization includes user-top-read." : "",
+        );
       return [];
     }
 

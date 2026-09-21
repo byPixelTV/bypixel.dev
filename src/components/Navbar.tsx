@@ -225,7 +225,8 @@ const Navbar = () => {
                     alt="ERAMC lightning logo"
                     width={30}
                     height={44}
-                    priority
+                    style={{ height: "auto" }}
+                    loading="eager"
                   />
                 </span>
               </Link>
@@ -336,6 +337,7 @@ const Navbar = () => {
                       alt="ERAMC lightning logo"
                       width={22}
                       height={32}
+                      style={{ height: "auto" }}
                     />
                   </span>
                 </Link>

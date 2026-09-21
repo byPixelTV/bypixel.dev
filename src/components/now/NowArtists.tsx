@@ -17,17 +17,35 @@ export default function NowArtists() {
   const [live, setLive] = useState(false);
   useEffect(() => {
     let disposed = false;
-    getTopArtists()
-      .then((result) => {
-        if (disposed || !result.length) return;
-        setArtists(result);
-        setLive(true);
-      })
-      .catch(() => {
-        /* Keep the explicitly labelled personal favorites. */
-      });
+    let pending = false;
+    let timer: ReturnType<typeof setTimeout>;
+    const refresh = () => {
+      if (disposed || pending || document.hidden) return;
+      pending = true;
+      void getTopArtists()
+        .then((result) => {
+          if (disposed || !result.length) return;
+          setArtists(result);
+          setLive(true);
+        })
+        .catch(() => {
+          /* Keep the explicitly labelled personal favorites. */
+        })
+        .finally(() => {
+          pending = false;
+          if (!disposed && !document.hidden) timer = setTimeout(refresh, 60000);
+        });
+    };
+    const visibility = () => {
+      clearTimeout(timer);
+      refresh();
+    };
+    document.addEventListener("visibilitychange", visibility);
+    void refresh();
     return () => {
       disposed = true;
+      clearTimeout(timer);
+      document.removeEventListener("visibilitychange", visibility);
     };
   }, []);
   return (

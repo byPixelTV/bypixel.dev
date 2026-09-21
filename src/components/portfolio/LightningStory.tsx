@@ -19,7 +19,13 @@ export default function LightningStory() {
         aria-label="Discover the story behind the lightning bolt"
         onClick={() => setOpen(!open)}
       >
-        <Image src="/assets/logo/eramc_base.svg" width={180} height={260} alt="" />
+        <Image
+          src="/assets/logo/eramc_base.svg"
+          width={180}
+          height={260}
+          style={{ height: "auto" }}
+          alt=""
+        />
         <span>
           <RollText>A FAMILIAR SPARK ↗</RollText>
         </span>
