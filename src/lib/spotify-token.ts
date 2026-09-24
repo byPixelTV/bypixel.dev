@@ -51,6 +51,7 @@ async function refreshToken(): Promise<string> {
     if (res.status === 429) {
       const seconds = Number(res.headers.get("Retry-After"));
       retryAt = Date.now() + (Number.isFinite(seconds) && seconds > 0 ? seconds : 60) * 1000;
+      console.warn(`[Spotify] OAuth HTTP 429; retry at ${new Date(retryAt).toISOString()}.`);
     }
     const details = await res.json().catch(() => null);
     // Only report known error codes and our own hints, never raw OAuth responses.

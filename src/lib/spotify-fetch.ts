@@ -8,10 +8,12 @@ export function createSpotifyFetch() {
   const cache = new Map<string, { response: Response; expiresAt: number }>();
   const pending = new Map<string, Promise<Response>>();
   const failures = new Map<string, { response: Response; retryAt: number }>();
+  const quotas = new Map<string, { response: Response; retryAt: number }>();
   let retryAt = 0;
 
   return async function spotifyFetch(url: string): Promise<Response> {
-    const artists = new URL(url).pathname === "/v1/me/top/artists";
+    const endpoint = new URL(url).pathname;
+    const artists = endpoint === "/v1/me/top/artists";
     const ttl = artists ? 3600000 : url.includes("recently-played") ? 60000 : 15000;
     const cached = cache.get(url);
     if (cached && Date.now() < cached.expiresAt) return cached.response.clone();
@@ -23,6 +25,8 @@ export function createSpotifyFetch() {
       return new Response(source.body, { status: source.status, headers });
     };
     if (Date.now() < retryAt) return fallback(new Response(null, { status: 429 }), retryAt);
+    const quota = quotas.get(endpoint);
+    if (quota && Date.now() < quota.retryAt) return fallback(quota.response, quota.retryAt);
     const failure = failures.get(url);
     if (failure && Date.now() < failure.retryAt) return fallback(failure.response, failure.retryAt);
     const existing = pending.get(url);
@@ -47,9 +51,24 @@ export function createSpotifyFetch() {
       if (response.status === 429) {
         const seconds = Number(response.headers.get("Retry-After"));
         const delay = Number.isFinite(seconds) && seconds > 0 ? seconds : 60;
-        retryAt = Math.max(retryAt, Date.now() + delay * 1000);
-        console.warn(`[Spotify] Rate limited; pausing API requests for ${delay} seconds.`);
-        return fallback(response, retryAt);
+        const until = Date.now() + delay * 1000;
+        const details = await response
+          .clone()
+          .json()
+          .catch(() => null);
+        const reason =
+          details?.error?.reason === "QUOTA_EXCEEDED" ? "QUOTA_EXCEEDED" : "RATE_OR_QUOTA_LIMIT";
+        if (reason === "QUOTA_EXCEEDED") {
+          // Quota buckets differ from the API-wide rolling rate limit. Do not
+          // disable functioning playback just because history exhausted its quota.
+          quotas.set(endpoint, { response: response.clone(), retryAt: until });
+        } else {
+          retryAt = Math.max(retryAt, until);
+        }
+        console.warn(
+          `[Spotify] HTTP 429 ${new URL(url).pathname}; ${reason}; Retry-After=${delay}s; retry at ${new Date(until).toISOString()}.`,
+        );
+        return fallback(response, until);
       }
       if (response.ok) {
         // Preserve the observation time when several visitors reuse a response.
@@ -77,6 +96,7 @@ export function createSpotifyFetch() {
         failures.delete(url);
         return response;
       }
+      console.error(`[Spotify] HTTP ${response.status} ${new URL(url).pathname}`);
       const until =
         Date.now() + (response.status === 401 || response.status === 403 ? 60000 : 15000);
       failures.set(url, { response: response.clone(), retryAt: until });
@@ -84,7 +104,11 @@ export function createSpotifyFetch() {
     };
     const work = request()
       .catch(() => {
+        console.error(
+          `[Spotify] Token, network or response failure for ${new URL(url).pathname}; retrying after 15s.`,
+        );
         const response = new Response(null, { status: 503 });
+
         const until = Date.now() + 15000;
         failures.set(url, { response, retryAt: until });
         return fallback(response, until);

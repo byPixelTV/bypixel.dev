@@ -101,12 +101,18 @@ export async function getRecentlyPlayed(): Promise<NowPlayingResult> {
   }
 }
 
+// History's cooldown must not stop the client checking for new live playback.
+// The fetch layer independently enforces history and API-wide cooldowns.
+async function playbackHistory(): Promise<NowPlayingResult> {
+  return { ...(await getRecentlyPlayed()), retryAfterMs: 15000 };
+}
+
 export async function getNowPlaying(): Promise<NowPlayingResult> {
   try {
     const res = await spotifyFetch(NOW_PLAYING_ENDPOINT);
 
     if (res.status === 204 && res.headers.get("X-Spotify-Stale") !== "true") {
-      return getRecentlyPlayed();
+      return playbackHistory();
     }
 
     if (!res.ok || res.headers.get("X-Spotify-Stale") === "true") {
@@ -135,7 +141,7 @@ export async function getNowPlaying(): Promise<NowPlayingResult> {
     const progressMs = Math.max(0, (song?.progress_ms ?? 0) + Date.now() - observedAt);
 
     if (!song || song.currently_playing_type !== "track" || !song.item) {
-      return getRecentlyPlayed();
+      return playbackHistory();
     }
 
     if (!song.is_playing) {
@@ -148,7 +154,7 @@ export async function getNowPlaying(): Promise<NowPlayingResult> {
           }),
         );
       }
-      return getRecentlyPlayed();
+      return playbackHistory();
     }
 
     return rememberActivity(

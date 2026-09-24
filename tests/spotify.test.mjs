@@ -120,6 +120,7 @@ test("recently played fallback reuses the current token", async () => {
 });
 
 test("a rejected access token is refreshed and the read retried", async () => {
+  setSystemTime(new Date("2026-10-01T12:00:00Z"));
   const fetch = mock()
     .mockResolvedValueOnce(tokenResponse())
     .mockResolvedValueOnce(new Response(null, { status: 401 }))
@@ -495,4 +496,55 @@ test("cached playback advances progress so track end is not postponed for new vi
   expect(result.progressMs).toBe(174000);
   expect(spotifyPollDelay(result)).toBe(6500);
   expect(globalThis.fetch).toHaveBeenCalledTimes(2);
+});
+
+test("history quota blocks all history query variants but leaves playback working", async () => {
+  setSystemTime(new Date("2031-01-01T12:00:00Z"));
+  const request = createSpotifyFetch();
+  globalThis.fetch = mock()
+    .mockResolvedValueOnce(tokenResponse())
+    .mockResolvedValueOnce(
+      Response.json(
+        { error: { reason: "QUOTA_EXCEEDED" } },
+        { status: 429, headers: { "Retry-After": "120" } },
+      ),
+    )
+    .mockResolvedValueOnce(Response.json({ is_playing: true, item: track }))
+    .mockResolvedValueOnce(Response.json({ items: [] }));
+  expect((await request(api + "player/recently-played?limit=1")).status).toBe(429);
+  expect((await request(api + "player/recently-played?limit=5")).status).toBe(429);
+  expect((await request(api + "player/currently-playing")).status).toBe(200);
+  expect(globalThis.fetch).toHaveBeenCalledTimes(3);
+  setSystemTime(new Date("2031-01-01T12:01:59Z"));
+  expect((await request(api + "player/recently-played?limit=1")).status).toBe(429);
+  expect(globalThis.fetch).toHaveBeenCalledTimes(3);
+  setSystemTime(new Date("2031-01-01T12:02:00Z"));
+  expect((await request(api + "player/recently-played?limit=1")).status).toBe(200);
+  expect(globalThis.fetch).toHaveBeenCalledTimes(4);
+});
+
+test("history quota does not put the widget to sleep when playback starts", async () => {
+  setSystemTime(new Date("2031-02-01T12:00:00Z"));
+  globalThis.fetch = mock()
+    .mockResolvedValueOnce(tokenResponse())
+    .mockResolvedValueOnce(new Response(null, { status: 204 }))
+    .mockResolvedValueOnce(
+      Response.json(
+        { error: { reason: "QUOTA_EXCEEDED" } },
+        { status: 429, headers: { "Retry-After": "6587" } },
+      ),
+    )
+    .mockResolvedValueOnce(
+      Response.json({
+        currently_playing_type: "track",
+        is_playing: true,
+        item: { ...track, name: "New live track", duration_ms: 180000 },
+        progress_ms: 1000,
+      }),
+    );
+  const idle = await getNowPlaying();
+  expect(spotifyPollDelay(idle)).toBe(15000);
+  setSystemTime(new Date("2031-02-01T12:00:15Z"));
+  expect(await getNowPlaying()).toMatchObject({ isPlaying: true, title: "New live track" });
+  expect(globalThis.fetch).toHaveBeenCalledTimes(4);
 });
