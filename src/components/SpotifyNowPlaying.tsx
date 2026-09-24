@@ -12,7 +12,7 @@ const time = (ms: number) => {
 };
 
 export default function SpotifyNowPlaying() {
-  const { data } = useAlbumAtmosphere();
+  const { data, loaded } = useAlbumAtmosphere();
   const reduce = useReducedMotion();
   const [expanded, setExpanded] = useState(false);
   const detailId = useId();
@@ -54,7 +54,19 @@ export default function SpotifyNowPlaying() {
     const timer = setInterval(update, 1000);
     return () => clearInterval(timer);
   }, [data]);
-  if (!hasTrack) return null;
+  if (!hasTrack)
+    return (
+      <div className="spotify-live spotify-empty" role="status">
+        <span className="spotify-status">Spotify</span>
+        <p>
+          {!loaded
+            ? "Loading Spotify activity…"
+            : data?.stale
+              ? "Spotify is temporarily unavailable. Retrying shortly."
+              : "No recent Spotify activity available."}
+        </p>
+      </div>
+    );
   return (
     <motion.div
       ref={root}
@@ -102,7 +114,7 @@ export default function SpotifyNowPlaying() {
                   strokeLinecap="round"
                 />
               </svg>
-              {data.isPlaying ? "Now playing" : "Last played"}
+              {data.stale ? "Last known track" : data.isPlaying ? "Now playing" : "Last played"}
             </span>
             <span className="spotify-copy" aria-live="polite" aria-atomic="true">
               <AnimatePresence initial={false} mode="popLayout">

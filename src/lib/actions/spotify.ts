@@ -16,6 +16,8 @@ function rememberActivity(incoming: NowPlayingResult): NowPlayingResult {
 export interface NowPlayingResult {
   isPlaying: boolean;
   isRecent?: boolean;
+  stale?: boolean;
+  retryAfterMs?: number;
   trackId?: string;
   title?: string;
   artist?: string;
@@ -67,25 +69,35 @@ export async function getRecentlyPlayed(): Promise<NowPlayingResult> {
     if (!res.ok) {
       if (res.status !== 429)
         console.error("[Spotify] Recently played request failed:", res.status);
-      return rememberActivity({ isPlaying: false });
+      return rememberActivity({
+        isPlaying: false,
+        stale: true,
+        retryAfterMs: Number(res.headers.get("Retry-After")) * 1000 || 15000,
+      });
     }
 
     const data = await res.json();
     const item = data.items?.[0];
 
     if (!item?.track) {
-      return rememberActivity({ isPlaying: false });
+      return rememberActivity({
+        isPlaying: false,
+        stale: res.headers.get("X-Spotify-Stale") === "true",
+        retryAfterMs: Number(res.headers.get("Retry-After")) * 1000 || undefined,
+      });
     }
 
     return rememberActivity(
       mapSpotifyTrack(item.track, {
         isRecent: true,
         playedAt: item.played_at,
+        stale: res.headers.get("X-Spotify-Stale") === "true",
+        retryAfterMs: Number(res.headers.get("Retry-After")) * 1000 || undefined,
       }),
     );
   } catch (err) {
     console.error("[Spotify] getRecentlyPlayed failed:", err);
-    return rememberActivity({ isPlaying: false });
+    return rememberActivity({ isPlaying: false, stale: true });
   }
 }
 
@@ -93,11 +105,34 @@ export async function getNowPlaying(): Promise<NowPlayingResult> {
   try {
     const res = await spotifyFetch(NOW_PLAYING_ENDPOINT);
 
-    if (res.status === 204 || !res.ok) {
+    if (res.status === 204 && res.headers.get("X-Spotify-Stale") !== "true") {
       return getRecentlyPlayed();
     }
 
+    if (!res.ok || res.headers.get("X-Spotify-Stale") === "true") {
+      // An API failure cannot tell us whether playback stopped. Keep the API's
+      // last track, but label it as unconfirmed instead of reporting last played.
+      if (!lastKnownTrack?.title && res.ok && res.status !== 204) {
+        const cached = await res.json();
+        if (cached.item && cached.currently_playing_type === "track") {
+          rememberActivity(
+            mapSpotifyTrack(cached.item, {
+              playedAt: new Date(Number(res.headers.get("X-Spotify-Observed-At"))).toISOString(),
+            }),
+          );
+        }
+      }
+      if (!lastKnownTrack?.title) await getRecentlyPlayed();
+      return rememberActivity({
+        isPlaying: false,
+        stale: true,
+        retryAfterMs: Number(res.headers.get("Retry-After")) * 1000 || 15000,
+      });
+    }
+
     const song = await res.json();
+    const observedAt = Number(res.headers.get("X-Spotify-Observed-At")) || Date.now();
+    const progressMs = Math.max(0, (song?.progress_ms ?? 0) + Date.now() - observedAt);
 
     if (!song || song.currently_playing_type !== "track" || !song.item) {
       return getRecentlyPlayed();
@@ -119,13 +154,15 @@ export async function getNowPlaying(): Promise<NowPlayingResult> {
     return rememberActivity(
       mapSpotifyTrack(song.item, {
         isPlaying: true,
-        progressMs: (song.progress_ms ?? 0) as number,
-        playedAt: new Date().toISOString(),
+        progressMs: Math.min(song.item.duration_ms ?? Infinity, progressMs),
+        playedAt: new Date(
+          Number(res.headers.get("X-Spotify-Observed-At")) || Date.now(),
+        ).toISOString(),
       }),
     );
   } catch (err) {
     console.error("[Spotify] getNowPlaying failed:", err);
-    return getRecentlyPlayed();
+    return rememberActivity({ isPlaying: false, stale: true, retryAfterMs: 15000 });
   }
 }
 

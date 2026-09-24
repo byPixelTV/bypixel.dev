@@ -13,6 +13,7 @@ import {
 import { usePathname } from "next/navigation";
 import { getNowPlaying, type NowPlayingResult } from "@/lib/actions/spotify";
 import { latestSpotifyActivity } from "@/lib/spotify-activity";
+import { spotifyPollDelay } from "@/lib/spotify-polling";
 const AlbumContext = createContext<{ data: NowPlayingResult | null; loaded: boolean }>({
   data: null,
   loaded: false,
@@ -108,8 +109,10 @@ export default function AlbumAtmosphere({ children }: { children: ReactNode }) {
     const poll = async () => {
       if (disposed || pending || document.hidden) return;
       pending = true;
+      let delay = 15000;
       try {
         const result = await getNowPlaying();
+        delay = spotifyPollDelay(result);
         if (!disposed) {
           setData((previous) => {
             const activity = latestSpotifyActivity(previous, result);
@@ -126,13 +129,13 @@ export default function AlbumAtmosphere({ children }: { children: ReactNode }) {
         }
       } catch {
         if (!disposed) {
-          setData((previous) => latestSpotifyActivity(previous, { isPlaying: false }));
+          setData((previous) => latestSpotifyActivity(previous, { isPlaying: false, stale: true }));
         }
       } finally {
         pending = false;
         if (!disposed) {
           setLoaded(true);
-          if (!document.hidden) timer = setTimeout(poll, 5000);
+          if (!document.hidden) timer = setTimeout(poll, Math.min(delay, 2147483647));
         }
       }
     };
@@ -147,7 +150,7 @@ export default function AlbumAtmosphere({ children }: { children: ReactNode }) {
       clearTimeout(timer);
       document.removeEventListener("visibilitychange", visibility);
     };
-  }, []);
+  }, [pathname]);
   useEffect(() => {
     let disposed = false;
     const apply = (colors: string[]) => {

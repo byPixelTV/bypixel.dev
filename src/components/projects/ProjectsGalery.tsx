@@ -33,7 +33,16 @@ const projects: Project[] = [
     role: "Sys Admin, Developer & Administrator",
     description:
       "Minecraft CraftAttack like survival server — plugin development, micro-services, infrastructure setup and full administration.",
-    tags: ["Minecraft", "Backend", "Linux", "Moderation", "Administration", "Go", "Kotlin", "Active"],
+    tags: [
+      "Minecraft",
+      "Backend",
+      "Linux",
+      "Moderation",
+      "Administration",
+      "Go",
+      "Kotlin",
+      "Active",
+    ],
     startAt: "October 2025",
     endAt: "now",
     url: "https://discord.gg/betterattack",

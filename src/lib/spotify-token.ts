@@ -2,11 +2,14 @@ import "server-only";
 
 let cached: { token: string; expiresAt: number } | undefined;
 let pending: Promise<string> | undefined;
+let retryAt = 0;
 
 /** Share a token refresh across simultaneous visitors; never expose it to clients. */
 export function getSpotifyAccessToken(): Promise<string> {
   if (cached && Date.now() < cached.expiresAt) return Promise.resolve(cached.token);
   if (pending) return pending;
+  if (Date.now() < retryAt)
+    return Promise.reject(new Error("Spotify token refresh is cooling down."));
   pending = refreshToken().finally(() => {
     pending = undefined;
   });
@@ -45,6 +48,10 @@ async function refreshToken(): Promise<string> {
     signal: AbortSignal.timeout(10000),
   });
   if (!res.ok) {
+    if (res.status === 429) {
+      const seconds = Number(res.headers.get("Retry-After"));
+      retryAt = Date.now() + (Number.isFinite(seconds) && seconds > 0 ? seconds : 60) * 1000;
+    }
     const details = await res.json().catch(() => null);
     // Only report known error codes and our own hints, never raw OAuth responses.
     let hint = "";

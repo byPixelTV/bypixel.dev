@@ -156,7 +156,7 @@ const track = {
   external_urls: { spotify: "https://open.spotify.com/track/recent-song" },
 };
 
-test("paused track survives missing history and later failures for 24 hours", async () => {
+test("paused track survives missing history and long listening breaks", async () => {
   const pausedAt = new Date("2027-01-01T12:00:00Z");
   setSystemTime(new Date("2027-01-01T14:00:00Z"));
   globalThis.fetch = mock()
@@ -184,8 +184,7 @@ test("paused track survives missing history and later failures for 24 hours", as
       .mockResolvedValueOnce(new Response(null, { status: 204 }))
       .mockResolvedValueOnce(new Response(null, { status: 503 }));
     const result = await getNowPlaying();
-    if (hours < 24) expect(result).toMatchObject({ title: "Recent song", isPlaying: false });
-    else expect(result).toEqual({ isPlaying: false });
+    expect(result).toMatchObject({ title: "Recent song", isPlaying: false });
   }
 });
 
@@ -221,7 +220,8 @@ test("a live track remains last played when history is empty or older", () => {
       playedAt: live.playedAt,
     });
   }
-  expect(latestSpotifyActivity(live, { isPlaying: false }, now + 86400000)).toEqual({
+  expect(latestSpotifyActivity(live, { isPlaying: false }, now + 86400000)).toMatchObject({
+    title: "Latest song",
     isPlaying: false,
   });
 });
@@ -313,7 +313,7 @@ test("playback cache expires quickly while artist data stays cached", async () =
   await request(api + "top/artists");
   await request(api + "player/currently-playing");
   expect(globalThis.fetch).toHaveBeenCalledTimes(3);
-  setSystemTime(new Date("2028-03-01T12:00:06Z"));
+  setSystemTime(new Date("2028-03-01T12:00:16Z"));
   await request(api + "player/currently-playing");
   await request(api + "top/artists");
   expect(globalThis.fetch).toHaveBeenCalledTimes(4);
@@ -334,9 +334,165 @@ test("artist cache survives network failures and later refreshes recover", async
   expect(await (await request(api + "top/artists")).json()).toEqual({
     items: [{ name: "Cached artist" }],
   });
+  setSystemTime(new Date("2028-04-01T13:00:17Z"));
   expect(await (await request(api + "top/artists")).json()).toEqual({
     items: [{ name: "Updated artist" }],
   });
   expect(globalThis.fetch).toHaveBeenCalledTimes(3);
   expect(globalThis.fetch.mock.calls[1][1].signal).toBeInstanceOf(AbortSignal);
+});
+
+test("API history older than a day remains visible", async () => {
+  setSystemTime(new Date("2029-01-10T12:00:00Z"));
+  globalThis.fetch = mock()
+    .mockResolvedValueOnce(tokenResponse())
+    .mockResolvedValueOnce(new Response(null, { status: 204 }))
+    .mockResolvedValueOnce(
+      Response.json({ items: [{ played_at: "2029-01-01T12:00:00Z", track }] }),
+    );
+  expect(await getNowPlaying()).toMatchObject({
+    title: "Recent song",
+    isRecent: true,
+    isPlaying: false,
+  });
+});
+
+test("live playback survives a rate limit as unconfirmed and recovers to live", async () => {
+  setSystemTime(new Date("2029-02-01T12:00:00Z"));
+  const live = {
+    currently_playing_type: "track",
+    is_playing: true,
+    item: track,
+    progress_ms: 1000,
+  };
+  globalThis.fetch = mock()
+    .mockResolvedValueOnce(tokenResponse())
+    .mockResolvedValueOnce(Response.json(live))
+    .mockResolvedValueOnce(new Response(null, { status: 429, headers: { "Retry-After": "120" } }))
+    .mockResolvedValueOnce(Response.json(live));
+  expect(await getNowPlaying()).toMatchObject({ isPlaying: true, title: "Recent song" });
+  setSystemTime(new Date("2029-02-01T12:00:16Z"));
+  expect(await getNowPlaying()).toMatchObject({
+    isPlaying: false,
+    stale: true,
+    title: "Recent song",
+    retryAfterMs: 120000,
+  });
+  setSystemTime(new Date("2029-02-01T12:01:00Z"));
+  expect(await getNowPlaying()).toMatchObject({ stale: true, title: "Recent song" });
+  expect(globalThis.fetch).toHaveBeenCalledTimes(3);
+  setSystemTime(new Date("2029-02-01T12:02:16Z"));
+  expect(await getNowPlaying()).toMatchObject({ isPlaying: true, title: "Recent song" });
+  expect(globalThis.fetch).toHaveBeenCalledTimes(4);
+});
+
+test("history stays readable during outages and retries are shared", async () => {
+  setSystemTime(new Date("2029-03-01T12:00:00Z"));
+  const request = createSpotifyFetch();
+  const url = api + "player/recently-played";
+  const data = { items: [{ played_at: "2029-03-01T11:00:00Z", track }] };
+  globalThis.fetch = mock()
+    .mockResolvedValueOnce(tokenResponse())
+    .mockResolvedValueOnce(Response.json(data))
+    .mockRejectedValueOnce(new Error("Offline"))
+    .mockResolvedValueOnce(Response.json(data));
+  await request(url);
+  setSystemTime(new Date("2029-03-01T12:01:01Z"));
+  const responses = await Promise.all(Array.from({ length: 10 }, () => request(url)));
+  for (const response of responses) {
+    expect(response.headers.get("X-Spotify-Stale")).toBe("true");
+    expect(await response.json()).toEqual(data);
+  }
+  await request(url);
+  expect(globalThis.fetch).toHaveBeenCalledTimes(3);
+  setSystemTime(new Date("2029-03-01T12:01:16Z"));
+  expect((await request(url)).headers.get("X-Spotify-Stale")).toBeNull();
+  expect(globalThis.fetch).toHaveBeenCalledTimes(4);
+});
+
+test("OAuth rate limits respect Retry-After", async () => {
+  setSystemTime(new Date("2029-04-01T12:00:00Z"));
+  globalThis.fetch = mock()
+    .mockResolvedValueOnce(new Response(null, { status: 429, headers: { "Retry-After": "90" } }))
+    .mockResolvedValueOnce(tokenResponse());
+  await expect(getSpotifyAccessToken()).rejects.toThrow("429");
+  await expect(getSpotifyAccessToken()).rejects.toThrow("cooling down");
+  expect(globalThis.fetch).toHaveBeenCalledTimes(1);
+  setSystemTime(new Date("2029-04-01T12:01:30Z"));
+  expect(await getSpotifyAccessToken()).toBe("test-token");
+  expect(globalThis.fetch).toHaveBeenCalledTimes(2);
+});
+
+const { spotifyPollDelay } = await import("../src/lib/spotify-polling");
+
+test("polling uses track end or 15 seconds and always honors cooldowns", () => {
+  expect(spotifyPollDelay({ isPlaying: true, durationMs: 180000, progressMs: 175000 })).toBe(5500);
+  expect(spotifyPollDelay({ isPlaying: true, durationMs: 180000, progressMs: 1000 })).toBe(15000);
+  for (const state of [
+    { isPlaying: false, durationMs: 10000, progressMs: 9000 },
+    { isPlaying: true, durationMs: 10000, progressMs: 10000 },
+    { isPlaying: true, durationMs: 10000, progressMs: 11000 },
+    { isPlaying: true, durationMs: 10000 },
+    { isPlaying: true, durationMs: 10000, progressMs: NaN },
+    { isPlaying: true, stale: true, durationMs: 10000, progressMs: 9000 },
+  ])
+    expect(spotifyPollDelay(state)).toBe(15000);
+  expect(
+    spotifyPollDelay({
+      isPlaying: true,
+      durationMs: 10000,
+      progressMs: 9000,
+      retryAfterMs: 120000,
+    }),
+  ).toBe(120000);
+});
+
+test("track end expires the cache early and simultaneous visitors share the next fetch", async () => {
+  setSystemTime(new Date("2030-01-01T12:00:00Z"));
+  const request = createSpotifyFetch();
+  const url = api + "player/currently-playing";
+  globalThis.fetch = mock()
+    .mockResolvedValueOnce(tokenResponse())
+    .mockResolvedValueOnce(
+      Response.json({
+        is_playing: true,
+        progress_ms: 175000,
+        item: { ...track, duration_ms: 180000 },
+      }),
+    )
+    .mockResolvedValueOnce(
+      Response.json({
+        is_playing: true,
+        progress_ms: 0,
+        item: { ...track, id: "next", duration_ms: 180000 },
+      }),
+    );
+  await request(url);
+  setSystemTime(new Date("2030-01-01T12:00:05Z"));
+  expect((await (await request(url)).json()).item.id).toBe(track.id);
+  expect(globalThis.fetch).toHaveBeenCalledTimes(2);
+  setSystemTime(new Date("2030-01-01T12:00:05.500Z"));
+  const responses = await Promise.all(Array.from({ length: 10 }, () => request(url)));
+  for (const response of responses) expect((await response.json()).item.id).toBe("next");
+  expect(globalThis.fetch).toHaveBeenCalledTimes(3);
+});
+
+test("cached playback advances progress so track end is not postponed for new visitors", async () => {
+  setSystemTime(new Date("2030-02-01T12:00:00Z"));
+  globalThis.fetch = mock()
+    .mockResolvedValueOnce(tokenResponse())
+    .mockResolvedValueOnce(
+      Response.json({
+        currently_playing_type: "track",
+        is_playing: true,
+        progress_ms: 170000,
+        item: { ...track, duration_ms: 180000 },
+      }),
+    );
+  expect(await getNowPlaying()).toMatchObject({ progressMs: 170000 });
+  setSystemTime(new Date("2030-02-01T12:00:04Z"));
+  const result = await getNowPlaying();
+  expect(result.progressMs).toBe(174000);
+  expect(spotifyPollDelay(result)).toBe(6500);
+  expect(globalThis.fetch).toHaveBeenCalledTimes(2);
 });
