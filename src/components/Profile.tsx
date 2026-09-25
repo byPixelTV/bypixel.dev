@@ -2,19 +2,29 @@
 import RollText from "@/components/portfolio/RollText";
 
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { useRef } from "react";
+import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
 import { FaDiscord, FaGithub } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 import { MdEmail } from "react-icons/md";
 import SpotifyNowPlaying from "@/components/SpotifyNowPlaying";
 
 const Profile = () => {
+  const root = useRef<HTMLElement>(null);
+  const reduce = useReducedMotion();
+  const { scrollYProgress } = useScroll({ target: root, offset: ["start start", "end start"] });
+  const y = useTransform(scrollYProgress, [0, 1], [0, 100]);
+  const opacity = useTransform(scrollYProgress, [0, 0.5, 1], [1, 1, 0.12]);
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 0.96]);
   const heroAccentGradient =
     "linear-gradient(100deg, var(--album-1), var(--album-2) 55%, var(--album-3))";
   return (
-    <section aria-label="About me" className="immersive-hero">
-      <motion.div className="relative min-h-[calc(100vh-8.25rem)]">
-        <div className="relative z-10 flex min-h-[calc(100vh-8.25rem)] items-center justify-center px-6 py-14 sm:px-8 lg:px-10">
+    <section ref={root} aria-label="About me" className="immersive-hero">
+      <motion.div
+        className="relative min-h-[calc(100svh-8.25rem)]"
+        style={{ y: reduce ? 0 : y, opacity: reduce ? 1 : opacity, scale: reduce ? 1 : scale }}
+      >
+        <div className="relative z-10 flex min-h-[calc(100svh-8.25rem)] items-center justify-center px-6 py-14 sm:px-8 lg:px-10">
           <div className="w-full max-w-300 text-center text-white">
             <motion.p
               className="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/72 sm:text-xs"
@@ -153,6 +163,23 @@ const Profile = () => {
           </div>
         </div>
       </motion.div>
+      <nav className="experience-index" aria-label="Explore the portfolio">
+        <a href="#projects">
+          <small>01</small>
+          <strong>Selected work</strong>
+          <span aria-hidden="true">↘</span>
+        </a>
+        <a href="#skills">
+          <small>02</small>
+          <strong>The toolkit</strong>
+          <span aria-hidden="true">↘</span>
+        </a>
+        <a href="#journey">
+          <small>03</small>
+          <strong>My story</strong>
+          <span aria-hidden="true">↘</span>
+        </a>
+      </nav>
     </section>
   );
 };

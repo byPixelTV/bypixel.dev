@@ -10,6 +10,7 @@ import {
   type ReactNode,
 } from "react";
 
+import FluidAtmosphere from "./FluidAtmosphere";
 import { usePathname } from "next/navigation";
 import { getNowPlaying, type NowPlayingResult } from "@/lib/actions/spotify";
 import { latestSpotifyActivity } from "@/lib/spotify-activity";
@@ -67,41 +68,8 @@ export default function AlbumAtmosphere({ children }: { children: ReactNode }) {
   const root = useRef<HTMLDivElement>(null);
   const [data, setData] = useState<NowPlayingResult | null>(null);
   const [loaded, setLoaded] = useState(false);
+  const [colors, setColors] = useState(fallback);
   const cover = data?.albumImageUrl ?? null;
-  // Scope scroll-driven styles to the scenery, avoiding invalidation of the whole page.
-  useEffect(() => {
-    if (pathname !== "/") return;
-    const scenery = root.current?.querySelector<HTMLElement>(".page-ambience");
-    if (!scenery) return;
-    const baseLights = scenery.querySelectorAll<HTMLElement>(".ambient-base-light");
-    const albumLights = scenery.querySelectorAll<HTMLElement>(".ambient-album-light");
-    let frame = 0;
-    let previousPresence: number | undefined;
-    const update = () => {
-      frame = 0;
-      const progress = Math.min(1, Math.max(0, (window.scrollY / window.innerHeight - 0.2) / 0.8));
-      const presence = 1 - progress;
-      if (presence === previousPresence) return;
-      previousPresence = presence;
-      baseLights.forEach((light) => {
-        light.style.opacity = String(1 - presence);
-      });
-      albumLights.forEach((light) => {
-        light.style.opacity = String(presence);
-      });
-    };
-    const schedule = () => {
-      if (!frame) frame = requestAnimationFrame(update);
-    };
-    update();
-    window.addEventListener("scroll", schedule, { passive: true });
-    window.addEventListener("resize", schedule);
-    return () => {
-      cancelAnimationFrame(frame);
-      window.removeEventListener("scroll", schedule);
-      window.removeEventListener("resize", schedule);
-    };
-  }, [pathname]);
   useEffect(() => {
     let disposed = false;
     let pending = false;
@@ -155,6 +123,7 @@ export default function AlbumAtmosphere({ children }: { children: ReactNode }) {
     let disposed = false;
     const apply = (colors: string[]) => {
       if (disposed || !root.current) return;
+      setColors(colors);
       colors.forEach((color, index) =>
         root.current!.style.setProperty(`--album-${index + 1}`, color),
       );
@@ -169,21 +138,7 @@ export default function AlbumAtmosphere({ children }: { children: ReactNode }) {
   return (
     <AlbumContext value={{ data, loaded }}>
       <div ref={root} className="album-atmosphere" data-home={pathname === "/"}>
-        <AmbientBlobs className="page-ambience" />
-        <svg
-          className="ambient-chart"
-          viewBox="0 0 1600 1000"
-          preserveAspectRatio="xMidYMid slice"
-          aria-hidden="true"
-        >
-          <g fill="none" stroke="currentColor" strokeWidth="0.65">
-            <ellipse cx="800" cy="500" rx="750" ry="350" transform="rotate(-28 800 500)" />
-            <ellipse cx="800" cy="500" rx="920" ry="460" transform="rotate(-28 800 500)" />
-            <path d="M110 185h12m-6-6v12M1390 730h12m-6-6v12M1210 130h12m-6-6v12M340 820h12m-6-6v12" />
-            <circle cx="230" cy="300" r="3" />
-            <circle cx="1320" cy="625" r="3" />
-          </g>
-        </svg>
+        <FluidAtmosphere colors={colors} />
         {children}
       </div>
     </AlbumContext>

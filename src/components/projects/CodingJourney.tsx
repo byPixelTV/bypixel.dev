@@ -1,4 +1,5 @@
 "use client";
+import ChapterTitle from "@/components/portfolio/ChapterTitle";
 
 import { useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion, useScroll, useSpring } from "motion/react";
@@ -129,11 +130,7 @@ export default function CodingJourney() {
       <div className="journey-overview">
         <p className="eyebrow">03 / Development timeline</p>
 
-        <h2 id="journey-heading">
-          FROM SCRIPTS
-          <br />
-          <em>TO SYSTEMS.</em>
-        </h2>
+        <ChapterTitle id="journey-heading" lines={["FROM SCRIPTS", "TO SYSTEMS."]} />
 
         <p className="journey-intro">
           How my development stack evolved from simple scripts and websites into backend systems,

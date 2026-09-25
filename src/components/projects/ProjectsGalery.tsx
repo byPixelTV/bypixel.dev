@@ -194,14 +194,25 @@ export default function HorizontalGallery() {
   const endOffset = (viewportWidth - lastItem.width) / 2 - lastItem.x;
   // Follow the already-smoothed page scroll directly, with no dead zone or second spring.
   const x = useTransform(scrollYProgress, [0, 1], [startOffset, endOffset]);
+  const titleX = useTransform(scrollYProgress, [0, 1], ["8%", "-14%"]);
 
   return (
     <section
       ref={ref}
       data-project-gallery
+      data-reduced-motion={Boolean(reduce)}
+      aria-label="Selected projects"
       className={`relative left-1/2 right-1/2 w-dvw -translate-x-1/2 ${isMobile ? "h-[350svh]" : "h-[450svh]"}`}
     >
-      <div className="project-stage sticky top-0 h-screen w-dvw overflow-hidden">
+      <div className="project-stage sticky top-0 h-svh w-dvw overflow-hidden">
+        <motion.div
+          className="project-scene-title"
+          style={{ x: reduce ? 0 : titleX }}
+          aria-hidden="true"
+        >
+          SELECTED WORK.
+        </motion.div>
+        <div className="project-scene-label eyebrow">01 / Ideas into real things</div>
         <div className="relative h-full">
           {responsiveProjectCards.map((project, index) => (
             <ProjectCardItem
@@ -215,6 +226,13 @@ export default function HorizontalGallery() {
               simpleMotion={simpleMotion}
             />
           ))}
+        </div>
+        <div className="project-scene-progress" aria-hidden="true">
+          <span>Explore the work</span>
+          <div>
+            <motion.i style={{ scaleX: scrollYProgress }} />
+          </div>
+          <span>Keep scrolling ↘</span>
         </div>
       </div>
     </section>

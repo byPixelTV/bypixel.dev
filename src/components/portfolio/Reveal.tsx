@@ -44,12 +44,18 @@ export default function Reveal({
           if (!entry.isIntersecting) continue;
           observer.unobserve(entry.target);
           if (preference.matches) continue;
-          const animation = entry.target.animate([{ opacity: 0 }, { opacity: 1 }], {
-            duration: 650,
-            delay: Number((entry.target as HTMLElement).dataset.enterDelay ?? 0),
-            fill: "backwards",
-            easing: "cubic-bezier(.2,.7,.2,1)",
-          });
+          const animation = entry.target.animate(
+            [
+              { opacity: 0, transform: "translateY(20px)" },
+              { opacity: 1, transform: "translateY(0)" },
+            ],
+            {
+              duration: 650,
+              delay: Number((entry.target as HTMLElement).dataset.enterDelay ?? 0),
+              fill: "backwards",
+              easing: "cubic-bezier(.2,.7,.2,1)",
+            },
+          );
           animations.add(animation);
           animation.onfinish = () => animations.delete(animation);
         }

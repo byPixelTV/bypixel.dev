@@ -3635,3 +3635,588 @@ html {
     opacity: 0;
   }
 }
+
+/* One continuous light field, with a static fallback when WebGL is unavailable. */
+.fluid-atmosphere {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at 25% 45%, #38215399, transparent 60%),
+    radial-gradient(ellipse at 80% 65%, #16364288, transparent 55%), #08070d;
+}
+.fluid-atmosphere canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.album-atmosphere:has(.article-page) .fluid-atmosphere {
+  opacity: 0.3;
+}
+.experience-index {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin: 12px auto 0;
+  border-top: 1px solid #ffffff20;
+}
+.experience-index a {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 23px 0;
+  color: #b9afc6;
+  transition: color 0.25s;
+}
+.experience-index small {
+  font:
+    10px var(--font-mono),
+    monospace;
+  color: #a27cbc;
+}
+.experience-index strong {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 500;
+}
+.experience-index span {
+  transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.experience-index a:hover {
+  color: #f0ddff;
+}
+.experience-index a:hover span {
+  transform: translate(4px, 4px);
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .skill-tile,
+  .journey-chapter {
+    transition:
+      border-color 0.3s,
+      box-shadow 0.3s,
+      transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .skill-tile:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 16px 35px #0003;
+    border-color: #c084fc65;
+  }
+  .journey-chapter:hover {
+    transform: translateX(5px);
+    border-color: #c084fc65;
+  }
+}
+@media (max-width: 640px) {
+  .experience-index {
+    gap: 14px;
+  }
+  .experience-index a {
+    gap: 7px;
+  }
+  .experience-index strong {
+    font-size: 11px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .experience-index span {
+    transition: none;
+  }
+  .experience-index a:hover span {
+    transform: none;
+  }
+}
+
+/* Stable viewport geometry prevents mobile browser chrome from tugging the scenery. */
+.fluid-atmosphere {
+  bottom: auto;
+  height: 100lvh;
+  background:
+    radial-gradient(
+      ellipse at 25% 45%,
+      color-mix(in srgb, var(--album-1, #8b5cf6) 22%, transparent),
+      transparent 65%
+    ),
+    radial-gradient(
+      ellipse at 80% 65%,
+      color-mix(in srgb, var(--album-2, #c084fc) 16%, transparent),
+      transparent 60%
+    ),
+    #08070d;
+}
+.work-gallery {
+  padding-block: 55px 15px;
+}
+.work-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 30px;
+  margin-bottom: 35px;
+}
+.work-heading h2 {
+  font-size: clamp(38px, 5.4vw, 78px);
+  line-height: 1;
+  font-weight: 850;
+  letter-spacing: -0.065em;
+  margin-top: 14px;
+}
+.work-heading em {
+  font-style: normal;
+  color: #c084fc;
+}
+.work-navigation p {
+  color: #b6aebf;
+  font-size: 13px;
+  line-height: 1.7;
+}
+.work-navigation > div {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  gap: 10px;
+  margin-top: 22px;
+}
+.work-navigation > div > span {
+  margin-right: 12px;
+}
+.work-navigation button {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid #ffffff28;
+  border-radius: 50%;
+  color: #e7d5fa;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.work-navigation button:hover:not(:disabled) {
+  background: #c084fc24;
+}
+.work-navigation button:disabled {
+  opacity: 0.25;
+  cursor: default;
+}
+.work-track {
+  position: relative;
+  display: flex;
+  gap: 24px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+  scrollbar-color: #b58ad94d transparent;
+  padding-bottom: 20px;
+}
+.work-card {
+  flex: 0 0 min(580px, 46%);
+  min-width: 0;
+  overflow: hidden;
+  scroll-snap-align: start;
+  border: 1px solid #ffffff1c;
+  border-radius: 22px;
+  background: #100d18ed;
+  display: flex;
+  flex-direction: column;
+  transition: border-color 0.3s;
+}
+.work-card:hover,
+.work-card:focus-within {
+  border-color: #c084fc66;
+}
+.work-image {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: #1a1324;
+}
+.work-image::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(transparent 35%, #100d18);
+  pointer-events: none;
+}
+.work-image img {
+  transition: transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.work-number,
+.work-status {
+  position: absolute;
+  top: 18px;
+  z-index: 1;
+  font:
+    10px var(--font-mono),
+    monospace;
+  padding: 8px 11px;
+  border: 1px solid #ffffff24;
+  background: #100d18d9;
+  border-radius: 20px;
+  color: #e0d4ea;
+}
+.work-number {
+  left: 18px;
+}
+.work-status {
+  right: 18px;
+}
+.work-card[data-active="true"] .work-status {
+  color: #c8edda;
+}
+.work-copy {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 22px 28px 28px;
+}
+.work-copy h3 {
+  font-size: clamp(28px, 3vw, 42px);
+  font-weight: 750;
+  letter-spacing: -0.045em;
+  margin: 13px 0 5px;
+}
+.work-role {
+  color: #cdb8df;
+  font-size: 12px;
+}
+.work-description {
+  color: #b6aebf;
+  font-size: 13px;
+  line-height: 1.8;
+  margin: 18px 0 22px;
+}
+.work-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 26px;
+}
+.work-tags li {
+  padding: 5px 8px;
+  border: 1px solid #ffffff17;
+  border-radius: 5px;
+  color: #c8bbd5;
+  font-size: 10px;
+}
+.work-link,
+.work-archive {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: auto;
+  padding-top: 18px;
+  border-top: 1px solid #ffffff1c;
+  font-size: 12px;
+  color: #eadcf5;
+}
+.work-archive {
+  color: #a193af;
+}
+.work-link svg {
+  transition: transform 0.3s;
+}
+.work-link:hover svg {
+  transform: translate(3px, -3px);
+}
+.work-hint {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 12px;
+  color: #a99ab9;
+  font-size: 11px;
+}
+.work-hint span {
+  white-space: nowrap;
+}
+.work-gallery :is(button, a, [tabindex]):focus-visible {
+  outline: 2px solid #d5b6f2;
+  outline-offset: -3px;
+}
+.skill-insight {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 35px;
+  align-items: center;
+  padding: 26px 30px;
+  margin-top: 26px;
+  background: linear-gradient(110deg, #c084fc12, transparent);
+  border: 1px solid #ffffff18;
+  border-radius: 16px;
+}
+.skill-insight > span {
+  grid-column: 1 / -1;
+}
+.skill-insight strong {
+  font-size: clamp(24px, 3vw, 36px);
+  letter-spacing: -0.04em;
+}
+.skill-insight p {
+  color: #c2b6cc;
+  font-size: 13px;
+  line-height: 1.8;
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .work-card:hover .work-image img,
+  .work-card:focus-within .work-image img {
+    transform: scale(1.035);
+  }
+}
+@media (max-width: 1000px) {
+  .work-card {
+    flex-basis: 66%;
+  }
+}
+@media (max-width: 640px) {
+  .work-heading {
+    align-items: start;
+    flex-direction: column;
+    gap: 22px;
+  }
+  .work-navigation {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .work-navigation p {
+    max-width: 180px;
+    font-size: 11px;
+  }
+  .work-navigation > div {
+    margin: 0;
+    gap: 7px;
+  }
+  .work-navigation > div > span {
+    display: none;
+  }
+  .work-track {
+    gap: 14px;
+  }
+  .work-card {
+    flex-basis: 88%;
+  }
+  .work-copy {
+    padding: 18px;
+  }
+  .work-hint {
+    font-size: 10px;
+  }
+  .skill-insight {
+    grid-template-columns: 1fr;
+    padding: 22px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .work-image img,
+  .work-link svg {
+    transition: none;
+  }
+  .work-link:hover svg {
+    transform: none;
+  }
+}
+
+.discovery-links {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  max-width: 1000px;
+  margin: 42px auto;
+  text-align: left;
+}
+.discovery-links a {
+  padding: clamp(22px, 3vw, 34px);
+  border: 1px solid #ffffff1c;
+  border-radius: 18px;
+  background: linear-gradient(140deg, #b88ae512, #100c18a6);
+  transition:
+    border-color 0.3s,
+    background 0.3s;
+}
+.discovery-links strong {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  margin: 18px 0 13px;
+  font-size: clamp(23px, 2.7vw, 36px);
+  letter-spacing: -0.045em;
+  font-weight: 650;
+  color: #eee6f5;
+}
+.discovery-links strong span {
+  color: #c084fc;
+  transition: transform 0.3s;
+}
+.discovery-links p {
+  max-width: 36ch;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #baadca;
+}
+.discovery-links a:hover,
+.discovery-links a:focus-visible {
+  border-color: #c084fc70;
+  background: #b88ae51c;
+}
+.discovery-links a:focus-visible {
+  outline: 2px solid #d5b6f2;
+  outline-offset: 4px;
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .discovery-links a:hover strong span {
+    transform: translate(4px, -4px);
+  }
+}
+@media (max-width: 640px) {
+  .discovery-links {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* One scroll sequence: hero yields, projects cross the stage, chapters arrive. */
+.project-scene-title {
+  position: absolute;
+  top: 42%;
+  left: 0;
+  width: max-content;
+  font-size: clamp(100px, 20vw, 320px);
+  font-weight: 850;
+  letter-spacing: -0.07em;
+  line-height: 0.9;
+  color: #c084fc0c;
+  pointer-events: none;
+  user-select: none;
+}
+.project-scene-label {
+  position: absolute;
+  left: 5vw;
+  top: 90px;
+  z-index: 2;
+  pointer-events: none;
+}
+.project-scene-progress {
+  position: absolute;
+  bottom: 28px;
+  left: 5vw;
+  right: 5vw;
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  pointer-events: none;
+  color: #bcb0c9;
+  font:
+    10px var(--font-mono),
+    monospace;
+}
+.project-scene-progress > div {
+  flex: 1;
+  height: 1px;
+  background: #ffffff20;
+  overflow: hidden;
+}
+.project-scene-progress i {
+  display: block;
+  height: 100%;
+  background: #d6adff;
+  transform-origin: left;
+}
+.chapter-title-mask {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.12em;
+  margin-bottom: -0.12em;
+}
+.chapter-title-mask > span {
+  display: block;
+  transform-origin: left bottom;
+}
+.chapter-title-accent {
+  color: #c084fc;
+}
+.footer-finale {
+  position: relative;
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  [data-project-card] .project-surface img {
+    transition: transform 0.65s cubic-bezier(0.22, 0.75, 0.18, 1);
+  }
+  [data-project-card]:hover .project-surface img {
+    transform: scale(1.045);
+  }
+  .constellation-nodes button:hover {
+    transform: translateY(-6px);
+  }
+  .discovery-links a {
+    transition:
+      transform 0.55s cubic-bezier(0.22, 0.75, 0.18, 1),
+      border-color 0.3s,
+      background 0.3s;
+  }
+  .discovery-links a:hover {
+    transform: translateY(-7px);
+  }
+}
+@media (max-width: 767px) {
+  .project-scene-label {
+    top: 85px;
+    font-size: 8px;
+  }
+  .project-scene-progress {
+    bottom: 18px;
+    gap: 12px;
+    font-size: 8px;
+  }
+}
+/* Reading mode presents every project in flow, including keyboard-accessible links. */
+[data-project-gallery][data-reduced-motion="true"] {
+  height: auto;
+}
+[data-reduced-motion="true"] .project-stage {
+  position: relative;
+  height: auto;
+  overflow: visible;
+  padding: 40px 5vw;
+}
+[data-reduced-motion="true"] .project-stage > .relative {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 24px;
+}
+[data-reduced-motion="true"] [data-project-card] {
+  position: relative;
+  top: auto;
+  bottom: auto;
+  transform: none !important;
+  translate: none;
+  max-width: 100%;
+}
+[data-reduced-motion="true"] .project-surface {
+  max-width: 100%;
+  height: auto !important;
+  min-height: 560px;
+}
+[data-reduced-motion="true"] .project-scene-title,
+[data-reduced-motion="true"] .project-scene-label,
+[data-reduced-motion="true"] .project-scene-progress {
+  display: none;
+}
+
+/* Keep the first line neutral; only the second line carries the chapter accent. */
+.chapter-title .chapter-title-mask {
+  color: inherit;
+}
+.chapter-title .chapter-title-mask > span {
+  color: inherit;
+}
+.chapter-title .chapter-title-mask > .chapter-title-accent {
+  color: #c084fc;
+}
+.project-scene-label {
+  z-index: 0;
+}

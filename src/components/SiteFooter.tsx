@@ -1,3 +1,5 @@
+import FooterFinale from "@/components/portfolio/FooterFinale";
+import Link from "next/link";
 import RollText from "@/components/portfolio/RollText";
 import LightningStory from "@/components/portfolio/LightningStory";
 import Reveal from "@/components/portfolio/Reveal";
@@ -7,7 +9,7 @@ export default function SiteFooter() {
   return (
     <footer id="contact" className="site-footer">
       <Reveal>
-        <div className="footer-stage" data-enter>
+        <FooterFinale>
           <svg
             className="footer-contours"
             viewBox="0 0 1400 700"
@@ -43,6 +45,22 @@ export default function SiteFooter() {
             Personal projects, experiments and ideas I choose to explore.
           </p>
 
+          <nav className="discovery-links" aria-label="Keep exploring">
+            <Link href="/now">
+              <span className="eyebrow">Off the clock / Now</span>
+              <strong>
+                Behind the code.<span aria-hidden="true">↗</span>
+              </strong>
+              <p>What's on repeat, what I'm playing, and life away from the editor.</p>
+            </Link>
+            <Link href="/blog">
+              <span className="eyebrow">Notes & ideas / Blog</span>
+              <strong>
+                A little deeper.<span aria-hidden="true">↗</span>
+              </strong>
+              <p>Thoughts, development stories, and things learned along the way.</p>
+            </Link>
+          </nav>
           <div className="footer-columns">
             <nav aria-label="Footer pages">
               <p className="eyebrow">Explore</p>
@@ -91,7 +109,7 @@ export default function SiteFooter() {
           >
             <RollText>Say hi on Discord</RollText> <span aria-hidden="true">↗</span>
           </a>
-        </div>
+        </FooterFinale>
 
         <div className="footer-baseline">
           <span>© {new Date().getFullYear()} byPixelTV</span>

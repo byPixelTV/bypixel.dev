@@ -1,4 +1,5 @@
 "use client";
+import ChapterTitle from "@/components/portfolio/ChapterTitle";
 import RollText from "@/components/portfolio/RollText";
 
 import { useState, useEffect, useRef, type CSSProperties } from "react";
@@ -94,6 +95,51 @@ const descriptions = [
   "The tools that make the everyday workflow work.",
 ];
 
+const skillNotes: Record<string, string> = {
+  HTML: "Semantic structure that makes interfaces accessible and understandable.",
+  CSS: "Responsive layouts, visual detail, and motion that feels natural.",
+  JavaScript: "The interaction layer between an idea and a working interface.",
+  TypeScript: "Typed application logic, from the browser to backend services.",
+  React: "Reusable components and stateful, interactive interfaces.",
+  "Next.js": "Full-stack React applications, including the Dat Bot dashboard.",
+  Vue: "Reactive components for building interfaces with a compact API.",
+  Nuxt: "Routing, rendering, and server features around Vue applications.",
+  "Tailwind CSS": "A consistent visual system built directly into components.",
+  "Framer Motion": "Transitions and interaction feedback in React interfaces.",
+  Java: "JVM applications and the ecosystem behind Minecraft servers.",
+  Kotlin: "Backend services and Minecraft plugins, including BetterAttack and EraMC.",
+  "Node.js": "JavaScript beyond the browser: APIs, integrations, and tooling.",
+  Python: "Scripts and automation that take repetitive work off the table.",
+  Spring: "A foundation for structured JVM backend applications.",
+  Gradle: "Dependency management and repeatable builds for JVM projects.",
+  Maven: "Building and managing dependencies in the Java ecosystem.",
+  Appwrite: "Backend building blocks for authentication, storage, and data.",
+  Ktor: "Lightweight HTTP services written in Kotlin.",
+  gRPC: "Typed communication between services.",
+  MySQL: "Relational storage for structured application data.",
+  MariaDB: "An open-source relational database in the MySQL ecosystem.",
+  SQLite: "An embedded database for applications that need local storage.",
+  PostgreSQL: "Relational data with flexible queries and strong constraints.",
+  MongoDB: "Document-based data storage, including this website's blog.",
+  Redis: "Fast in-memory storage for caching and short-lived state.",
+  Prisma: "Typed database access and schema management.",
+  Clickhouse: "Column-oriented storage for analytical queries.",
+  InfluxDB: "Time-series data, metrics, and measurements.",
+  Linux: "The foundation of the server infrastructure I administer.",
+  Git: "Version history, collaboration, and room to experiment.",
+  Docker: "Reproducible environments packaged into containers.",
+  Nginx: "Routing web traffic and serving applications behind a reverse proxy.",
+  "Nginx Proxy Manager": "Managing proxy hosts and certificates through a web interface.",
+  Vercel: "A deployment platform for web applications.",
+  "VS Code": "An extensible editor for web development and everyday coding.",
+  IntelliJ: "A development environment for Java and Kotlin projects.",
+  WebStorm: "Tools for navigating and developing JavaScript applications.",
+  PyCharm: "A focused environment for Python development.",
+  GoLand: "Editing, navigating, and debugging Go applications.",
+  DataGrip: "Exploring databases and working with SQL.",
+  Grafana: "Dashboards that make infrastructure metrics easier to understand.",
+  Postman: "Exploring endpoints and testing API requests.",
+};
 export default function SkillsShowcase() {
   const [category, setCategory] = useState("Frontend");
   const [selected, setSelected] = useState("React");
@@ -128,11 +174,7 @@ export default function SkillsShowcase() {
       <div className="skill-heading">
         <div>
           <p className="eyebrow">02 / {skills.length} tools. Five disciplines.</p>
-          <h2 id="skills-heading">
-            MY SKILL
-            <br />
-            <span>UNIVERSE.</span>
-          </h2>
+          <ChapterTitle id="skills-heading" lines={["MY SKILL", "UNIVERSE."]} />
         </div>
         <p>
           Pick a discipline. Explore its orbit.
@@ -225,6 +267,11 @@ export default function SkillsShowcase() {
             {visibleSkills.length} technologies in this orbit
           </span>
         </div>
+      </div>
+      <div className="skill-insight" aria-live="polite" aria-atomic="true">
+        <span className="eyebrow">In focus / {category}</span>
+        <strong>{selected}</strong>
+        <p>{skillNotes[selected]}</p>
       </div>
       <details className="complete-toolkit">
         <summary>
