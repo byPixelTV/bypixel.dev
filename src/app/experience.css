@@ -3654,7 +3654,7 @@ html {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 24px;
-  margin: 12px auto 0;
+  margin: 24px auto 0;
   border-top: 1px solid #ffffff20;
 }
 .experience-index a {
