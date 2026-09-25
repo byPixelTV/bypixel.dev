@@ -1,5 +1,7 @@
 "use server";
 
+import { withArtistImages } from "@/lib/artist-images";
+import { favoriteArtists } from "@/lib/favorite-artists";
 import { spotifyFetch } from "@/lib/spotify-fetch";
 import { latestSpotifyActivity } from "@/lib/spotify-activity";
 const NOW_PLAYING_ENDPOINT = "https://api.spotify.com/v1/me/player/currently-playing";
@@ -188,25 +190,31 @@ export async function getTopArtists(): Promise<TopArtistResult[]> {
 
     const data = await res.json();
 
-    return (data.items ?? []).map(
-      (artist: {
-        id: string;
-        name: string;
-        images?: { url: string }[];
-        external_urls?: { spotify?: string };
-        genres?: string[];
-        popularity?: number;
-      }) => ({
-        id: artist.id,
-        name: artist.name,
-        imageUrl: artist.images?.[0]?.url,
-        spotifyUrl: artist.external_urls?.spotify,
-        genres: artist.genres ?? [],
-        popularity: artist.popularity,
-      }),
+    return withArtistImages(
+      (data.items ?? []).map(
+        (artist: {
+          id: string;
+          name: string;
+          images?: { url: string }[];
+          external_urls?: { spotify?: string };
+          genres?: string[];
+          popularity?: number;
+        }) => ({
+          id: artist.id,
+          name: artist.name,
+          imageUrl: artist.images?.[0]?.url,
+          spotifyUrl: artist.external_urls?.spotify,
+          genres: artist.genres ?? [],
+          popularity: artist.popularity,
+        }),
+      ),
     );
   } catch (err) {
     console.error("[Spotify] getTopArtists failed:", err);
     return [];
   }
+}
+
+export async function getFavoriteArtists(): Promise<TopArtistResult[]> {
+  return withArtistImages(favoriteArtists);
 }

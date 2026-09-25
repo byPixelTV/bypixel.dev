@@ -7,6 +7,12 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
+        hostname: "cdn-images.dzcdn.net",
+        pathname: "/images/artist/**",
+        search: "",
+      },
+      {
+        protocol: "https",
         hostname: "cdn.bypixel.dev",
         pathname: "/raw/**",
       },

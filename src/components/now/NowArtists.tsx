@@ -2,29 +2,31 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { getTopArtists, type TopArtistResult } from "@/lib/actions/spotify";
+import { getTopArtists, getFavoriteArtists, type TopArtistResult } from "@/lib/actions/spotify";
 
-const favorites: TopArtistResult[] = [
-  { id: "raf-camora", name: "RAF Camora", genres: ["german hip hop"] },
-  { id: "travis-scott", name: "Travis Scott", genres: ["rap", "trap"] },
-  { id: "yeat", name: "Yeat", genres: ["rage rap"] },
-  { id: "nf", name: "NF", genres: ["hip hop"] },
-  { id: "don-toliver", name: "Don Toliver", genres: ["melodic rap"] },
-];
+import { favoriteArtists } from "@/lib/favorite-artists";
 
 export default function NowArtists() {
-  const [artists, setArtists] = useState(favorites);
+  const [artists, setArtists] = useState<TopArtistResult[]>(favoriteArtists);
   const [live, setLive] = useState(false);
   useEffect(() => {
     let disposed = false;
     let pending = false;
+    let hasTopArtists = false;
     let timer: ReturnType<typeof setTimeout>;
     const refresh = () => {
       if (disposed || pending || document.hidden) return;
       pending = true;
       void getTopArtists()
-        .then((result) => {
-          if (disposed || !result.length) return;
+        .then(async (result) => {
+          if (disposed) return;
+          if (!result.length) {
+            if (hasTopArtists) return;
+            const fallback = await getFavoriteArtists();
+            if (!disposed) setArtists(fallback);
+            return;
+          }
+          hasTopArtists = true;
           setArtists(result);
           setLive(true);
         })

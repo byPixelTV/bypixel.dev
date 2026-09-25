@@ -548,3 +548,40 @@ test("history quota does not put the widget to sleep when playback starts", asyn
   expect(await getNowPlaying()).toMatchObject({ isPlaying: true, title: "New live track" });
   expect(globalThis.fetch).toHaveBeenCalledTimes(4);
 });
+
+test("cold Spotify rate limit loads favorite images from Deezer and later recovers top artists", async () => {
+  const { getTopArtists, getFavoriteArtists } = await import("../src/lib/actions/spotify");
+  setSystemTime(new Date("2032-01-01T12:00:00Z"));
+  const image = "https://cdn-images.dzcdn.net/images/artist/test/250x250.jpg";
+  globalThis.fetch = mock(async (url) => {
+    if (url.includes("/api/token")) return tokenResponse();
+    if (url.startsWith("https://api.spotify.com/"))
+      return new Response(null, { status: 429, headers: { "Retry-After": "120" } });
+    const name = new URL(url).searchParams.get("q");
+    return Response.json({ data: [{ name, picture_medium: image }] });
+  });
+  expect(await getTopArtists()).toEqual([]);
+  const favorites = await getFavoriteArtists();
+  expect(favorites).toHaveLength(5);
+  expect(favorites.every((artist) => artist.imageUrl === image)).toBe(true);
+  expect(globalThis.fetch).toHaveBeenCalledTimes(7);
+  expect(await getTopArtists()).toEqual([]);
+  expect(await getFavoriteArtists()).toEqual(favorites);
+  expect(globalThis.fetch).toHaveBeenCalledTimes(7);
+
+  setSystemTime(new Date("2032-01-01T12:02:01Z"));
+  globalThis.fetch = mock(async () =>
+    Response.json({
+      items: [
+        {
+          id: "spotify-nf",
+          name: "NF",
+          images: [],
+          external_urls: { spotify: "https://open.spotify.com/artist/spotify-nf" },
+        },
+      ],
+    }),
+  );
+  expect(await getTopArtists()).toMatchObject([{ id: "spotify-nf", name: "NF", imageUrl: image }]);
+  expect(globalThis.fetch).toHaveBeenCalledTimes(1);
+});
