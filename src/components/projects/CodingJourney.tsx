@@ -1,10 +1,8 @@
 "use client";
-import ChapterTitle from "@/components/portfolio/ChapterTitle";
-
-import { useEffect, useRef, useState } from "react";
-import { motion, useReducedMotion, useScroll, useSpring } from "motion/react";
 import { Icon } from "@iconify/react";
-
+import { useRef } from "react";
+import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
+import ChapterTitle from "@/components/portfolio/ChapterTitle";
 const milestones = [
   {
     year: "2022",
@@ -55,179 +53,96 @@ const milestones = [
 ];
 
 export default function CodingJourney() {
-  const root = useRef<HTMLElement>(null);
-  const [active, setActive] = useState(0);
-
-  const reduce = useReducedMotion();
-
-  const { scrollYProgress } = useScroll({
-    target: root,
-    offset: ["start start", "end end"],
-  });
-
-  const progress = useSpring(scrollYProgress, {
-    stiffness: 100,
-    damping: 30,
-  });
-
-  useEffect(() => {
-    const element = root.current;
-    if (!element) return;
-
-    const slots = Array.from(element.querySelectorAll<HTMLElement>(".journey-chapter-slot"));
-
-    let frame = 0;
-
-    const update = () => {
-      frame = 0;
-
-      // Switch chapter when its actual scroll slot crosses
-      // the reading line. Do NOT measure the card itself.
-      const readingLine = window.innerHeight * 0.42;
-
-      let next = 0;
-
-      for (let index = 0; index < slots.length; index++) {
-        const rect = slots[index].getBoundingClientRect();
-
-        if (rect.top <= readingLine) {
-          next = index;
-        } else {
-          break;
-        }
-      }
-
-      setActive((current) => (current === next ? current : next));
-    };
-
-    const schedule = () => {
-      if (!frame) {
-        frame = requestAnimationFrame(update);
-      }
-    };
-
-    const resizeObserver = new ResizeObserver(schedule);
-    resizeObserver.observe(element);
-
-    window.addEventListener("scroll", schedule, { passive: true });
-    window.addEventListener("resize", schedule);
-
-    update();
-
-    return () => {
-      cancelAnimationFrame(frame);
-      resizeObserver.disconnect();
-
-      window.removeEventListener("scroll", schedule);
-      window.removeEventListener("resize", schedule);
-    };
-  }, []);
-
-  const current = milestones[active];
-
   return (
-    <section ref={root} className="journey-editorial" aria-labelledby="journey-heading">
-      <div className="journey-overview">
-        <p className="eyebrow">03 / Development timeline</p>
-
-        <ChapterTitle id="journey-heading" lines={["FROM SCRIPTS", "TO SYSTEMS."]} />
-
-        <p className="journey-intro">
-          How my development stack evolved from simple scripts and websites into backend systems,
-          infrastructure and scalable services.
+    <section className="story-editorial" aria-labelledby="story-heading">
+      <header className="story-editorial-intro">
+        <p className="eyebrow">02 / A work in progress</p>
+        <ChapterTitle id="story-heading" lines={["FOLLOWING", "THE CURIOSITY."]} />
+        <p>
+          From the first script to the systems I build today.
+          <br />
+          One idea leading to the next.
         </p>
-
-        <div className="journey-current" aria-live="polite">
-          <span className="eyebrow">{current.year}</span>
-
-          <motion.div
-            key={current.year}
-            className="journey-current-content"
-            initial={reduce ? false : { opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: reduce ? 0 : 0.35,
-              ease: [0.22, 0.75, 0.18, 1],
-            }}
-          >
-            <span className="journey-year">{current.shortTitle}</span>
-
-            <span className="journey-current-tech">{current.tags.slice(0, 3).join(" · ")}</span>
-          </motion.div>
-        </div>
-
-        <nav className="journey-chapters" aria-label="Development timeline">
-          {milestones.map((milestone, index) => (
-            <a
-              href={`#year-${milestone.year}`}
-              key={milestone.year}
-              aria-current={active === index ? "step" : undefined}
-            >
-              {String(index + 1).padStart(2, "0")} / {milestone.year}
-            </a>
-          ))}
-        </nav>
-
-        <div className="journey-progress" aria-hidden="true">
-          <motion.div
-            style={{
-              scaleX: reduce ? scrollYProgress : progress,
-            }}
-          />
-        </div>
-      </div>
-
-      <ol className="journey-chapter-list">
+      </header>
+      <ol>
         {milestones.map((milestone, index) => (
-          <li
-            key={milestone.year}
-            id={`year-${milestone.year}`}
-            data-index={index}
-            data-current={active === index}
-            className="journey-chapter-slot"
-          >
-            <div className="journey-card-frame">
-              <motion.article
-                className="journey-chapter"
-                initial={false}
-                animate={{
-                  opacity: active === index ? 1 : 0.72,
-                }}
-                transition={{
-                  duration: reduce ? 0 : 0.35,
-                  ease: [0.22, 0.75, 0.18, 1],
-                }}
-              >
-                <div className="journey-chapter-top">
-                  <div className="journey-chapter-meta">
-                    <span className="eyebrow">
-                      {String(index + 1).padStart(2, "0")} / {milestone.year}
-                    </span>
-
-                    {milestone.isCurrent && <span className="journey-current-badge">Current</span>}
-                  </div>
-
-                  <Icon icon={milestone.icon} width={42} height={42} aria-hidden="true" />
-                </div>
-
-                <h3>{milestone.title}</h3>
-
-                <p>{milestone.description}</p>
-
-                <ul className="journey-tags" aria-label="Technologies">
-                  {milestone.tags.map((tag) => (
-                    <li key={tag}>{tag}</li>
-                  ))}
-                </ul>
-
-                <span className="journey-chapter-number" aria-hidden="true">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-              </motion.article>
-            </div>
-          </li>
+          <StoryMoment key={milestone.year} milestone={milestone} index={index} />
         ))}
       </ol>
     </section>
+  );
+}
+function StoryMoment({
+  milestone,
+  index,
+}: {
+  milestone: (typeof milestones)[number];
+  index: number;
+}) {
+  const root = useRef<HTMLLIElement>(null);
+  const reduce = useReducedMotion();
+  const { scrollYProgress } = useScroll({ target: root, offset: ["start end", "end start"] });
+  const yearX = useTransform(
+    scrollYProgress,
+    [0, 0.45, 1],
+    [index % 2 ? 75 : -75, 0, index % 2 ? -35 : 35],
+  );
+  const yearScale = useTransform(scrollYProgress, [0, 0.4, 1], [0.82, 1, 1.08]);
+  const yearOpacity = useTransform(scrollYProgress, [0, 0.28, 0.72, 1], [0.7, 1, 1, 0.7]);
+  const copyY = useTransform(scrollYProgress, [0, 0.3, 0.8, 1], [55, 0, 0, -25]);
+  const copyOpacity = useTransform(scrollYProgress, [0, 0.25, 0.85, 1], [0.2, 1, 1, 0.5]);
+  const trace = useTransform(scrollYProgress, [0, 0.45, 1], [0, 1, 1]);
+  return (
+    <li ref={root} id={`year-${milestone.year}`} className="story-moment">
+      <motion.div
+        className="story-moment-year"
+        aria-hidden="true"
+        style={{
+          x: reduce ? 0 : yearX,
+          scale: reduce ? 1 : yearScale,
+          opacity: reduce ? 1 : yearOpacity,
+        }}
+      >
+        {milestone.year}
+      </motion.div>
+      <motion.div
+        className="story-moment-copy"
+        style={{ y: reduce ? 0 : copyY, opacity: reduce ? 1 : copyOpacity }}
+      >
+        <p className="eyebrow">
+          {milestone.year} / {milestone.isCurrent ? "Still unfolding" : `Chapter 0${index + 1}`}
+        </p>
+        <div className="story-detail" aria-hidden="true">
+          <Icon icon={milestone.icon} width={28} height={28} />
+          <svg viewBox="0 0 160 42">
+            <motion.path
+              d={
+                [
+                  "M2 21h28l12-14 20 28 12-14h84",
+                  "M2 21h40V7h45v28h35V21h36",
+                  "M2 30h35V12h35v18h35V12h51",
+                  "M2 21h38l20-14 20 14-20 14-20-14m40 0h78",
+                  "M2 30h25l24-18h22l22 18h20l25-18h18",
+                ][index]
+              }
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              style={{ pathLength: reduce ? 1 : trace }}
+            />
+          </svg>
+        </div>
+        <h3>{milestone.title}</h3>
+        <p>{milestone.description}</p>
+        <ul aria-label="Technologies">
+          {milestone.tags.map((tag) => (
+            <li key={tag}>{tag}</li>
+          ))}
+        </ul>
+      </motion.div>
+      <span className="story-moment-index" aria-hidden="true">
+        0{index + 1}
+      </span>
+    </li>
   );
 }

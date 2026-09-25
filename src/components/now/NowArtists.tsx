@@ -2,11 +2,13 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { motion, useReducedMotion } from "motion/react";
 import { getTopArtists, getFavoriteArtists, type TopArtistResult } from "@/lib/actions/spotify";
 
 import { favoriteArtists } from "@/lib/favorite-artists";
 
 export default function NowArtists() {
+  const reduce = useReducedMotion();
   const [artists, setArtists] = useState<TopArtistResult[]>(favoriteArtists);
   const [live, setLive] = useState(false);
   useEffect(() => {
@@ -76,7 +78,17 @@ export default function NowArtists() {
             </>
           );
           return (
-            <li key={artist.id}>
+            <motion.li
+              key={artist.id}
+              initial={reduce ? false : { opacity: 0, y: 26 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{
+                duration: reduce ? 0 : 0.7,
+                delay: reduce ? 0 : Math.min(index, 4) * 0.06,
+                ease: [0.22, 0.75, 0.18, 1],
+              }}
+            >
               {artist.spotifyUrl ? (
                 <a href={artist.spotifyUrl} target="_blank" rel="noopener noreferrer">
                   {content}
@@ -84,7 +96,7 @@ export default function NowArtists() {
               ) : (
                 <div>{content}</div>
               )}
-            </li>
+            </motion.li>
           );
         })}
       </ol>

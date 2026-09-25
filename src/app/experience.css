@@ -1826,7 +1826,7 @@
   border-color: #8b5cf650 !important;
   box-shadow: 0 8px 30px #7c3aed19 !important;
 }
-/* Once-through rolling glyphs on real links and controls. */
+/* Smooth rolling glyphs for links and controls. */
 .roll-text {
   display: inline-block;
   vertical-align: bottom;
@@ -1840,23 +1840,19 @@
   display: inline-block;
   height: 1.2em;
   overflow: hidden;
+  contain: paint;
 }
 .roll-track {
   display: block;
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
+  backface-visibility: hidden;
 }
 .roll-track > span {
   display: block;
   height: 1.2em;
   line-height: 1.2;
-}
-
-@keyframes link-roll {
-  from {
-    transform: translateY(0);
-  }
-  to {
-    transform: translateY(-50%);
-  }
+  transform: translateZ(0);
 }
 /* Category changes animate only the small, visible group of nodes. */
 .constellation-nodes button {
@@ -2015,7 +2011,6 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  :is(a, button, summary):is(:hover, :focus-visible) .roll-track,
   .constellation-nodes button,
   .skill-focus-name,
   .category-copy {

@@ -7,6 +7,7 @@ void main() { gl_Position = vec4(position, 0.0, 1.0); }`;
 const fragment = `precision mediump float;
 uniform vec2 resolution;
 uniform float time;
+uniform float songTransition;
 uniform vec3 primary;
 uniform vec3 secondary;
 uniform vec3 tertiary;
@@ -14,7 +15,15 @@ void main() {
   vec2 uv = gl_FragCoord.xy / resolution;
   vec2 p = (uv - .5) * vec2(resolution.x / resolution.y, 1.0);
   float t = time * .055;
+  float arrival = sin(songTransition * 3.14159265);
+  float aspect = resolution.x / resolution.y;
+  vec2 origin = vec2(-aspect * .32, .12);
+  float front = mix(-.3, length(vec2(aspect, 1.0)) + .5, songTransition);
+  float ringDistance = (length(p - origin) - front) * 4.0;
+  float wave = exp(-ringDistance * ringDistance) * arrival;
+  p *= 1.0 - arrival * .025;
   float bend = sin(p.x * 1.8 + t) * .18 + sin(p.x * 2.7 - t * .6) * .06;
+  bend += wave * .10;
   float d = p.y - bend;
   float light = exp(-d * d * 9.0);
   float foldDistance = (d + .16 + sin(p.x * 1.4 + t * .7) * .08) * 8.0;
@@ -24,6 +33,7 @@ void main() {
   color *= light * .16 + fold * .065;
   color += tertiary * glow * .05;
   color *= exp(-dot(p * .5, p * .5));
+  color += mix(primary, secondary, uv.x) * wave * .13;
   gl_FragColor = vec4(vec3(.024, .020, .037) + color, 1.0);
 }`;
 const fallback = [
@@ -33,17 +43,29 @@ const fallback = [
 ];
 
 /** Fixed scenery: neither page scroll nor the pointer changes its geometry. */
-export default function FluidAtmosphere({ colors }: { colors: string[] }) {
+export default function FluidAtmosphere({
+  colors,
+  trackKey,
+}: {
+  colors: string[];
+  trackKey: string | null;
+}) {
   const canvas = useRef<HTMLCanvasElement>(null);
   const palette = useRef(fallback);
+  const song = useRef<{ key: string | null; revision: number }>({ key: null, revision: 0 });
   const refresh = useRef<() => void>(() => {});
   useEffect(() => {
     palette.current = fallback.map((base, index) => {
       const rgb = colors[index]?.match(/[\d.]+/g)?.map(Number);
       return rgb?.length === 3 ? rgb.map((n) => Math.min(1, Math.max(0, n / 255))) : base;
     });
+    // Initial data and repeat polling updates do not count as a new song.
+    if (trackKey && trackKey !== song.current.key) {
+      if (song.current.key) song.current.revision++;
+      song.current.key = trackKey;
+    }
     refresh.current();
-  }, [colors]);
+  }, [colors, trackKey]);
 
   useEffect(() => {
     const surface = canvas.current;
@@ -97,7 +119,7 @@ export default function FluidAtmosphere({ colors }: { colors: string[] }) {
     gl.enableVertexAttribArray(position);
     gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
     const uniforms = Object.fromEntries(
-      ["resolution", "time", "primary", "secondary", "tertiary"].map((name) => [
+      ["resolution", "time", "songTransition", "primary", "secondary", "tertiary"].map((name) => [
         name,
         gl.getUniformLocation(program, name),
       ]),
@@ -108,14 +130,24 @@ export default function FluidAtmosphere({ colors }: { colors: string[] }) {
     let frame = 0;
     let previous = 0;
     let elapsed = 0;
+    let transition = 1;
+    let revision = song.current.revision;
     let lost = false;
     const draw = (now: number) => {
       frame = 0;
       if (lost || document.hidden) return;
       const dt = previous ? Math.min((now - previous) / 1000, 0.05) : 0;
       previous = now;
-      if (!preference.matches) elapsed += dt;
-      const ease = preference.matches ? 1 : 1 - Math.exp(-dt * 0.65);
+      if (revision !== song.current.revision) {
+        revision = song.current.revision;
+        transition = preference.matches ? 1 : 0;
+      }
+      if (preference.matches) transition = 1;
+      else {
+        elapsed += dt;
+        transition = Math.min(1, transition + dt / 3.2);
+      }
+      const ease = preference.matches ? 1 : 1 - Math.exp(-dt * (transition < 1 ? 1.25 : 0.65));
       tint.forEach((color, index) =>
         color.forEach((value, channel) => {
           color[channel] = value + (palette.current[index][channel] - value) * ease;
@@ -123,6 +155,7 @@ export default function FluidAtmosphere({ colors }: { colors: string[] }) {
       );
       gl.uniform2f(uniforms.resolution, surface.width, surface.height);
       gl.uniform1f(uniforms.time, elapsed);
+      gl.uniform1f(uniforms.songTransition, transition);
       ["primary", "secondary", "tertiary"].forEach((name, index) =>
         gl.uniform3fv(uniforms[name], tint[index]),
       );
@@ -133,6 +166,10 @@ export default function FluidAtmosphere({ colors }: { colors: string[] }) {
     const sync = () => {
       cancelAnimationFrame(frame);
       previous = 0;
+      if (document.hidden || preference.matches) {
+        transition = 1;
+        revision = song.current.revision;
+      }
       if (!document.hidden && !lost) frame = requestAnimationFrame(draw);
     };
     const resize = () => {

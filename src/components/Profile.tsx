@@ -169,16 +169,16 @@ const Profile = () => {
           <strong>Selected work</strong>
           <span aria-hidden="true">↘</span>
         </a>
-        <a href="#skills">
-          <small>02</small>
-          <strong>The toolkit</strong>
-          <span aria-hidden="true">↘</span>
-        </a>
         <a href="#journey">
-          <small>03</small>
+          <small>02</small>
           <strong>My story</strong>
           <span aria-hidden="true">↘</span>
         </a>
+        <a href="#skills">
+          <small>03</small>
+          <strong>The toolkit</strong>
+          <span aria-hidden="true">↘</span>
+        </a>{" "}
       </nav>
     </section>
   );

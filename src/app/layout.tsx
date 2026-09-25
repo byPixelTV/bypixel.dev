@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { Inter, JetBrains_Mono, Caveat } from "next/font/google";
 import "./globals.css";
 import "./experience.css";
+import "./flow.css";
 import "lenis/dist/lenis.css";
 import AlbumAtmosphere from "@/components/portfolio/AlbumAtmosphere";
 

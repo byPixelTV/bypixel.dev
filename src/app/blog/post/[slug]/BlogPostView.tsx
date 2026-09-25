@@ -6,7 +6,7 @@ import CustomVideoPlayer from "@/components/blog/CustomVideoPlayer";
 import { LuArrowLeft, LuCalendar, LuEye, LuUser, LuClock } from "react-icons/lu";
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, useScroll } from "motion/react";
 import dayjs from "dayjs";
 import { Button } from "@/components/ui/button";
 
@@ -98,8 +98,16 @@ export default function BlogPostView({
     "prose-blockquote:border-l-purple-500 prose-blockquote:bg-white/5 prose-blockquote:py-4 prose-blockquote:px-8 prose-blockquote:rounded-r-3xl prose-blockquote:text-white/70 prose-blockquote:italic",
   );
 
+  const articleRef = React.useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({ target: articleRef, offset: ["start start", "end end"] });
+
   return (
     <>
+      <motion.div
+        className="article-reading-progress"
+        style={{ scaleX: scrollYProgress }}
+        aria-hidden="true"
+      />
       <div className="article-page container mx-auto px-6 pt-40 pb-24 min-h-screen">
         <motion.div
           className="max-w-4xl mx-auto mb-12"
@@ -118,7 +126,7 @@ export default function BlogPostView({
           </Link>
         </motion.div>
 
-        <article id="post-content-root" className="max-w-4xl mx-auto">
+        <article ref={articleRef} id="post-content-root" className="max-w-4xl mx-auto">
           <header className="mb-16 text-center">
             <motion.div
               initial={{ opacity: 0 }}

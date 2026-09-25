@@ -2,7 +2,6 @@ import BackgroundLayout from "@/components/BackgroundLayout";
 import Navbar from "@/components/Navbar";
 import Profile from "@/components/Profile";
 import HorizontalGallery from "@/components/projects/ProjectsGalery";
-import SkillsShowcase from "@/components/projects/SkillsShowcase";
 import CodingJourney from "@/components/projects/CodingJourney";
 import SiteFooter from "@/components/SiteFooter";
 import { Metadata } from "next";
@@ -64,10 +63,7 @@ export default async function About() {
           </section>
           <section id="projects" className="space-y-10 scroll-mt-28 md:space-y-20">
             <HorizontalGallery />
-            <div id="skills" className="scroll-mt-28">
-              <SkillsShowcase />
-            </div>
-            <div id="journey" className="scroll-mt-28" data-enter>
+            <div id="journey" className="scroll-mt-28">
               <CodingJourney />
             </div>
           </section>

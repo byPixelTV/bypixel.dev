@@ -10,6 +10,7 @@ import {
   type ReactNode,
 } from "react";
 
+import { albumFallback as fallback, extractAlbumPalette } from "@/lib/album-palette";
 import FluidAtmosphere from "./FluidAtmosphere";
 import { usePathname } from "next/navigation";
 import { getNowPlaying, type NowPlayingResult } from "@/lib/actions/spotify";
@@ -19,7 +20,6 @@ const AlbumContext = createContext<{ data: NowPlayingResult | null; loaded: bool
   data: null,
   loaded: false,
 });
-const fallback = ["rgb(139 92 246)", "rgb(192 132 252)", "rgb(120 80 205)"];
 const palettes = new Map<string, string[]>();
 export const useAlbumAtmosphere = () => useContext(AlbumContext);
 
@@ -32,25 +32,13 @@ function paletteFromCover(url: string): Promise<string[]> {
     cover.onload = () => {
       try {
         const canvas = document.createElement("canvas");
-        canvas.width = canvas.height = 24;
+        const sampleSize = 96;
+        canvas.width = canvas.height = sampleSize;
         const ctx = canvas.getContext("2d", { willReadFrequently: true });
         if (!ctx) return resolve(fallback);
-        ctx.drawImage(cover, 0, 0, 24, 24);
-        const { data } = ctx.getImageData(0, 0, 24, 24);
-        const colors = [0, 1, 2].map((region) => {
-          const rgb = [0, 0, 0];
-          let count = 0;
-          for (let y = 0; y < 24; y++)
-            for (let x = region * 8; x < region * 8 + 8; x++) {
-              const offset = (y * 24 + x) * 4;
-              for (let channel = 0; channel < 3; channel++) rgb[channel] += data[offset + channel];
-              count++;
-            }
-          const average = rgb.map((value) => value / count);
-          const peak = Math.max(...average, 1);
-          const lift = Math.max(1, 165 / peak);
-          return `rgb(${average.map((value) => Math.round(Math.min(235, value * lift + 12))).join(" ")})`;
-        });
+        ctx.drawImage(cover, 0, 0, sampleSize, sampleSize);
+        const { data } = ctx.getImageData(0, 0, sampleSize, sampleSize);
+        const colors = extractAlbumPalette(data);
         if (palettes.size > 24) palettes.clear();
         palettes.set(url, colors);
         resolve(colors);
@@ -68,8 +56,13 @@ export default function AlbumAtmosphere({ children }: { children: ReactNode }) {
   const root = useRef<HTMLDivElement>(null);
   const [data, setData] = useState<NowPlayingResult | null>(null);
   const [loaded, setLoaded] = useState(false);
-  const [colors, setColors] = useState(fallback);
+  const [atmosphere, setAtmosphere] = useState<{ colors: string[]; trackKey: string | null }>({
+    colors: fallback,
+    trackKey: null,
+  });
   const cover = data?.albumImageUrl ?? null;
+  const trackKey =
+    data?.trackId ?? data?.songUrl ?? (data?.title ? `${data.title}::${data.artist ?? ""}` : null);
   useEffect(() => {
     let disposed = false;
     let pending = false;
@@ -123,7 +116,7 @@ export default function AlbumAtmosphere({ children }: { children: ReactNode }) {
     let disposed = false;
     const apply = (colors: string[]) => {
       if (disposed || !root.current) return;
-      setColors(colors);
+      setAtmosphere({ colors, trackKey });
       colors.forEach((color, index) =>
         root.current!.style.setProperty(`--album-${index + 1}`, color),
       );
@@ -134,11 +127,11 @@ export default function AlbumAtmosphere({ children }: { children: ReactNode }) {
     return () => {
       disposed = true;
     };
-  }, [cover]);
+  }, [cover, trackKey]);
   return (
     <AlbumContext value={{ data, loaded }}>
       <div ref={root} className="album-atmosphere" data-home={pathname === "/"}>
-        <FluidAtmosphere colors={colors} />
+        <FluidAtmosphere colors={atmosphere.colors} trackKey={atmosphere.trackKey} />
         {children}
       </div>
     </AlbumContext>

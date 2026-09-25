@@ -1,3 +1,5 @@
+import ChapterTitle from "@/components/portfolio/ChapterTitle";
+import { ScrollScene, SceneRibbon } from "@/components/portfolio/ScrollScene";
 import { Suspense } from "react";
 import BlogFeed from "@/components/blog/BlogFeed";
 import BlogFeedSkeleton from "@/components/blog/BlogFeedSkeleton";
@@ -11,13 +13,9 @@ export default function BlogPage() {
           <p className="eyebrow" data-intro="0">
             The workbench / byPixelTV
           </p>
-          <h1 data-intro="1">
-            THINK.
-            <br />
-            <em>BUILD.</em>
-            <br />
-            SHARE.
-          </h1>
+          <ScrollScene travel={35}>
+            <ChapterTitle as="h1" lines={["THINK.", "BUILD.", "SHARE."]} />
+          </ScrollScene>
           <div data-intro="2">
             <span className="blog-hero-mark" aria-hidden="true">
               ✳
@@ -30,6 +28,7 @@ export default function BlogPage() {
           </div>
         </header>
       </Reveal>
+      <SceneRibbon words="NOTES FROM THE WORKBENCH" />
       <Suspense fallback={<BlogFeedSkeleton />}>
         <BlogFeed />
       </Suspense>
