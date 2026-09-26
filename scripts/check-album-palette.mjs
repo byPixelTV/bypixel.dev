@@ -44,13 +44,52 @@ test("a small pastel accent is retained against white", () => {
   ).map(rgb);
   assert.ok(colors.every(([r, , b]) => b > r + 35));
 });
-test("monochrome and isolated color noise use the purple fallback", () => {
+test("white and black covers stay neutral despite isolated color noise", () => {
+  const colors = extractAlbumPalette(
+    cover([
+      [5000, [255, 255, 255]],
+      [5000, [20, 20, 20]],
+      [1, [255, 0, 0]],
+    ]),
+  ).map(rgb);
+  assert.ok(colors.every(([r, g, b]) => r === g && g === b && r >= 210));
+});
+test("white and off-white covers supply their own light palette", () => {
+  for (const color of [
+    [255, 255, 255],
+    [248, 244, 233],
+  ]) {
+    const colors = extractAlbumPalette(cover([[1000, color]])).map(rgb);
+    assert.deepEqual(colors[0], color);
+    assert.ok(colors.every((channels) => Math.min(...channels) >= 200));
+  }
+});
+test("small shaded white details on black produce a bright neutral palette", () => {
+  const colors = extractAlbumPalette(
+    cover([
+      [9800, [15, 15, 15]],
+      [100, [95, 95, 95]],
+      [100, [150, 150, 150]],
+    ]),
+  ).map(rgb);
+  assert.ok(colors.every(([r, g, b]) => r === g && g === b && r >= 200));
+});
+test("color accents still take priority over shaded neutral artwork", () => {
+  const colors = extractAlbumPalette(
+    cover([
+      [7000, [15, 15, 15]],
+      [2900, [120, 120, 120]],
+      [100, [215, 30, 50]],
+    ]),
+  ).map(rgb);
+  assert.ok(colors.every(([r, g, b]) => r > g * 2 && r > b * 2));
+});
+test("dark covers and tiny white highlights retain the fallback", () => {
   assert.deepEqual(
     extractAlbumPalette(
       cover([
-        [5000, [255, 255, 255]],
-        [5000, [20, 20, 20]],
-        [1, [255, 0, 0]],
+        [9990, [20, 20, 20]],
+        [10, [255, 255, 255]],
       ]),
     ),
     albumFallback,
@@ -60,6 +99,10 @@ test("monochrome and isolated color noise use the purple fallback", () => {
 test("transparent pixels do not introduce an accent", () => {
   assert.deepEqual(
     extractAlbumPalette(new Uint8ClampedArray(Array(100).fill([255, 0, 0, 0]).flat())),
+    albumFallback,
+  );
+  assert.deepEqual(
+    extractAlbumPalette(new Uint8ClampedArray(Array(100).fill([255, 255, 255, 0]).flat())),
     albumFallback,
   );
 });

@@ -1,4 +1,4 @@
-/** Accent extraction: neutral backgrounds never dilute small, colorful regions. */
+/** Prefer colorful accents, with light neutrals for otherwise monochrome covers. */
 export const albumFallback = ["rgb(139 92 246)", "rgb(192 132 252)", "rgb(120 80 205)"];
 
 type Swatch = { count: number; rgb: number[]; saturation: number; chroma: number; hue: number };
@@ -6,6 +6,7 @@ const hueDistance = (a: number, b: number) => Math.min(Math.abs(a - b), 360 - Ma
 
 export function extractAlbumPalette(pixels: ArrayLike<number>): string[] {
   const buckets = new Map<number, Swatch>();
+  const lightNeutral = { count: 0, rgb: [0, 0, 0] };
   let opaquePixels = 0;
   for (let i = 0; i + 3 < pixels.length; i += 4) {
     if (pixels[i + 3] < 200) continue;
@@ -15,6 +16,13 @@ export function extractAlbumPalette(pixels: ArrayLike<number>): string[] {
     const min = Math.min(...rgb) / 255;
     const chroma = max - min;
     const saturation = max ? chroma / max : 0;
+    // Downsampling and shaded artwork often turn white details into mid-grey.
+    if (min >= 0.28 && saturation < 0.18 && chroma < 0.1) {
+      lightNeutral.count++;
+      rgb.forEach((channel, index) => {
+        lightNeutral.rgb[index] += channel;
+      });
+    }
     // Ignore paper, shadows, and compression noise, but retain muted/pastel accents.
     if (max < 0.12 || saturation < 0.18 || chroma < 0.055) continue;
     const [r, g, b] = rgb.map((channel) => channel / 255);
@@ -51,7 +59,16 @@ export function extractAlbumPalette(pixels: ArrayLike<number>): string[] {
       selected.push(candidate);
     if (selected.length === 3) break;
   }
-  if (!selected.length) return [...albumFallback];
+  if (!selected.length) {
+    // Require a visible neutral region, so tiny highlights cannot recolor dark covers.
+    if (lightNeutral.count < Math.max(3, Math.ceil(opaquePixels * 0.005)))
+      return [...albumFallback];
+    const average = lightNeutral.rgb.map((value) => value / lightNeutral.count);
+    const lift = Math.max(235, Math.max(...average)) / Math.max(...average);
+    return [1, 0.94, 0.86].map(
+      (tone) => `rgb(${average.map((value) => Math.round(value * lift * tone)).join(" ")})`,
+    );
+  }
   return [0, 1, 2].map((index) => {
     const swatch = selected[index % selected.length];
     const average = swatch.rgb.map((value) => value / swatch.count);
