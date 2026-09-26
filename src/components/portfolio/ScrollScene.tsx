@@ -40,7 +40,7 @@ export function SceneRibbon({ words }: { words: string }) {
   const { scrollYProgress } = useScroll({ target: root, offset: ["start end", "end start"] });
   const x = useTransform(scrollYProgress, [0, 1], ["3%", "-24%"]);
   return (
-    <div ref={root} className="scene-ribbon" aria-hidden="true">
+    <div ref={root} className="scene-ribbon overflow-hidden pointer-events-none" aria-hidden="true">
       <motion.div style={{ x: reduce ? 0 : x }}>
         {words}
         <span> ✳ </span>

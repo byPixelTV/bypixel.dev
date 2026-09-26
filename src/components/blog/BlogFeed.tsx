@@ -14,12 +14,12 @@ export default async function BlogFeed() {
           Admin view · {draftCount} private drafts
         </p>
       )}
-      <div className="blog-feed-label eyebrow">
+      <div className="blog-feed-label flex justify-between mb-[30px] eyebrow font-medium tracking-[0.13em] uppercase">
         <span>{posts.length - draftCount} published articles</span>
         <span>Notes from the workbench</span>
       </div>
       {posts.length ? (
-        <div className="blog-card-grid">
+        <div className="blog-card-grid grid">
           {posts.map((post, index) => (
             <div key={post._id} data-enter data-enter-delay={Math.min(index, 3) * 80}>
               <BlogPostCard post={post} authorName={post.authorName} />

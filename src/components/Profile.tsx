@@ -19,7 +19,7 @@ const Profile = () => {
   const heroAccentGradient =
     "linear-gradient(100deg, var(--album-1), var(--album-2) 55%, var(--album-3))";
   return (
-    <section ref={root} aria-label="About me" className="immersive-hero">
+    <section ref={root} aria-label="About me" className="immersive-hero relative pb-[46px]">
       <motion.div
         className="relative min-h-[calc(100svh-8.25rem)]"
         style={{ y: reduce ? 0 : y, opacity: reduce ? 1 : opacity, scale: reduce ? 1 : scale }}

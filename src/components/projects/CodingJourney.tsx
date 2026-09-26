@@ -55,8 +55,8 @@ const milestones = [
 export default function CodingJourney() {
   return (
     <section className="story-editorial" aria-labelledby="story-heading">
-      <header className="story-editorial-intro">
-        <p className="eyebrow">02 / A work in progress</p>
+      <header className="story-editorial-intro grid items-end mb-10">
+        <p className="eyebrow font-medium tracking-[0.13em] uppercase">02 / A work in progress</p>
         <ChapterTitle id="story-heading" lines={["FOLLOWING", "THE CURIOSITY."]} />
         <p>
           From the first script to the systems I build today.
@@ -93,9 +93,9 @@ function StoryMoment({
   const copyOpacity = useTransform(scrollYProgress, [0, 0.25, 0.85, 1], [0.2, 1, 1, 0.5]);
   const trace = useTransform(scrollYProgress, [0, 0.45, 1], [0, 1, 1]);
   return (
-    <li ref={root} id={`year-${milestone.year}`} className="story-moment">
+    <li ref={root} id={`year-${milestone.year}`} className="story-moment grid items-center">
       <motion.div
-        className="story-moment-year"
+        className="story-moment-year font-[850] leading-none select-none"
         aria-hidden="true"
         style={{
           x: reduce ? 0 : yearX,
@@ -109,10 +109,10 @@ function StoryMoment({
         className="story-moment-copy"
         style={{ y: reduce ? 0 : copyY, opacity: reduce ? 1 : copyOpacity }}
       >
-        <p className="eyebrow">
+        <p className="eyebrow font-medium tracking-[0.13em] uppercase">
           {milestone.year} / {milestone.isCurrent ? "Still unfolding" : `Chapter 0${index + 1}`}
         </p>
-        <div className="story-detail" aria-hidden="true">
+        <div className="story-detail flex items-center gap-[18px]" aria-hidden="true">
           <Icon icon={milestone.icon} width={28} height={28} />
           <svg viewBox="0 0 160 42">
             <motion.path
@@ -140,7 +140,7 @@ function StoryMoment({
           ))}
         </ul>
       </motion.div>
-      <span className="story-moment-index" aria-hidden="true">
+      <span className="story-moment-index absolute bottom-[18px] left-[18px]" aria-hidden="true">
         0{index + 1}
       </span>
     </li>

@@ -10,8 +10,11 @@ export default function FooterFinale({ children }: { children: ReactNode }) {
   const y = useTransform(scrollYProgress, [0, 1], [90, 0]);
   const scale = useTransform(scrollYProgress, [0, 1], [0.94, 1]);
   return (
-    <div ref={root} className="footer-finale">
-      <motion.div className="footer-stage" style={{ y: reduce ? 0 : y, scale: reduce ? 1 : scale }}>
+    <div ref={root} className="footer-finale relative">
+      <motion.div
+        className="footer-stage isolate"
+        style={{ y: reduce ? 0 : y, scale: reduce ? 1 : scale }}
+      >
         {children}
       </motion.div>
     </div>

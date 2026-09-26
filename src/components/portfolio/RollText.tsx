@@ -38,14 +38,9 @@ export default function RollText({
     const ensureAnimations = () => {
       if (animations.length) return;
 
-      animations = Array.from(
-        element.querySelectorAll<HTMLElement>(".roll-track"),
-      ).map((track) => {
+      animations = Array.from(element.querySelectorAll<HTMLElement>(".roll-track")).map((track) => {
         const animation = track.animate(
-          [
-            { transform: "translate3d(0, 0, 0)" },
-            { transform: "translate3d(0, -50%, 0)" },
-          ],
+          [{ transform: "translate3d(0, 0, 0)" }, { transform: "translate3d(0, -50%, 0)" }],
           {
             duration: DURATION,
             easing: "cubic-bezier(.2,.82,.2,1)",
@@ -71,9 +66,7 @@ export default function RollText({
       animations.forEach((animation, index) => {
         const currentTime = Number(animation.currentTime ?? 0);
         const isAlreadyMoving = currentTime > 0;
-        const delay = isAlreadyMoving
-          ? 0
-          : Math.min(index, MAX_STAGGER_INDEX) * FORWARD_STAGGER;
+        const delay = isAlreadyMoving ? 0 : Math.min(index, MAX_STAGGER_INDEX) * FORWARD_STAGGER;
 
         const play = () => {
           animation.updatePlaybackRate(1);
@@ -93,9 +86,7 @@ export default function RollText({
 
       clearTimers();
 
-      const active = animations.filter(
-        (animation) => Number(animation.currentTime ?? 0) > 0,
-      );
+      const active = animations.filter((animation) => Number(animation.currentTime ?? 0) > 0);
 
       active
         .slice()
@@ -179,17 +170,16 @@ export default function RollText({
   }, [children, autoPlay, playOnHover]);
 
   return (
-    <span ref={root} className="roll-text">
+    <span ref={root} className="roll-text inline-block">
       <span className="sr-only">{children}</span>
-      <span aria-hidden="true" className="roll-visual">
+      <span aria-hidden="true" className="roll-visual inline-flex whitespace-nowrap">
         {Array.from(children).map((letter, index) => (
           <span
             key={`${letter}-${index}`}
-            className="roll-letter"
+            className="roll-letter inline-block h-[1.2em] overflow-hidden"
             style={
               {
-                "--letter-delay":
-                  Math.min(index, MAX_STAGGER_INDEX) * FORWARD_STAGGER + "ms",
+                "--letter-delay": Math.min(index, MAX_STAGGER_INDEX) * FORWARD_STAGGER + "ms",
               } as CSSProperties
             }
           >

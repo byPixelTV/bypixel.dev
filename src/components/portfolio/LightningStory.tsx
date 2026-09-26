@@ -10,10 +10,10 @@ export default function LightningStory() {
   const reduce = useReducedMotion();
   const id = useId();
   return (
-    <div className="footer-story" data-open={open}>
+    <div className="footer-story relative min-w-0" data-open={open}>
       <button
         type="button"
-        className="footer-emblem"
+        className="footer-emblem items-center flex-col justify-center cursor-pointer"
         aria-expanded={open}
         aria-controls={id}
         aria-label="Discover the story behind the lightning bolt"
@@ -43,12 +43,12 @@ export default function LightningStory() {
             window.portfolioScroll.scrollTo(bottom, { immediate: true });
           } else window.scrollTo({ top: bottom, behavior: "instant" });
         }}
-        className="footer-story-reveal"
+        className="footer-story-reveal overflow-hidden relative"
         aria-hidden={!open}
         inert={!open}
       >
-        <div className="footer-story-copy">
-          <p className="eyebrow">An EraMC easter egg</p>
+        <div className="footer-story-copy relative">
+          <p className="eyebrow font-medium tracking-[0.13em] uppercase">An EraMC easter egg</p>
           <h3>It started with a server.</h3>
           <p>
             This lightning bolt was the icon of EraMC, a Minecraft server I owned and poured a huge

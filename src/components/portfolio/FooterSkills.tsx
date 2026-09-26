@@ -24,13 +24,18 @@ export default function FooterSkills() {
     };
   }, []);
   return (
-    <section id="skills" ref={root} className="footer-skills" aria-label="My development toolkit">
+    <section
+      id="skills"
+      ref={root}
+      className="footer-skills relative z-1 text-left"
+      aria-label="My development toolkit"
+    >
       <div className="footer-skills-window">
-        <div className="footer-skills-track">
+        <div className="footer-skills-track flex w-max">
           {[0, 1].map((copy) => (
             <ul
               key={copy}
-              className="footer-skills-group"
+              className="footer-skills-group m-0"
               aria-hidden={copy === 1 ? true : undefined}
             >
               {skills.map((skill) => (

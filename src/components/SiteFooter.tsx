@@ -5,10 +5,10 @@ import FooterNavLink from "./FooterNavLink";
 
 export default function SiteFooter() {
   return (
-    <footer id="contact" className="site-footer footer-clean">
+    <footer id="contact" className="site-footer relative z-1 overflow-hidden footer-clean">
       <FooterFinale>
         <svg
-          className="footer-contours"
+          className="footer-contours absolute w-full h-full pointer-events-none overflow-hidden z-[-1]"
           viewBox="0 0 1400 700"
           preserveAspectRatio="none"
           aria-hidden="true"
@@ -27,17 +27,17 @@ export default function SiteFooter() {
         <h2 className="footer-title">
           BUILT OUT OF
           <br />
-          <span className="footer-curiosity-line">
+          <span className="footer-curiosity-line relative inline-block">
             <em>
-              <a href="mailto:contact@bypixel.dev" className="footer-hello">
+              <a href="mailto:contact@bypixel.dev" className="footer-hello inline-block">
                 <RollText>CURIOSITY.</RollText>
               </a>
             </em>
           </span>
         </h2>
-        <div className="footer-clean-links">
+        <div className="footer-clean-links relative z-1 justify-between">
           <nav aria-label="Footer pages">
-            <p className="eyebrow">Explore</p>
+            <p className="eyebrow font-medium tracking-[0.13em] uppercase">Explore</p>
             <FooterNavLink href="/">HOME</FooterNavLink>
             <FooterNavLink href="/now">NOW</FooterNavLink>
             <FooterNavLink href="/blog">BLOG</FooterNavLink>
@@ -50,7 +50,7 @@ export default function SiteFooter() {
             </a>
           </nav>
           <nav aria-label="Footer social links">
-            <p className="eyebrow">Elsewhere</p>
+            <p className="eyebrow font-medium tracking-[0.13em] uppercase">Elsewhere</p>
             <a href="https://github.com/bypixeltv" target="_blank" rel="noopener noreferrer">
               <RollText>GITHUB ↗</RollText>
             </a>
@@ -67,7 +67,7 @@ export default function SiteFooter() {
         </div>
         <FooterSkills />
       </FooterFinale>
-      <div className="footer-baseline">
+      <div className="footer-baseline justify-between gap-5 max-w-[1500px] font-semibold pt-[22px]">
         <span>© {new Date().getFullYear()} byPixelTV</span>
         <span>Always curious.</span>
       </div>

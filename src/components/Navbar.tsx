@@ -180,9 +180,17 @@ const Navbar = () => {
         >
           <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2 md:gap-4">
             <motion.div className="flex items-center space-x-2 sm:space-x-3" custom={0}>
-              <Link href="/" className="brand-mark" aria-label="bypixel.dev home">
-                <span className="brand-title">bypixel.dev</span>
-                <span className="brand-sub">software engineer</span>
+              <Link
+                href="/"
+                className="brand-mark inline-flex flex-col"
+                aria-label="bypixel.dev home"
+              >
+                <span className="brand-title text-[0.98rem] leading-[1.05] font-extrabold tracking-[0.045em]">
+                  bypixel.dev
+                </span>
+                <span className="brand-sub mt-[0.18rem] text-[0.62rem] uppercase tracking-[0.19em]">
+                  software engineer
+                </span>
               </Link>
               {pathname !== "/" && (
                 <Link
@@ -219,7 +227,9 @@ const Navbar = () => {
               style={{ pointerEvents: isScrolled ? "none" : "auto" }}
             >
               <Link href="/" aria-label="Go to homepage" className="nav-logo">
-                <span className={`nav-logo-core ${isScrolled ? "nav-logo-core-exit" : ""}`}>
+                <span
+                  className={`nav-logo-core inline-flex items-center justify-center isolate ${isScrolled ? "nav-logo-core-exit" : ""}`}
+                >
                   <Image
                     src="/assets/logo/eramc_base.svg"
                     alt="ERAMC lightning logo"
@@ -331,7 +341,7 @@ const Navbar = () => {
             <div className="flex flex-col h-full">
               <div className="flex justify-between items-center p-4 border-b border-[#333]">
                 <Link href="/" className="nav-logo" onClick={() => setIsMobileMenuOpen(false)}>
-                  <span className="nav-logo-core">
+                  <span className="nav-logo-core inline-flex items-center justify-center isolate">
                     <Image
                       src="/assets/logo/eramc_base.svg"
                       alt="ERAMC lightning logo"

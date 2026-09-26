@@ -53,24 +53,26 @@ export default function NowArtists() {
     };
   }, []);
   return (
-    <div className="now-artists">
-      <div className="now-artists-label">
+    <div className="now-artists min-w-0">
+      <div className="now-artists-label min-h-[54px] flex justify-between items-center flex-wrap gap-2 pb-4">
         <h3>{live ? "My top artists" : "Personal favorites"}</h3>
-        <span className="eyebrow">{live ? "Spotify / Past 4 weeks" : "Regular rotation"}</span>
+        <span className="eyebrow font-medium tracking-[0.13em] uppercase">
+          {live ? "Spotify / Past 4 weeks" : "Regular rotation"}
+        </span>
       </div>
       <ol>
         {artists.map((artist, index) => {
           const content = (
             <>
-              <span className="now-artist-number">0{index + 1}</span>
-              <span className="now-artist-image">
+              <span className="now-artist-number text-[11px]">0{index + 1}</span>
+              <span className="now-artist-image shrink-0 grid place-items-center overflow-hidden rounded-full text-[28px]">
                 {artist.imageUrl ? (
                   <Image src={artist.imageUrl} alt="" width={72} height={72} sizes="72px" />
                 ) : (
                   <span aria-hidden="true">{artist.name.slice(0, 1)}</span>
                 )}
               </span>
-              <span className="now-artist-name">
+              <span className="now-artist-name min-w-0">
                 <strong>{artist.name}</strong>
                 <small>{artist.genres.slice(0, 2).join(" / ") || "On repeat"}</small>
               </span>

@@ -130,7 +130,11 @@ export default function AlbumAtmosphere({ children }: { children: ReactNode }) {
   }, [cover, trackKey]);
   return (
     <AlbumContext value={{ data, loaded }}>
-      <div ref={root} className="album-atmosphere" data-home={pathname === "/"}>
+      <div
+        ref={root}
+        className="album-atmosphere relative isolate min-h-[100vh]"
+        data-home={pathname === "/"}
+      >
         <FluidAtmosphere colors={atmosphere.colors} trackKey={atmosphere.trackKey} />
         {children}
       </div>
@@ -191,11 +195,15 @@ export function AmbientBlobs({ className = "" }: { className?: string }) {
     };
   }, []);
   return (
-    <div ref={root} className={`ambient-blobs ${className}`} aria-hidden="true">
+    <div
+      ref={root}
+      className={`ambient-blobs pointer-events-none overflow-hidden ${className}`}
+      aria-hidden="true"
+    >
       {[1, 2, 3].map((number) => (
         <i
           key={number}
-          className="ambient-blob"
+          className="ambient-blob absolute block rounded-full"
           style={{ "--blob-color": `var(--album-${number})` } as CSSProperties}
         >
           {className === "page-ambience" && (

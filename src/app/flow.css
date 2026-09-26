@@ -3,9 +3,7 @@
   min-width: 0;
 }
 .scene-ribbon {
-  overflow: hidden;
   padding: clamp(35px, 6vw, 90px) 0;
-  pointer-events: none;
 }
 .scene-ribbon > div {
   width: max-content;
@@ -32,22 +30,13 @@
 }
 .now-opening {
   min-height: calc(100svh - 135px);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
 }
 .now-opening-index {
-  display: flex;
-  justify-content: space-between;
-  gap: 20px;
   border-top: 1px solid #ffffff24;
-  padding-top: 20px;
 }
 .now-opening-grid {
-  display: grid;
   grid-template-columns: 1.4fr 1fr;
   gap: 45px;
-  align-items: center;
   padding-block: 65px;
 }
 .now-opening h1 {
@@ -59,12 +48,9 @@
 .now-opening-copy {
   color: #c5bacf;
   font-size: clamp(15px, 1.6vw, 21px);
-  line-height: 1.7;
-  margin-top: 30px;
 }
 .now-opening-art {
   max-width: 360px;
-  width: 100%;
   justify-self: center;
 }
 .now-opening-art p {
@@ -78,8 +64,6 @@
 .now-orbit-art {
   aspect-ratio: 1;
   position: relative;
-  display: grid;
-  place-items: center;
   border-radius: 50%;
   background: radial-gradient(circle, #c084fc12, transparent 65%);
 }
@@ -116,9 +100,7 @@
   color: #c9b7d8;
 }
 .now-chapter-heading {
-  display: grid;
   grid-template-columns: 1fr auto;
-  align-items: end;
   gap: 20px;
   margin-bottom: 55px;
 }
@@ -139,10 +121,8 @@
   padding-bottom: 5px;
 }
 .now-soundtrack-grid {
-  display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: clamp(35px, 7vw, 110px);
-  align-items: start;
 }
 .now-record-sticky {
   position: sticky;
@@ -159,9 +139,6 @@
 }
 .now-margin-note {
   font-size: clamp(23px, 2.6vw, 38px);
-  line-height: 1.25;
-  letter-spacing: -0.04em;
-  font-weight: 600;
   margin: 20px 0 40px;
 }
 .now-margin-note span {
@@ -174,10 +151,8 @@
   font-size: clamp(20px, 2.5vw, 35px);
 }
 .now-life-story {
-  display: grid;
   grid-template-columns: 1.05fr 1fr;
   gap: clamp(30px, 6vw, 90px);
-  align-items: start;
 }
 .now-flow .now-race-feature {
   position: sticky;
@@ -187,14 +162,9 @@
   background: #c395e9;
 }
 .now-race-word {
-  display: block;
   font-size: clamp(42px, 6vw, 88px);
-  font-weight: 900;
-  letter-spacing: -0.075em;
-  line-height: 1;
   margin-top: 28px;
   color: #43255745;
-  white-space: nowrap;
 }
 .now-race-feature .now-track {
   height: clamp(180px, 23vw, 320px);
@@ -222,10 +192,6 @@
 }
 .now-minecraft-art {
   min-height: 280px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
   padding-block: 35px;
 }
 .now-minecraft-art > span {
@@ -267,10 +233,8 @@
   margin: 10px 0;
 }
 .now-return {
-  display: grid;
   grid-template-columns: 1fr 0.85fr;
   gap: clamp(40px, 8vw, 120px);
-  align-items: start;
 }
 .now-return-intro {
   position: sticky;
@@ -318,17 +282,12 @@
   font-size: 12px;
 }
 .now-language-symbol {
-  position: absolute;
-  right: 15px;
-  bottom: -20px;
   color: #c084fc12;
   font:
     100px var(--font-mono),
     monospace;
-  pointer-events: none;
 }
 .now-closing {
-  text-align: center;
   padding: clamp(100px, 15vw, 220px) 0 30px;
 }
 .now-closing p {
@@ -363,15 +322,8 @@
   padding-block: 35px;
 }
 .article-reading-progress {
-  position: fixed;
-  z-index: 80;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
   background: #c084fc;
   transform-origin: left;
-  pointer-events: none;
 }
 @media (min-width: 1000px) and (prefers-reduced-motion: no-preference) {
   .now-language-stack li {
@@ -606,191 +558,6 @@
 .chapter-title-line {
   overflow-wrap: normal;
 }
-.skill-lab {
-  padding-block: 55px 15px;
-  color: #f3eef8;
-}
-.skill-lab-heading {
-  display: flex;
-  justify-content: space-between;
-  gap: 30px;
-  align-items: end;
-  margin-bottom: 32px;
-}
-.skill-lab-heading h2 {
-  font-size: clamp(38px, 5.4vw, 78px);
-  line-height: 1;
-  font-weight: 850;
-  letter-spacing: -0.065em;
-  margin-top: 14px;
-}
-.skill-lab-heading > p {
-  color: #c3b7cf;
-  font-size: 14px;
-  line-height: 1.7;
-}
-.skill-lab-categories {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 22px;
-}
-.skill-lab-categories button {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-  border: 1px solid #ffffff24;
-  border-radius: 9px;
-  background: #17111f;
-  font-size: 12px;
-  color: #d7cce1;
-  cursor: pointer;
-  transition:
-    background 0.25s,
-    border-color 0.25s;
-}
-.skill-lab-categories small {
-  color: #be9dd7;
-  font:
-    10px var(--font-mono),
-    monospace;
-}
-.skill-lab-categories button[aria-pressed="true"] {
-  background: #3a254c;
-  border-color: #c797ee;
-  color: #fff;
-}
-.skill-lab-workspace {
-  display: grid;
-  grid-template-columns: minmax(0, 1.8fr) minmax(260px, 1fr);
-  gap: 22px;
-  align-items: stretch;
-}
-.skill-lab-browser {
-  padding: clamp(18px, 2.5vw, 30px);
-  border: 1px solid #ffffff1c;
-  border-radius: 18px;
-  background: #100d17ec;
-}
-.skill-lab-description {
-  color: #c5b8d1;
-  font-size: 13px;
-  line-height: 1.7;
-  margin-bottom: 22px;
-}
-.skill-lab-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
-}
-.skill-lab-grid button {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  min-height: 104px;
-  display: flex;
-  flex-direction: column;
-  align-items: start;
-  gap: 12px;
-  padding: 16px;
-  border: 1px solid #ffffff1a;
-  border-radius: 12px;
-  background: #1c1526;
-  color: #f0e9f7;
-  text-align: left;
-  cursor: pointer;
-  transition:
-    background 0.25s,
-    border-color 0.25s,
-    transform 0.3s;
-}
-.skill-lab-grid button > span:not(.skill-lab-arrow) {
-  font-size: 12px;
-  line-height: 1.5;
-  overflow-wrap: anywhere;
-}
-.skill-lab-grid button[aria-pressed="true"] {
-  background: #332041;
-  border-color: #bd90df;
-}
-.skill-lab-arrow {
-  position: absolute;
-  right: 13px;
-  top: 13px;
-  color: #c5a1df;
-}
-.skill-lab-detail {
-  display: flex;
-  flex-direction: column;
-  padding: clamp(22px, 3vw, 38px);
-  border: 1px solid #bb8cdf42;
-  border-radius: 18px;
-  background: radial-gradient(ellipse at 80% 0%, #51336555, transparent 75%), #191121;
-  min-width: 0;
-}
-.skill-lab-emblem {
-  display: grid;
-  place-items: center;
-  width: 110px;
-  height: 110px;
-  border: 1px solid #c6a1e22e;
-  background: #ffffff04;
-  border-radius: 24px;
-  margin-block: 30px 24px;
-}
-.skill-lab-detail h3 {
-  font-size: clamp(28px, 3vw, 44px);
-  line-height: 1.1;
-  letter-spacing: -0.045em;
-  font-weight: 750;
-  overflow-wrap: anywhere;
-}
-.skill-lab-detail p {
-  color: #d0c3db;
-  font-size: 14px;
-  line-height: 1.8;
-  margin: 18px 0 28px;
-}
-.skill-lab-footnote {
-  display: block;
-  margin-top: auto;
-  padding-top: 20px;
-  border-top: 1px solid #ffffff20;
-  color: #bcaaca;
-  font-size: 11px;
-}
-.skill-lab button:focus-visible {
-  outline: 2px solid #ead4fa;
-  outline-offset: 4px;
-}
-.skill-lab .complete-toolkit {
-  margin-top: 24px;
-}
-@media (hover: hover) and (prefers-reduced-motion: no-preference) {
-  .skill-lab-grid button:hover {
-    transform: translateY(-3px);
-    border-color: #c99beb;
-    background: #30203e;
-  }
-}
-@media (max-width: 900px) {
-  .skill-lab-workspace {
-    grid-template-columns: 1fr;
-  }
-  .skill-lab-detail {
-    display: block;
-  }
-  .skill-lab-emblem {
-    width: 76px;
-    height: 76px;
-    margin-block: 20px;
-  }
-  .skill-lab-emblem svg {
-    width: 50px;
-    height: 50px;
-  }
-}
 @media (max-width: 640px) {
   .now-opening {
     min-height: 0;
@@ -821,24 +588,6 @@
   }
   .now-minecraft-art > span {
     font-size: 38px;
-  }
-  .skill-lab-heading {
-    display: block;
-  }
-  .skill-lab-heading > p {
-    margin-top: 20px;
-  }
-  .skill-lab-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  .skill-lab-categories button {
-    padding: 10px 12px;
-    font-size: 11px;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .skill-lab-grid button {
-    transition: none;
   }
 }
 
@@ -893,10 +642,6 @@
   object-fit: contain;
   object-position: center;
 }
-.scroll-passage {
-  position: relative;
-  min-width: 0;
-}
 .scroll-passage-content {
   transform-origin: center center;
 }
@@ -904,80 +649,9 @@
   opacity: 1 !important;
   transform: none !important;
 }
-.skill-lab-stage {
-  perspective: 1400px;
-}
-.skill-lab-stage .scroll-passage-content {
-  transform-origin: center 35%;
-}
-.journey-flow {
-  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
-  gap: clamp(35px, 6vw, 90px);
-  padding-block: 65px 20px;
-}
-.journey-flow .journey-overview {
-  top: 110px;
-}
-.journey-flow .journey-chapter-list {
-  gap: clamp(30px, 5vh, 60px);
-  padding-bottom: 35px;
-}
-.journey-flow .journey-chapter-list::before {
-  bottom: 35px;
-}
-.journey-flow .journey-chapter {
-  min-height: 290px;
-  background: linear-gradient(135deg, #2a1838, #14101d 75%);
-  transition:
-    border-color 0.35s,
-    background 0.35s;
-}
-.journey-flow .journey-chapter:hover {
-  transform: none;
-}
-.journey-flow .journey-chapter > p {
-  font-size: 14px;
-  line-height: 1.8;
-  color: #d3c7dd;
-}
-.journey-flow .journey-current {
-  margin-top: 28px;
-}
-.journey-flow .journey-year {
-  font-size: clamp(35px, 4vw, 62px);
-  line-height: 1.02;
-}
-.journey-flow .journey-chapter-number {
-  font-size: clamp(85px, 9vw, 140px);
-  right: 20px;
-  bottom: -12px;
-}
 @media (max-width: 760px) {
-  .journey-flow {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 30px;
-  }
-  .journey-flow .journey-overview {
-    position: static;
-  }
-  .journey-flow .journey-chapter-list {
-    padding-left: 0;
-    gap: 16px;
-  }
-  .journey-flow .journey-chapter {
-    min-height: 260px;
-  }
-  .journey-flow .journey-chapter h3 {
-    margin-top: 12px;
-  }
   .now-race-feature .now-circuit-viewport {
     height: 220px;
-  }
-}
-@media (max-height: 740px) {
-  .journey-flow .journey-overview {
-    position: relative;
-    top: auto;
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -985,45 +659,14 @@
     transform: none !important;
     opacity: 1 !important;
   }
-  .journey-flow .journey-overview {
-    position: relative;
-    top: auto;
-  }
 }
 
 /* A quiet logo ribbon belongs to the footer, not a separate skills dashboard. */
 .footer-skills {
-  position: relative;
-  z-index: 1;
   margin-top: 48px;
   padding-top: 22px;
   border-top: 1px solid #c5a2e021;
-  text-align: left;
   scroll-margin-top: 120px;
-}
-.footer-skills-caption {
-  display: flex;
-  align-items: center;
-  gap: 22px;
-  min-height: 32px;
-  padding-inline: 12px;
-}
-.footer-skill-name {
-  flex: 1;
-  color: #e2c9fa;
-  font-size: 12px;
-}
-.footer-skill-name small {
-  color: #bba6cf;
-  font-size: 10px;
-}
-.footer-skills-caption > button {
-  font:
-    10px var(--font-mono),
-    monospace;
-  color: #cab0df;
-  cursor: pointer;
-  padding: 8px;
 }
 .footer-skills-window {
   overflow: hidden;
@@ -1031,8 +674,6 @@
   mask-image: linear-gradient(to right, transparent, #000 3%, #000 97%, transparent);
 }
 .footer-skills-track {
-  display: flex;
-  width: max-content;
   animation: footer-toolkit-drift 140s linear infinite;
   animation-play-state: paused;
 }
@@ -1040,7 +681,6 @@
   display: flex;
   flex: 0 0 auto;
   list-style: none;
-  margin: 0;
   padding: 0;
 }
 
@@ -1133,11 +773,8 @@
   padding-block: 80px 20px;
 }
 .story-editorial-intro {
-  display: grid;
   grid-template-columns: 1.25fr 1fr;
-  align-items: end;
   gap: 22px 60px;
-  margin-bottom: 40px;
 }
 .story-editorial-intro > .eyebrow {
   grid-column: 1 / -1;
@@ -1156,9 +793,7 @@
 }
 .story-moment {
   position: relative;
-  display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  align-items: center;
   gap: clamp(30px, 6vw, 90px);
   min-height: clamp(360px, 58svh, 620px);
   padding: 50px 18px;
@@ -1166,12 +801,9 @@
 }
 .story-moment-year {
   font-size: clamp(110px, 18vw, 270px);
-  font-weight: 850;
-  line-height: 1;
   letter-spacing: -0.085em;
   color: #c9a3e4;
   transform-origin: center;
-  user-select: none;
 }
 .story-moment:nth-child(even) .story-moment-year {
   grid-column: 2;
@@ -1213,9 +845,6 @@
   color: #bca0d2;
 }
 .story-moment-index {
-  position: absolute;
-  bottom: 18px;
-  left: 18px;
   color: #ad8ec5;
   font:
     10px var(--font-mono),
@@ -1256,14 +885,6 @@
   }
   .story-moment-copy {
     max-width: none;
-  }
-  .footer-skills-caption {
-    gap: 12px;
-    padding-inline: 0;
-    flex-wrap: wrap;
-  }
-  .footer-skills-caption > .eyebrow {
-    display: none;
   }
   .footer-skills-group button {
     width: 85px;
@@ -1326,10 +947,7 @@
   color: #bd96eb;
 }
 .footer-clean-links {
-  position: relative;
-  z-index: 1;
   display: flex;
-  justify-content: space-between;
   gap: 50px;
   padding: 65px 13% 55px;
 }
@@ -1390,9 +1008,6 @@
   letter-spacing: -0.055em;
 }
 .story-detail {
-  display: flex;
-  align-items: center;
-  gap: 18px;
   margin-top: 24px;
   color: #c09cdc;
 }

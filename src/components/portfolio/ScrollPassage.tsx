@@ -22,7 +22,7 @@ export default function ScrollPassage({
   const y = useTransform(scrollYProgress, [0, 0.24, 0.82, 1], [travel, 0, 0, -18]);
   const opacity = useTransform(scrollYProgress, [0, 0.24, 0.82, 1], [0.2, 1, 1, 0.4]);
   return (
-    <div ref={root} className={`scroll-passage ${className}`}>
+    <div ref={root} className={`scroll-passage relative min-w-0 ${className}`}>
       <motion.div
         className="scroll-passage-content"
         style={{ scale: reduce ? 1 : scale, y: reduce ? 0 : y, opacity: reduce ? 1 : opacity }}

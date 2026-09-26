@@ -66,24 +66,24 @@ function formatRaceDate(date: string) {
 
 export default function NowExperience({ nextRace }: { nextRace: NextRace | null }) {
   return (
-    <Reveal className="now-editorial now-flow">
+    <Reveal className="now-editorial overflow-clip now-flow">
       <main className="now-content">
-        <header className="now-opening">
-          <div className="now-opening-index eyebrow">
+        <header className="now-opening flex flex-col justify-between">
+          <div className="now-opening-index flex justify-between gap-5 pt-5 eyebrow font-medium tracking-[0.13em] uppercase">
             <span>byPixelTV / Beyond the code</span>
             <span>A little life update</span>
           </div>
-          <div className="now-opening-grid">
+          <div className="now-opening-grid grid items-center">
             <div>
               <ChapterTitle as="h1" lines={["OFF THE", "CLOCK."]} />
-              <p className="now-opening-copy">
+              <p className="now-opening-copy leading-[1.7] mt-[30px]">
                 Code. Headphones. One more round.
                 <br />
                 The person behind the projects.
               </p>
             </div>
-            <ScrollScene className="now-opening-art" travel={24} turn={3} zoom={0.88}>
-              <div className="now-orbit-art" aria-hidden="true">
+            <ScrollScene className="now-opening-art w-full" travel={24} turn={3} zoom={0.88}>
+              <div className="now-orbit-art grid place-items-center" aria-hidden="true">
                 <i />
                 <i />
                 <i />
@@ -117,8 +117,8 @@ export default function NowExperience({ nextRace }: { nextRace: NextRace | null 
         </header>
 
         <section id="rotation" className="now-soundtrack" aria-labelledby="rotation-heading">
-          <div className="now-chapter-heading">
-            <p className="eyebrow">01 / The soundtrack</p>
+          <div className="now-chapter-heading grid items-end">
+            <p className="eyebrow font-medium tracking-[0.13em] uppercase">01 / The soundtrack</p>
             <ChapterTitle id="rotation-heading" lines={["LIFE HAS A", "SOUNDTRACK."]} />
             <p>
               Usually something playing.
@@ -126,14 +126,14 @@ export default function NowExperience({ nextRace }: { nextRace: NextRace | null 
               Usually a little too loud.
             </p>
           </div>
-          <div className="now-soundtrack-grid">
+          <div className="now-soundtrack-grid grid items-start">
             <div className="now-record-sticky">
               <ScrollScene travel={12} zoom={0.94}>
                 <NowListening />
               </ScrollScene>
             </div>
             <div className="now-rotation-list">
-              <p className="now-margin-note">
+              <p className="now-margin-note leading-[1.25] tracking-[-0.04em] font-semibold">
                 A few familiar voices.
                 <br />
                 <span>A lot of repeat plays.</span>
@@ -146,21 +146,28 @@ export default function NowExperience({ nextRace }: { nextRace: NextRace | null 
         <SceneRibbon words="A CHANGE OF PACE" />
 
         <section id="off-screen" className="now-downtime" aria-labelledby="off-heading">
-          <div className="now-chapter-heading">
-            <p className="eyebrow">02 / Away from the editor</p>
+          <div className="now-chapter-heading grid items-end">
+            <p className="eyebrow font-medium tracking-[0.13em] uppercase">
+              02 / Away from the editor
+            </p>
             <ChapterTitle id="off-heading" lines={["ONE MORE", "ROUND."]} />
             <p>
               Race weekends. Familiar worlds.
               <br />A few things I keep coming back to.
             </p>
           </div>
-          <div className="now-life-story">
-            <article className="now-race now-race-feature">
+          <div className="now-life-story grid items-start">
+            <article className="now-race overflow-hidden relative now-race-feature">
               <div className="now-card-top">
-                <span className="eyebrow">Weekend plans / Formula 1</span>
+                <span className="eyebrow font-medium tracking-[0.13em] uppercase">
+                  Weekend plans / Formula 1
+                </span>
                 <NowCardDetail kind="race" />
               </div>
-              <span className="now-race-word" aria-hidden="true">
+              <span
+                className="now-race-word block font-black tracking-[-0.075em] leading-none whitespace-nowrap"
+                aria-hidden="true"
+              >
                 LIGHTS OUT.
               </span>
               <div className="now-circuit-viewport">
@@ -174,31 +181,36 @@ export default function NowExperience({ nextRace }: { nextRace: NextRace | null 
                         height={300}
                       />
                     ) : (
-                      <span className="now-f1-word" aria-hidden="true">
+                      <span
+                        className="now-f1-word text-[76px] italic leading-[0.8] font-[950] tracking-[-0.08em]"
+                        aria-hidden="true"
+                      >
                         F1
                       </span>
                     )}
                   </div>
                 </ScrollScene>
               </div>
-              <p className="eyebrow">
+              <p className="eyebrow font-medium tracking-[0.13em] uppercase">
                 {nextRace ? `Up next / Round ${nextRace.round}` : "Following the season"}
               </p>
               <h3>{nextRace?.name ?? "Race weekends."}</h3>
               {nextRace ? (
-                <p className="now-race-date">
+                <p className="now-race-date flex flex-wrap justify-between gap-2 text-[11px] mt-[18px] pb-4">
                   {nextRace.location}
                   <time dateTime={nextRace.date}>{formatRaceDate(nextRace.date)}</time>
                 </p>
               ) : (
-                <p className="now-race-date">The next race is currently unavailable.</p>
+                <p className="now-race-date flex flex-wrap justify-between gap-2 text-[11px] mt-[18px] pb-4">
+                  The next race is currently unavailable.
+                </p>
               )}
               <p className="now-copy">
                 The speed, the strategy, the tiny decisions that change an entire weekend. I’m here
                 for all of it.
               </p>
               <a
-                className="now-text-link"
+                className="now-text-link flex justify-between items-center gap-4 text-[12px] font-semibold mt-6 pb-[6px]"
                 href="https://www.formula1.com/en/racing/2026"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -209,9 +221,11 @@ export default function NowExperience({ nextRace }: { nextRace: NextRace | null 
             <div className="now-offline-stories">
               {games.map((game) => (
                 <article className="now-minecraft-story" key={game.name} data-enter>
-                  <p className="eyebrow">A familiar world / {game.label}</p>
+                  <p className="eyebrow font-medium tracking-[0.13em] uppercase">
+                    A familiar world / {game.label}
+                  </p>
                   <ScrollScene travel={12} turn={3} zoom={0.9}>
-                    <div className="now-minecraft-art">
+                    <div className="now-minecraft-art flex items-center justify-between gap-[14px]">
                       <span aria-hidden="true">
                         PLAY.
                         <br />
@@ -226,13 +240,18 @@ export default function NowExperience({ nextRace }: { nextRace: NextRace | null 
                   </ScrollScene>
                   <h3>{game.name}</h3>
                   <p className="now-copy">{game.detail}</p>
-                  <Link className="now-text-link" href="/#projects">
+                  <Link
+                    className="now-text-link flex justify-between items-center gap-4 text-[12px] font-semibold mt-6 pb-[6px]"
+                    href="/#projects"
+                  >
                     Where playing turns into building <span>↗</span>
                   </Link>
                 </article>
               ))}
               <div className="now-daily-tools">
-                <p className="eyebrow">The everyday essentials</p>
+                <p className="eyebrow font-medium tracking-[0.13em] uppercase">
+                  The everyday essentials
+                </p>
                 {setupCards.map((item) => (
                   <article key={item.name} data-enter>
                     <Image
@@ -243,7 +262,9 @@ export default function NowExperience({ nextRace }: { nextRace: NextRace | null 
                       className={item.logoClassName}
                     />
                     <div>
-                      <p className="eyebrow">{item.label}</p>
+                      <p className="eyebrow font-medium tracking-[0.13em] uppercase">
+                        {item.label}
+                      </p>
                       <h3>{item.name}</h3>
                       <p className="now-copy">{item.detail}</p>
                     </div>
@@ -256,33 +277,49 @@ export default function NowExperience({ nextRace }: { nextRace: NextRace | null 
 
         <SceneRibbon words="CURIOSITY NEVER CLOCKS OUT" />
 
-        <section id="working-with" className="now-return" aria-labelledby="code-heading">
+        <section
+          id="working-with"
+          className="now-return grid items-start"
+          aria-labelledby="code-heading"
+        >
           <div className="now-return-intro">
-            <p className="eyebrow">03 / Back in the editor</p>
+            <p className="eyebrow font-medium tracking-[0.13em] uppercase">
+              03 / Back in the editor
+            </p>
             <ChapterTitle id="code-heading" lines={["AND BACK", "TO BUILDING."]} />
             <p className="now-copy">
               Backend systems, Minecraft projects and web interfaces. These are the languages I keep
               reaching for.
             </p>
-            <Link href="/#projects" className="now-text-link">
+            <Link
+              href="/#projects"
+              className="now-text-link flex justify-between items-center gap-4 text-[12px] font-semibold mt-6 pb-[6px]"
+            >
               Explore my projects <span>↗</span>
             </Link>
           </div>
           <ol className="now-language-stack">
             {stack.map((language, index) => (
               <li key={language.name} data-enter data-enter-delay={index * 70}>
-                <span className="eyebrow">0{index + 1} / In the toolkit</span>
+                <span className="eyebrow font-medium tracking-[0.13em] uppercase">
+                  0{index + 1} / In the toolkit
+                </span>
                 <strong>{language.name}</strong>
                 <p>{language.note}</p>
-                <span className="now-language-symbol" aria-hidden="true">
+                <span
+                  className="now-language-symbol absolute right-[15px] bottom-[-20px] pointer-events-none"
+                  aria-hidden="true"
+                >
                   {index % 2 ? "{ }" : "</>"}
                 </span>
               </li>
             ))}
           </ol>
         </section>
-        <div className="now-closing">
-          <span className="eyebrow">That's where I'm at.</span>
+        <div className="now-closing text-center">
+          <span className="eyebrow font-medium tracking-[0.13em] uppercase">
+            That's where I'm at.
+          </span>
           <p>
             Still figuring things out.
             <br />

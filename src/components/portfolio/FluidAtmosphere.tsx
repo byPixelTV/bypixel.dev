@@ -208,7 +208,10 @@ export default function FluidAtmosphere({
     };
   }, []);
   return (
-    <div className="fluid-atmosphere" aria-hidden="true">
+    <div
+      className="fluid-atmosphere fixed z-[-1] pointer-events-none overflow-hidden"
+      aria-hidden="true"
+    >
       <canvas ref={canvas} style={{ opacity: 0 }} />
     </div>
   );

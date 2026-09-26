@@ -56,8 +56,11 @@ export default function SpotifyNowPlaying() {
   }, [data]);
   if (!hasTrack)
     return (
-      <div className="spotify-live spotify-empty" role="status">
-        <span className="spotify-status">Spotify</span>
+      <div
+        className="spotify-live min-h-[112px] text-left relative isolate spotify-empty"
+        role="status"
+      >
+        <span className="spotify-status uppercase mb-1">Spotify</span>
         <p>
           {!loaded
             ? "Loading Spotify activity…"
@@ -70,13 +73,13 @@ export default function SpotifyNowPlaying() {
   return (
     <motion.div
       ref={root}
-      className="spotify-live"
+      className="spotify-live min-h-[112px] text-left relative isolate"
       aria-label="Spotify activity"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: reduce ? 0 : 0.5, ease: [0.22, 0.75, 0.18, 1] }}
     >
-      <AmbientBlobs className="spotify-ambience" />
+      <AmbientBlobs className="spotify-ambience absolute z-[-1]" />
       {data?.title ? (
         <div
           className="spotify-track"
@@ -87,7 +90,7 @@ export default function SpotifyNowPlaying() {
         >
           <button
             type="button"
-            className="spotify-toggle"
+            className="spotify-toggle w-full grid items-center text-left cursor-pointer"
             aria-expanded={expanded}
             aria-controls={detailId}
             onClick={() => setExpanded(!expanded)}
@@ -100,10 +103,10 @@ export default function SpotifyNowPlaying() {
                 height={64}
                 sizes="64px"
                 loading="eager"
-                className="spotify-cover"
+                className="spotify-cover object-cover"
               />
             )}
-            <span className="spotify-status">
+            <span className="spotify-status uppercase mb-1">
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <circle cx="12" cy="12" r="11" fill="currentColor" />
                 <path
@@ -120,7 +123,7 @@ export default function SpotifyNowPlaying() {
               <AnimatePresence initial={false} mode="popLayout">
                 <motion.span
                   key={trackKey}
-                  className="spotify-song-text"
+                  className="spotify-song-text flex-col items-center w-full gap-[1px]"
                   initial="incoming"
                   animate="visible"
                   exit="outgoing"
@@ -148,7 +151,7 @@ export default function SpotifyNowPlaying() {
             </span>
             <span className="spotify-indicator" aria-hidden="true">
               {data.isPlaying ? (
-                <span className="spotify-bars">
+                <span className="spotify-bars items-end gap-[3px]">
                   <i />
                   <i />
                   <i />
@@ -158,20 +161,20 @@ export default function SpotifyNowPlaying() {
               )}
             </span>
             {data.isPlaying && data.durationMs && (
-              <span className="spotify-timeline">
+              <span className="spotify-timeline pt-1">
                 <progress
                   ref={progress}
                   max={data.durationMs}
                   value={data.progressMs ?? 0}
                   aria-label="Track progress"
                 />
-                <span className="spotify-times">
+                <span className="spotify-times flex justify-between mt-[6px] text-[10px] leading-[1.3]">
                   <span ref={elapsed}>{time(data.progressMs ?? 0)}</span>
                   <span>{time(data.durationMs)}</span>
                 </span>
               </span>
             )}
-            <span className="spotify-disclosure">
+            <span className="spotify-disclosure flex justify-between pt-[7px] text-[10px]">
               {expanded ? "Less detail" : "Track details"}{" "}
               <span aria-hidden="true">{expanded ? "−" : "+"}</span>
             </span>
@@ -210,7 +213,7 @@ export default function SpotifyNowPlaying() {
               </dl>
               {data.songUrl && (
                 <a
-                  className="spotify-open"
+                  className="spotify-open block mt-5 text-center text-[12px]"
                   href={data.songUrl}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -229,11 +232,11 @@ export default function SpotifyNowPlaying() {
 /** The old letters roll out as the new ones enter; no second autoplay or hover pass. */
 function TrackRollText({ children, reduce }: { children: string; reduce: boolean }) {
   return (
-    <span className="roll-text">
+    <span className="roll-text inline-block">
       <span className="sr-only">{children}</span>
-      <span className="roll-visual" aria-hidden="true">
+      <span className="roll-visual inline-flex whitespace-nowrap" aria-hidden="true">
         {Array.from(children).map((letter, index) => (
-          <span key={index} className="roll-letter">
+          <span key={index} className="roll-letter inline-block h-[1.2em] overflow-hidden">
             <motion.span
               className="spotify-roll-glyph"
               style={{ display: "block", height: "1.2em", lineHeight: 1.2 }}

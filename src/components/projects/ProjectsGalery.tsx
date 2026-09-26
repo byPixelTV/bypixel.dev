@@ -204,15 +204,17 @@ export default function HorizontalGallery() {
       aria-label="Selected projects"
       className={`relative left-1/2 right-1/2 w-dvw -translate-x-1/2 ${isMobile ? "h-[350svh]" : "h-[450svh]"}`}
     >
-      <div className="project-stage sticky top-0 h-svh w-dvw overflow-hidden">
+      <div className="project-stage isolate sticky top-0 h-svh w-dvw overflow-hidden">
         <motion.div
-          className="project-scene-title"
+          className="project-scene-title absolute top-[42%] left-0 w-max font-[850] tracking-[-0.07em] leading-[0.9] pointer-events-none select-none"
           style={{ x: reduce ? 0 : titleX }}
           aria-hidden="true"
         >
           SELECTED WORK.
         </motion.div>
-        <div className="project-scene-label eyebrow">01 / Ideas into real things</div>
+        <div className="project-scene-label absolute left-[5vw] pointer-events-none eyebrow font-medium tracking-[0.13em] uppercase">
+          01 / Ideas into real things
+        </div>
         <div className="relative h-full">
           {responsiveProjectCards.map((project, index) => (
             <ProjectCardItem
@@ -227,7 +229,10 @@ export default function HorizontalGallery() {
             />
           ))}
         </div>
-        <div className="project-scene-progress" aria-hidden="true">
+        <div
+          className="project-scene-progress absolute left-[5vw] right-[5vw] items-center pointer-events-none"
+          aria-hidden="true"
+        >
           <span>Explore the work</span>
           <div>
             <motion.i style={{ scaleX: scrollYProgress }} />

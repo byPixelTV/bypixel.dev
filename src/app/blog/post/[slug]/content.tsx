@@ -226,7 +226,7 @@ export async function BlogPostContent({ slug }: { slug: string }) {
             <Suspense
               key={index}
               fallback={
-                <a className="streamed-link-placeholder" href={segment.url}>
+                <a className="streamed-link-placeholder block" href={segment.url}>
                   {segment.url} ↗
                 </a>
               }

@@ -3,7 +3,6 @@
 import Image from "next/image";
 import { Pause, Play } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import styles from "./PortalRadio.module.css";
 
 type Player = {
   playVideo(): void;
@@ -182,15 +181,16 @@ export default function PortalRadio() {
 
   const label = playing ? "Pause Portal radio" : "Play Portal radio";
   return (
-    <div className={styles.depth}>
+    <div className="pt-[420svh] pb-[120px] [background:linear-gradient(to_bottom,#a2acdf_0,#97afda_30svh,#8db1d6_65svh,#87b2d3_100svh)]">
       <section
         ref={section}
-        className={styles.radio}
+        className="group/portal relative mx-auto w-[min(420px,calc(100%_-_48px))] text-[#152f43]"
         data-discovered={discovered}
         aria-label="Portal radio"
       >
-        <div className={styles.art}>
+        <div className="translate-y-5 opacity-0 transition-[opacity,translate] duration-1000 ease-[ease] group-data-[discovered=true]/portal:translate-y-0 group-data-[discovered=true]/portal:opacity-100 motion-reduce:translate-y-0 motion-reduce:transition-none">
           <Image
+            className="block aspect-video h-auto w-full rounded-none"
             src="/portal.jpeg"
             alt="The glowing 85.2 FM radio from Portal"
             width={1920}
@@ -198,9 +198,11 @@ export default function PortalRadio() {
             sizes="(max-width: 468px) calc(100vw - 48px), 420px"
           />
         </div>
-        <div className={styles.caption}>
+        <div className="flex items-center justify-between gap-4 pt-[18px] [&_p]:mt-[6px] [&_p]:text-[14px] [&_p]:text-[#244459] [&_.eyebrow]:text-[#244459]! [&_:is(button,a):focus-visible]:outline-2 [&_:is(button,a):focus-visible]:outline-[#152f43] [&_:is(button,a):focus-visible]:outline-offset-[5px] translate-y-5 opacity-0 transition-[opacity,translate] duration-1000 ease-[ease] group-data-[discovered=true]/portal:translate-y-0 group-data-[discovered=true]/portal:opacity-100 motion-reduce:translate-y-0 motion-reduce:transition-none">
           <div>
-            <span className="eyebrow">Aperture Science / 85.2 FM</span>
+            <span className="eyebrow font-medium tracking-[0.13em] uppercase">
+              Aperture Science / 85.2 FM
+            </span>
             <p>
               I played Portal and Portal 2 for the first time in 2026. Portal 2 was a recent
               discovery, and I still find it wild that a game like this came out in 2011. Both feel
@@ -209,11 +211,17 @@ export default function PortalRadio() {
             <p>The Source Engine behind them is just as fascinating to me.</p>
           </div>
           {failed ? (
-            <a href="https://youtu.be/Ffx56ZqZoIM" target="_blank" rel="noopener noreferrer">
+            <a
+              className="text-[13px] text-[#152f43]"
+              href="https://youtu.be/Ffx56ZqZoIM"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               Listen on YouTube
             </a>
           ) : (
             <button
+              className="grid size-11 flex-[0_0_44px] cursor-pointer place-items-center rounded-full border border-[#152f4350] bg-[#ffffff08] text-[#152f43] hover:bg-[#ffffff18] disabled:cursor-wait disabled:opacity-40"
               type="button"
               disabled={!ready}
               title={label}
@@ -229,7 +237,12 @@ export default function PortalRadio() {
             </button>
           )}
         </div>
-        <div ref={host} className={styles.player} aria-hidden="true" inert />
+        <div
+          ref={host}
+          className="pointer-events-none absolute size-px overflow-hidden opacity-0 [&_iframe]:size-[200px] [&_iframe]:border-0"
+          aria-hidden="true"
+          inert
+        />
       </section>
     </div>
   );

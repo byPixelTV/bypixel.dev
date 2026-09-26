@@ -57,7 +57,11 @@ export default function ChapterTitle({
   return (
     <Tag ref={root} id={id} className={`chapter-title ${className}`} aria-label={lines.join(" ")}>
       {lines.map((line, index) => (
-        <span className="chapter-title-mask" key={line} aria-hidden="true">
+        <span
+          className="chapter-title-mask overflow-hidden pb-[0.12em] mb-[-0.12em]"
+          key={line}
+          aria-hidden="true"
+        >
           <span className={`chapter-title-line ${index > 0 ? "chapter-title-accent" : ""}`}>
             {line}
           </span>

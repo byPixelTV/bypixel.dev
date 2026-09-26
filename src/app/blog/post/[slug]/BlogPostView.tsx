@@ -104,7 +104,7 @@ export default function BlogPostView({
   return (
     <>
       <motion.div
-        className="article-reading-progress"
+        className="article-reading-progress fixed z-80 top-0 left-0 right-0 h-[2px] pointer-events-none"
         style={{ scaleX: scrollYProgress }}
         aria-hidden="true"
       />

@@ -9,15 +9,15 @@ export default function BlogPage() {
   return (
     <main className="blog-editorial">
       <Reveal>
-        <header className="blog-hero">
-          <p className="eyebrow" data-intro="0">
+        <header className="blog-hero relative grid items-end gap-x-15">
+          <p className="eyebrow font-medium tracking-[0.13em] uppercase" data-intro="0">
             The workbench / byPixelTV
           </p>
           <ScrollScene travel={35}>
             <ChapterTitle as="h1" lines={["THINK.", "BUILD.", "SHARE."]} />
           </ScrollScene>
           <div data-intro="2">
-            <span className="blog-hero-mark" aria-hidden="true">
+            <span className="blog-hero-mark text-[115px] leading-none mb-[30px]" aria-hidden="true">
               ✳
             </span>
             <p>

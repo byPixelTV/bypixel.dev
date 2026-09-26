@@ -32,7 +32,11 @@ export function NowStar() {
     };
   }, []);
   return (
-    <span ref={root} className="now-asterisk" aria-hidden="true">
+    <span
+      ref={root}
+      className="now-asterisk inline-block text-[0.7em] ml-[0.15em]"
+      aria-hidden="true"
+    >
       ✳
     </span>
   );
