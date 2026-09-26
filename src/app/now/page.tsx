@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import BackgroundLayout from "@/components/BackgroundLayout";
 import Navbar from "@/components/Navbar";
 import SiteFooter from "@/components/SiteFooter";
+import PortalRadio from "@/components/now/PortalRadio";
+import portalStyles from "@/components/now/PortalRadio.module.css";
 import NowExperience, { type NextRace } from "@/components/now/NowExperience";
 
 export const metadata: Metadata = {
@@ -107,7 +109,10 @@ export default async function NowPage() {
     <BackgroundLayout>
       <Navbar />
       <NowExperience nextRace={nextRace} />
-      <SiteFooter />
+      <div className={portalStyles.ending}>
+        <SiteFooter />
+        <PortalRadio />
+      </div>
     </BackgroundLayout>
   );
 }

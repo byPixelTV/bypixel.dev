@@ -1,0 +1,115 @@
+.ending :global(.footer-clean) {
+  background: linear-gradient(
+    180deg,
+    transparent,
+    #9d7fc633 25%,
+    #bda6ee 60%,
+    #b4a8e9 75%,
+    #a2acdf 100%
+  );
+}
+
+.depth {
+  padding: 420svh 0 120px;
+  background: linear-gradient(to bottom, #a2acdf 0, #97afda 30svh, #8db1d6 65svh, #87b2d3 100svh);
+}
+
+.radio {
+  position: relative;
+  width: min(420px, calc(100% - 48px));
+  margin: 0 auto;
+  color: #152f43;
+}
+
+.art,
+.caption {
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity 1s ease,
+    transform 1s ease;
+}
+
+.radio[data-discovered="true"] .art,
+.radio[data-discovered="true"] .caption {
+  opacity: 1;
+  transform: none;
+}
+
+.art img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  border-radius: 0;
+}
+
+.caption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-top: 18px;
+}
+
+.caption p {
+  margin: 6px 0 0;
+  font-size: 14px;
+  color: #244459;
+}
+
+.caption :global(.eyebrow) {
+  color: #244459;
+}
+
+.caption button {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+  border: 1px solid #152f4350;
+  border-radius: 50%;
+  background: #ffffff08;
+  color: #152f43;
+  cursor: pointer;
+}
+
+.caption button:hover {
+  background: #ffffff18;
+}
+.caption :is(button, a):focus-visible {
+  outline: 2px solid #152f43;
+  outline-offset: 5px;
+}
+.caption button:disabled {
+  opacity: 0.4;
+  cursor: wait;
+}
+.caption a {
+  font-size: 13px;
+  color: #152f43;
+}
+
+.player {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.player iframe {
+  width: 200px;
+  height: 200px;
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .art,
+  .caption {
+    transition: none;
+    transform: none;
+  }
+}
