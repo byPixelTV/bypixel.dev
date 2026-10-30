@@ -1,261 +1,100 @@
 "use client";
 
-import Image from "next/image";
-import RollText from "@/components/portfolio/RollText";
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { useAlbumAtmosphere, AmbientBlobs } from "@/components/portfolio/AlbumAtmosphere";
-import { useEffect, useId, useRef, useState } from "react";
+import { LiquidGlass } from "@vepando/liquid-glass-react";
+import { useAlbumAtmosphere } from "@/components/portfolio/AlbumAtmosphere";
 
-const time = (ms: number) => {
+function formatTime(ms: number) {
   const seconds = Math.floor(Math.max(0, ms) / 1000);
-  return Math.floor(seconds / 60) + ":" + String(seconds % 60).padStart(2, "0");
-};
+  return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
+}
 
 export default function SpotifyNowPlaying() {
   const { data, loaded } = useAlbumAtmosphere();
-  const reduce = useReducedMotion();
-  const [expanded, setExpanded] = useState(false);
-  const detailId = useId();
-  const trackKey = data?.trackId ?? data?.songUrl ?? data?.title;
-  const hasTrack = Boolean(data?.title);
-  const root = useRef<HTMLDivElement>(null);
-  const progress = useRef<HTMLProgressElement>(null);
-  const elapsed = useRef<HTMLSpanElement>(null);
+  const [elapsed, setElapsed] = useState(0);
+  const reducedMotion = useReducedMotion();
   useEffect(() => {
-    if (!hasTrack) return;
-    let inView = false;
-    const sync = () => {
-      if (root.current) root.current.dataset.active = String(inView && !document.hidden);
-    };
-    const observer = new IntersectionObserver(([entry]) => {
-      inView = entry.isIntersecting;
-      sync();
-    });
-    if (root.current) observer.observe(root.current);
-    document.addEventListener("visibilitychange", sync);
-    return () => {
-      observer.disconnect();
-      document.removeEventListener("visibilitychange", sync);
-    };
-  }, [hasTrack]);
-  useEffect(() => {
-    if (!data?.isPlaying || !data.durationMs) return;
-    const received = performance.now();
-    const update = () => {
-      if (document.hidden || root.current?.dataset.active !== "true") return;
-      const value = Math.min(
-        data?.durationMs ?? 0,
-        (data?.progressMs ?? 0) + (data?.isPlaying ? performance.now() - received : 0),
-      );
-      if (progress.current) progress.current.value = value;
-      if (elapsed.current) elapsed.current.textContent = time(value);
-    };
+    const started = performance.now();
+    const update = () =>
+      setElapsed(data?.isPlaying && !document.hidden ? performance.now() - started : 0);
     update();
-    const timer = setInterval(update, 1000);
-    return () => clearInterval(timer);
+    if (!data?.isPlaying) return;
+    const timer = window.setInterval(update, 1000);
+    return () => window.clearInterval(timer);
   }, [data]);
-  if (!hasTrack)
-    return (
-      <div
-        className="spotify-live min-h-[112px] text-left relative isolate spotify-empty"
-        role="status"
-      >
-        <span className="spotify-status uppercase mb-1">Spotify</span>
-        <p>
-          {!loaded
-            ? "Loading Spotify activity…"
-            : data?.stale
-              ? "Spotify is temporarily unavailable. Retrying shortly."
-              : "No recent Spotify activity available."}
-        </p>
-      </div>
-    );
-  return (
-    <motion.div
-      ref={root}
-      className="spotify-live min-h-[112px] text-left relative isolate"
-      aria-label="Spotify activity"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: reduce ? 0 : 0.5, ease: [0.22, 0.75, 0.18, 1] }}
-    >
-      <AmbientBlobs className="spotify-ambience absolute z-[-1]" />
-      {data?.title ? (
-        <div
-          className="spotify-track"
-          data-expanded={expanded}
-          onKeyDown={(event) => {
-            if (event.key === "Escape") setExpanded(false);
-          }}
-        >
-          <button
-            type="button"
-            className="spotify-toggle w-full grid items-center text-left cursor-pointer"
-            aria-expanded={expanded}
-            aria-controls={detailId}
-            onClick={() => setExpanded(!expanded)}
-          >
-            {data.albumImageUrl && (
-              <Image
-                src={data.albumImageUrl}
-                alt=""
-                width={64}
-                height={64}
-                sizes="64px"
-                loading="eager"
-                className="spotify-cover object-cover"
-              />
-            )}
-            <span className="spotify-status uppercase mb-1">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <circle cx="12" cy="12" r="11" fill="currentColor" />
-                <path
-                  d="M6 9c4-1.2 8-1 12 1M7 12c3-1 6.5-.7 10 1M8 15c2.8-.6 5-.3 8 1"
-                  fill="none"
-                  stroke="#102416"
-                  strokeWidth="1.6"
-                  strokeLinecap="round"
-                />
-              </svg>
-              {data.stale ? "Last known track" : data.isPlaying ? "Now playing" : "Last played"}
-            </span>
-            <span className="spotify-copy" aria-live="polite" aria-atomic="true">
-              <AnimatePresence initial={false} mode="popLayout">
-                <motion.span
-                  key={trackKey}
-                  className="spotify-song-text flex-col items-center w-full gap-[1px]"
-                  initial="incoming"
-                  animate="visible"
-                  exit="outgoing"
-                >
-                  <strong title={data.title}>
-                    <TrackRollText reduce={Boolean(reduce)}>{data.title}</TrackRollText>
-                  </strong>
-                  <span>
-                    <TrackRollText reduce={Boolean(reduce)}>{data.artist ?? ""}</TrackRollText>
-                  </span>
-                  {data.album && (
-                    <motion.small
-                      variants={{
-                        incoming: { opacity: 0 },
-                        visible: { opacity: 1 },
-                        outgoing: { opacity: 0 },
-                      }}
-                      transition={{ duration: reduce ? 0 : 0.56 }}
-                    >
-                      {data.album}
-                    </motion.small>
-                  )}
-                </motion.span>
-              </AnimatePresence>
-            </span>
-            <span className="spotify-indicator" aria-hidden="true">
-              {data.isPlaying ? (
-                <span className="spotify-bars items-end gap-[3px]">
-                  <i />
-                  <i />
-                  <i />
-                </span>
-              ) : (
-                "↗"
-              )}
-            </span>
-            {data.isPlaying && data.durationMs && (
-              <span className="spotify-timeline pt-1">
-                <progress
-                  ref={progress}
-                  max={data.durationMs}
-                  value={data.progressMs ?? 0}
-                  aria-label="Track progress"
-                />
-                <span className="spotify-times flex justify-between mt-[6px] text-[10px] leading-[1.3]">
-                  <span ref={elapsed}>{time(data.progressMs ?? 0)}</span>
-                  <span>{time(data.durationMs)}</span>
-                </span>
-              </span>
-            )}
-            <span className="spotify-disclosure flex justify-between pt-[7px] text-[10px]">
-              {expanded ? "Less detail" : "Track details"}{" "}
-              <span aria-hidden="true">{expanded ? "−" : "+"}</span>
-            </span>
-          </button>
-          <motion.div
-            id={detailId}
-            className="spotify-details"
-            initial={false}
-            animate={{ height: expanded ? "auto" : 0, opacity: expanded ? 1 : 0 }}
-            transition={{ duration: reduce ? 0 : 0.3, ease: [0.22, 0.75, 0.18, 1] }}
-            inert={!expanded}
-            aria-hidden={!expanded}
-          >
-            <div className="spotify-details-inner">
-              <dl>
-                <div>
-                  <dt>Track</dt>
-                  <dd>{data.title}</dd>
-                </div>
-                <div>
-                  <dt>Artist</dt>
-                  <dd>{data.artist}</dd>
-                </div>
-                {data.album && (
-                  <div>
-                    <dt>Album</dt>
-                    <dd>{data.album}</dd>
-                  </div>
-                )}
-                {data.durationMs && (
-                  <div>
-                    <dt>Duration</dt>
-                    <dd>{time(data.durationMs)}</dd>
-                  </div>
-                )}
-              </dl>
-              {data.songUrl && (
-                <a
-                  className="spotify-open block mt-5 text-center text-[12px]"
-                  href={data.songUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <RollText>Open song in Spotify ↗</RollText>
-                </a>
-              )}
-            </div>
-          </motion.div>
-        </div>
-      ) : null}
-    </motion.div>
-  );
-}
 
-/** The old letters roll out as the new ones enter; no second autoplay or hover pass. */
-function TrackRollText({ children, reduce }: { children: string; reduce: boolean }) {
+  const duration = data?.durationMs ?? 0;
+  const position = Math.max(0, Math.min(duration, (data?.progressMs ?? 0) + elapsed));
+  const key = data?.trackId ?? data?.songUrl ?? data?.title ?? "empty";
   return (
-    <span className="roll-text inline-block">
-      <span className="sr-only">{children}</span>
-      <span className="roll-visual inline-flex whitespace-nowrap" aria-hidden="true">
-        {Array.from(children).map((letter, index) => (
-          <span key={index} className="roll-letter inline-block h-[1.2em] overflow-hidden">
-            <motion.span
-              className="spotify-roll-glyph"
-              style={{ display: "block", height: "1.2em", lineHeight: 1.2 }}
-              variants={{
-                incoming: { y: reduce ? 0 : "100%", opacity: 0 },
-                visible: { y: 0, opacity: 1 },
-                outgoing: { y: reduce ? 0 : "-100%", opacity: 0 },
-              }}
-              transition={{
-                duration: reduce ? 0 : 0.56,
-                delay: reduce ? 0 : Math.min(index, 22) * 0.012,
-                ease: [0.22, 0.75, 0.18, 1],
-              }}
-            >
-              {letter === " " ? "\u00a0" : letter}
-            </motion.span>
-          </span>
-        ))}
-      </span>
-    </span>
+    <LiquidGlass radius={22} tint="dark" blur={4} specular={0.8} className="spotify-glass">
+      <div className="spotify-widget" aria-label="Spotify activity">
+        <div className="spotify-widget-row">
+          <div className="spotify-widget-cover">
+            <AnimatePresence initial={false}>
+              <motion.div
+                key={key}
+                className="absolute inset-0"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: reducedMotion ? 0 : 0.22 }}
+              >
+                {data?.albumImageUrl && (
+                  <img src={data.albumImageUrl} alt="" className="size-full object-cover" />
+                )}
+              </motion.div>
+            </AnimatePresence>
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="spotify-widget-status">
+              <span data-playing={data?.isPlaying || undefined} />
+              {!loaded
+                ? "Loading Spotify…"
+                : data?.stale
+                  ? "Last known track"
+                  : data?.isPlaying
+                    ? "Listening now"
+                    : "Last listened"}
+            </div>
+            <AnimatePresence initial={false} mode="wait">
+              <motion.div
+                key={key}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: reducedMotion ? 0 : 0.18 }}
+              >
+                {data?.songUrl ? (
+                  <a
+                    className="spotify-widget-title"
+                    href={data.songUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {data.title}
+                  </a>
+                ) : (
+                  <p className="spotify-widget-title">
+                    {data?.title ?? (loaded ? "No recent listening activity" : " ")}
+                  </p>
+                )}
+                <p className="spotify-widget-artist">{data?.artist}</p>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+        </div>
+        {data?.isPlaying && duration > 0 && (
+          <div className="spotify-widget-progress">
+            <progress max={duration} value={position} aria-label="Song progress" />
+            <div>
+              <span>{formatTime(position)}</span>
+              <span>{formatTime(duration)}</span>
+            </div>
+          </div>
+        )}
+      </div>
+    </LiquidGlass>
   );
 }

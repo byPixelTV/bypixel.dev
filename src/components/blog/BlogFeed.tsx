@@ -1,4 +1,3 @@
-import Reveal from "@/components/portfolio/Reveal";
 import BlogPostCard from "@/components/BlogPostCard";
 import { getPostSummaries } from "@/lib/blog-data";
 import { isServerAdmin } from "@/lib/session";
@@ -6,29 +5,25 @@ import { isServerAdmin } from "@/lib/session";
 export default async function BlogFeed() {
   const isAdmin = await isServerAdmin();
   const posts = await getPostSummaries(isAdmin);
-  const draftCount = posts.filter((post) => post.draft).length;
+  const drafts = posts.filter((post) => post.draft).length;
   return (
-    <Reveal className="max-w-6xl mx-auto">
-      {isAdmin && draftCount > 0 && (
-        <p className="mb-6 rounded-xl border border-yellow-500/20 bg-yellow-500/10 p-4 text-sm text-yellow-100">
-          Admin view · {draftCount} private drafts
-        </p>
+    <section aria-label="Blog posts" className="simple-feed">
+      {isAdmin && drafts > 0 && (
+        <p className="simple-draft-notice">Admin view · {drafts} private drafts</p>
       )}
-      <div className="blog-feed-label flex justify-between mb-[30px] eyebrow font-medium tracking-[0.13em] uppercase">
-        <span>{posts.length - draftCount} published articles</span>
-        <span>Notes from the workbench</span>
+      <div className="simple-feed-header">
+        <h2>Articles</h2>
+        <span>{posts.length - drafts} published</span>
       </div>
       {posts.length ? (
-        <div className="blog-card-grid grid">
-          {posts.map((post, index) => (
-            <div key={post._id} data-enter data-enter-delay={Math.min(index, 3) * 80}>
-              <BlogPostCard post={post} authorName={post.authorName} />
-            </div>
+        <div>
+          {posts.map((post) => (
+            <BlogPostCard key={post._id} post={post} authorName={post.authorName} />
           ))}
         </div>
       ) : (
-        <p className="py-16 text-white/60">No articles found yet.</p>
+        <p className="simple-empty">No articles yet.</p>
       )}
-    </Reveal>
+    </section>
   );
 }

@@ -76,16 +76,19 @@ export function PostsPage() {
 
       if (error) {
         console.error("Error fetching posts:", error);
+        setActionError("Could not load posts. Please try again.");
         return;
       }
 
       setPosts(postsData);
 
       // Fetch author names for all posts
-      const authorPromises = postsData.map(async (post) => {
-        const name = await getAuthorName(post.userId);
-        return { userId: post.userId, name };
-      });
+      const authorPromises = [...new Set(postsData.map((post) => post.userId))].map(
+        async (userId) => {
+          const name = await getAuthorName(userId);
+          return { userId, name };
+        },
+      );
 
       const authorResults = await Promise.all(authorPromises);
       const authorsMap = authorResults.reduce(
@@ -237,15 +240,15 @@ export function PostsPage() {
         )}
 
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Posts Management</h1>
-            <p className="text-muted-foreground">Manage and organize your blog posts</p>
+            <h1 className="text-3xl font-bold tracking-tight">Blog posts</h1>
+            <p className="text-muted-foreground">Manage your published posts and drafts.</p>
           </div>
           <div className="flex items-center gap-3">
             <Button onClick={openCreateDialog} className="gap-2">
               <Plus className="h-4 w-4" />
-              Create New Post
+              New post
             </Button>
             <Button onClick={handleLogout} className="gap-2 bg-red-600 hover:bg-red-700 text-white">
               <Minus className="h-4 w-4" />

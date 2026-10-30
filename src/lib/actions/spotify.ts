@@ -4,6 +4,7 @@ import { withArtistImages } from "@/lib/artist-images";
 import { favoriteArtists } from "@/lib/favorite-artists";
 import { spotifyFetch } from "@/lib/spotify-fetch";
 import { latestSpotifyActivity } from "@/lib/spotify-activity";
+import { getTopArtists as getLastfmTopArtists } from "@/lib/music";
 const NOW_PLAYING_ENDPOINT = "https://api.spotify.com/v1/me/player/currently-playing";
 const RECENTLY_PLAYED_ENDPOINT = "https://api.spotify.com/v1/me/player/recently-played";
 const TOP_ARTISTS_ENDPOINT = "https://api.spotify.com/v1/me/top/artists";
@@ -176,6 +177,21 @@ export async function getNowPlaying(): Promise<NowPlayingResult> {
 
 export async function getTopArtists(): Promise<TopArtistResult[]> {
   try {
+    if (process.env.LASTFM_API_KEY && process.env.LASTFM_USERNAME) {
+      try {
+        const artists = await getLastfmTopArtists("1month", 5, false);
+        if (artists.length)
+          return artists.map((artist) => ({
+            id: artist.mbid || artist.name,
+            name: artist.name,
+            imageUrl: artist.image || undefined,
+            spotifyUrl: artist.url || undefined,
+            genres: [],
+          }));
+      } catch (error) {
+        console.error("[Last.fm] Top artists request failed:", error);
+      }
+    }
     const res = await spotifyFetch(`${TOP_ARTISTS_ENDPOINT}?time_range=short_term&limit=5`);
 
     if (!res.ok) {
@@ -217,4 +233,22 @@ export async function getTopArtists(): Promise<TopArtistResult[]> {
 
 export async function getFavoriteArtists(): Promise<TopArtistResult[]> {
   return withArtistImages(favoriteArtists);
+}
+
+export async function getArtistImages(
+  artists: Pick<TopArtistResult, "id" | "name">[],
+): Promise<TopArtistResult[]> {
+  if (!Array.isArray(artists)) return [];
+  const safe = artists
+    .slice(0, 5)
+    .filter(
+      (artist) =>
+        artist != null &&
+        typeof artist.name === "string" &&
+        artist.name.length <= 120 &&
+        typeof artist.id === "string" &&
+        artist.id.length <= 120,
+    )
+    .map((artist) => ({ id: artist.id, name: artist.name, genres: [] }));
+  return withArtistImages(safe);
 }

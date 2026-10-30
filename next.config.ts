@@ -20,6 +20,18 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "i.scdn.co",
       },
+      {
+        protocol: "https",
+        hostname: "lastfm-img2.akamaized.net",
+        pathname: "/i/u/**",
+        search: "",
+      },
+      {
+        protocol: "https",
+        hostname: "lastfm-img.freetls.fastly.net",
+        pathname: "/i/u/**",
+        search: "",
+      },
     ],
   },
   reactCompiler: true,

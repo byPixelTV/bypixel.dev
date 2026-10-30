@@ -2000,3 +2000,375 @@ html {
 .project-scene-label {
   z-index: 0;
 }
+
+/* Transparent glass keeps the artwork and atmosphere visible through the card. */
+.spotify-glass {
+  width: 100%;
+  padding: 18px;
+  color: white;
+  background: linear-gradient(135deg, #ffffff14, #ffffff05);
+  border: 1px solid #ffffff35;
+  box-shadow:
+    inset 0 1px 0 #ffffff42,
+    0 12px 32px #00000025;
+}
+.spotify-widget {
+  min-width: 0;
+  text-align: left;
+}
+.spotify-widget-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.spotify-widget-cover {
+  position: relative;
+  width: 56px;
+  height: 56px;
+  flex: none;
+  overflow: hidden;
+  border-radius: 9px;
+  background: #ffffff15;
+}
+.spotify-widget-status {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #ffffffa8;
+  font-size: 11px;
+  margin-bottom: 4px;
+}
+.spotify-widget-status > span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #888;
+}
+.spotify-widget-status > span[data-playing] {
+  background: #45d479;
+}
+.spotify-widget-title,
+.spotify-widget-artist {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.spotify-widget-title {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+}
+a.spotify-widget-title:hover {
+  text-decoration: underline;
+}
+.spotify-widget-artist {
+  color: #ffffffa8;
+  font-size: 12px;
+  margin-top: 2px;
+}
+.spotify-widget-progress {
+  margin-top: 14px;
+}
+.spotify-widget-progress progress {
+  width: 100%;
+  height: 3px;
+  display: block;
+  appearance: none;
+  border: 0;
+  background: #ffffff30;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.spotify-widget-progress progress::-webkit-progress-bar {
+  background: #ffffff30;
+}
+.spotify-widget-progress progress::-webkit-progress-value {
+  background: #ffffffb0;
+}
+.spotify-widget-progress progress::-moz-progress-bar {
+  background: #ffffffb0;
+}
+.spotify-widget-progress > div {
+  display: flex;
+  justify-content: space-between;
+  color: #ffffffa0;
+  font-size: 10px;
+  margin-top: 5px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Calm article list and personal now page. */
+.simple-blog,
+.personal-now {
+  width: min(100% - 48px, 1240px);
+  margin-inline: auto;
+  padding-top: 145px;
+  padding-bottom: 100px;
+}
+.simple-blog {
+  max-width: 950px;
+}
+.simple-label {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  font-weight: 650;
+  color: #bb9bce;
+}
+.simple-page-header,
+.personal-now-header {
+  padding: 35px 0 58px;
+}
+.simple-page-header h1,
+.personal-now-header h1 {
+  font-size: clamp(42px, 5vw, 72px);
+  font-weight: 650;
+  letter-spacing: -0.055em;
+  line-height: 1.1;
+  margin: 18px 0;
+  color: #f3eff6;
+}
+.simple-page-header h1 span,
+.personal-now-header h1 span {
+  color: #c4a0de;
+}
+.simple-page-header > p:last-child,
+.personal-now-header > p:not(.simple-label) {
+  font-size: 16px;
+  line-height: 1.7;
+  color: #bbb3c2;
+}
+.simple-feed-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  border-bottom: 1px solid #ffffff24;
+  padding-bottom: 16px;
+}
+.simple-feed-header h2 {
+  font-size: 17px;
+  font-weight: 600;
+}
+.simple-feed-header span,
+.simple-post-meta {
+  font-size: 12px;
+  color: #aaa0b1;
+}
+.simple-post {
+  border-bottom: 1px solid #ffffff16;
+}
+.simple-post > a {
+  display: flex;
+  gap: 24px;
+  justify-content: space-between;
+  align-items: center;
+  padding: 25px 0;
+}
+.simple-post-copy {
+  min-width: 0;
+}
+.simple-post-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 9px;
+}
+.simple-post h3 {
+  font-size: 19px;
+  font-weight: 600;
+  margin: 9px 0 6px;
+  letter-spacing: -0.025em;
+}
+.simple-post h3 span {
+  color: #bba0ca;
+  font-size: 15px;
+}
+.simple-post a:hover h3 {
+  color: #d6b7e7;
+}
+.simple-post p,
+.simple-empty {
+  color: #b4abbc;
+  line-height: 1.65;
+  font-size: 14px;
+}
+.simple-post-image {
+  position: relative;
+  width: 112px;
+  aspect-ratio: 1.4;
+  flex: none;
+  overflow: hidden;
+  border-radius: 10px;
+  background: #ffffff0d;
+}
+.simple-post-image img {
+  object-fit: cover;
+}
+.simple-draft,
+.simple-draft-notice {
+  color: #f1d89c;
+}
+.simple-draft-notice {
+  padding-bottom: 20px;
+  font-size: 13px;
+}
+.simple-post-placeholder {
+  padding: 26px 0;
+  border-bottom: 1px solid #ffffff16;
+  display: grid;
+  gap: 10px;
+}
+.simple-post-placeholder span {
+  display: block;
+  width: 40%;
+  height: 10px;
+  border-radius: 5px;
+  background: #ffffff13;
+}
+.simple-post-placeholder span:nth-child(2) {
+  width: 65%;
+  height: 18px;
+}
+.simple-post-placeholder span:nth-child(3) {
+  width: 85%;
+}
+.personal-now-header nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  color: #d1b9de;
+  margin-top: 25px;
+  font-size: 13px;
+}
+.personal-section {
+  margin-top: 68px;
+  scroll-margin-top: 100px;
+}
+.personal-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 20px;
+  border-bottom: 1px solid #ffffff20;
+  padding-bottom: 20px;
+  margin-bottom: 28px;
+}
+.personal-heading h2 {
+  font-size: clamp(24px, 2.5vw, 34px);
+  letter-spacing: -0.04em;
+  font-weight: 600;
+  margin-top: 8px;
+}
+.personal-heading > p {
+  font-size: 13px;
+  color: #aaa0b1;
+}
+.personal-music-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  gap: clamp(28px, 5vw, 70px);
+  align-items: start;
+}
+.personal-music-grid .now-listening,
+.personal-music-grid .now-artists {
+  min-width: 0;
+}
+.personal-music-grid .now-album-art {
+  max-width: 260px;
+}
+.personal-tiles {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+.personal-tile {
+  border: 1px solid #ffffff1f;
+  border-radius: 20px;
+  padding: 25px;
+  background: #ffffff08;
+}
+.personal-tile h3 {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  margin-top: 15px;
+}
+.personal-tile > p:not(.simple-label),
+.personal-easter p {
+  color: #bbb2c2;
+  font-size: 14px;
+  line-height: 1.7;
+  margin-top: 12px;
+}
+.personal-tile > a,
+.personal-blog-link {
+  display: inline-block;
+  margin-top: 20px;
+  color: #d4b5e7;
+  font-size: 13px;
+}
+.personal-track {
+  display: block;
+  height: 100px;
+  width: auto;
+  object-fit: contain;
+  margin-top: 15px;
+}
+.personal-logo {
+  object-fit: contain;
+  margin-top: 18px;
+}
+.personal-easter {
+  border-top: 1px solid #ffffff18;
+  margin-top: 22px;
+  padding-top: 14px;
+}
+.personal-easter summary {
+  cursor: pointer;
+  color: #c8b4d2;
+  font-size: 12px;
+}
+.personal-toolkit ul {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+.personal-toolkit li {
+  padding: 18px;
+  border: 1px solid #ffffff1a;
+  border-radius: 14px;
+  background: #ffffff06;
+}
+.personal-toolkit li strong,
+.personal-toolkit li span {
+  display: block;
+}
+.personal-toolkit li span {
+  color: #aaa0b1;
+  font-size: 12px;
+  margin-top: 6px;
+}
+@media (max-width: 760px) {
+  .simple-blog,
+  .personal-now {
+    width: min(100% - 36px, 1240px);
+    padding-top: 105px;
+  }
+  .simple-page-header,
+  .personal-now-header {
+    padding-bottom: 36px;
+  }
+  .personal-heading {
+    align-items: start;
+    flex-direction: column;
+  }
+  .personal-music-grid,
+  .personal-tiles {
+    grid-template-columns: 1fr;
+  }
+  .personal-toolkit ul {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .simple-post-image {
+    width: 80px;
+  }
+}

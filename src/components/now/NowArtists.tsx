@@ -3,7 +3,12 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { motion, useReducedMotion } from "motion/react";
-import { getTopArtists, getFavoriteArtists, type TopArtistResult } from "@/lib/actions/spotify";
+import {
+  getTopArtists,
+  getFavoriteArtists,
+  getArtistImages,
+  type TopArtistResult,
+} from "@/lib/actions/spotify";
 
 import { favoriteArtists } from "@/lib/favorite-artists";
 
@@ -31,6 +36,23 @@ export default function NowArtists() {
           hasTopArtists = true;
           setArtists(result);
           setLive(true);
+          if (result.some((artist) => !artist.imageUrl)) {
+            void getArtistImages(
+              result.filter((artist) => !artist.imageUrl).map(({ id, name }) => ({ id, name })),
+            )
+              .then((enriched) => {
+                if (disposed) return;
+                setArtists((current) =>
+                  current.map((artist) => {
+                    const match = enriched.find(
+                      (item) => item.id === artist.id && item.name === artist.name,
+                    );
+                    return match?.imageUrl ? { ...artist, imageUrl: match.imageUrl } : artist;
+                  }),
+                );
+              })
+              .catch(() => {});
+          }
         })
         .catch(() => {
           /* Keep the explicitly labelled personal favorites. */
@@ -57,7 +79,7 @@ export default function NowArtists() {
       <div className="now-artists-label min-h-[54px] flex justify-between items-center flex-wrap gap-2 pb-4">
         <h3>{live ? "My top artists" : "Personal favorites"}</h3>
         <span className="eyebrow font-medium tracking-[0.13em] uppercase">
-          {live ? "Spotify / Past 4 weeks" : "Regular rotation"}
+          {live ? "Recent listening" : "Regular rotation"}
         </span>
       </div>
       <ol>

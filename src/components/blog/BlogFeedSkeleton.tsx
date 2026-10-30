@@ -1,15 +1,17 @@
 export default function BlogFeedSkeleton() {
   return (
-    <div className="blog-card-grid grid" role="status" aria-label="Loading articles">
-      <span className="sr-only">Loading articles…</span>
-      {[0, 1, 2, 3].map((item) => (
-        <div className="blog-skeleton overflow-hidden pb-[25px]" key={item} aria-hidden="true">
-          <div />
+    <section className="simple-feed" role="status" aria-label="Loading articles">
+      <div className="simple-feed-header">
+        <h2>Articles</h2>
+        <span>Loading…</span>
+      </div>
+      {[0, 1, 2].map((item) => (
+        <div className="simple-post-placeholder" key={item} aria-hidden="true">
           <span />
           <span />
           <span />
         </div>
       ))}
-    </div>
+    </section>
   );
 }

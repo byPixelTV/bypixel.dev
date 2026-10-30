@@ -1,14 +1,13 @@
 import BlogFeedSkeleton from "@/components/blog/BlogFeedSkeleton";
 export default function BlogLoading() {
   return (
-    <main className="blog-page content-width">
-      <header className="page-intro">
-        <p className="micro-label">The blog</p>
+    <main className="simple-blog">
+      <header className="simple-page-header">
+        <p className="simple-label">B Y P I X E L / W R I T I N G</p>
         <h1>
-          Thoughts, projects
-          <br />
-          <span>&amp; things I learn.</span>
+          Blog<span>.</span>
         </h1>
+        <p>Notes on development, projects and whatever I’m learning.</p>
       </header>
       <BlogFeedSkeleton />
     </main>

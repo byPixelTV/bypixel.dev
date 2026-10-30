@@ -17,8 +17,6 @@ export default function AdminClient() {
     const checkAuthAndAdmin = async () => {
       try {
         const session = await authClient.getSession();
-        // Check if user has a session
-        console.log("Checking session:", session.data);
         if (!session.data || !session.data.session) {
           router.push("/auth/login?not-logged-in=true");
           return;
@@ -46,7 +44,7 @@ export default function AdminClient() {
     return (
       <div className="flex flex-col items-center justify-center h-screen">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-4"></div>
-        <p>Loading...</p>
+        <p role="status">Loading dashboard…</p>
       </div>
     );
   }
