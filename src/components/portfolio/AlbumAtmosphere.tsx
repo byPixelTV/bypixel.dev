@@ -13,9 +13,9 @@ import {
 import { albumFallback as fallback, extractAlbumPalette } from "@/lib/album-palette";
 import FluidAtmosphere from "./FluidAtmosphere";
 import { usePathname } from "next/navigation";
-import { getNowPlaying, type NowPlayingResult } from "@/lib/actions/spotify";
+import type { NowPlayingResult } from "@/lib/actions/spotify";
+import { getMusicSnapshot } from "@/lib/actions/music";
 import { latestSpotifyActivity } from "@/lib/spotify-activity";
-import { spotifyPollDelay } from "@/lib/spotify-polling";
 const AlbumContext = createContext<{ data: NowPlayingResult | null; loaded: boolean }>({
   data: null,
   loaded: false,
@@ -70,10 +70,24 @@ export default function AlbumAtmosphere({ children }: { children: ReactNode }) {
     const poll = async () => {
       if (disposed || pending || document.hidden) return;
       pending = true;
-      let delay = 15000;
+      let delay = 2000;
       try {
-        const result = await getNowPlaying();
-        delay = spotifyPollDelay(result);
+        const snapshot = await getMusicSnapshot();
+        const track = snapshot.track;
+        const result: NowPlayingResult = {
+          isPlaying: snapshot.isPlaying,
+          isRecent: !snapshot.isPlaying,
+          title: track?.name,
+          artist: track?.artists.join(", "),
+          album: track?.album ?? undefined,
+          albumImageUrl: track?.image ?? undefined,
+          songUrl: track?.url ?? undefined,
+          progressMs:
+            snapshot.progressMs +
+            (snapshot.isPlaying ? Math.max(0, Date.now() - snapshot.fetchedAt) : 0),
+          durationMs: track?.durationMs,
+          playedAt: new Date(track?.playedAt ?? snapshot.fetchedAt).toISOString(),
+        };
         if (!disposed) {
           setData((previous) => {
             const activity = latestSpotifyActivity(previous, result);
@@ -89,6 +103,7 @@ export default function AlbumAtmosphere({ children }: { children: ReactNode }) {
           });
         }
       } catch {
+        delay = 15000;
         if (!disposed) {
           setData((previous) => latestSpotifyActivity(previous, { isPlaying: false, stale: true }));
         }

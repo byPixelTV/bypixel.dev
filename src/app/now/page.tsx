@@ -5,6 +5,8 @@ import SiteFooter from "@/components/SiteFooter";
 import PortalRadio from "@/components/now/PortalRadio";
 import portalStyles from "@/components/now/PortalRadio.module.css";
 import NowExperience, { type NextRace } from "@/components/now/NowExperience";
+import NowRaceCard from "@/components/now/NowRaceCard";
+import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: "Now | byPixelTV",
@@ -102,13 +104,21 @@ async function getNextRace(): Promise<NextRace | null> {
   }
 }
 
-export default async function NowPage() {
-  const nextRace = await getNextRace();
+async function NextRaceCard() {
+  return <NowRaceCard race={await getNextRace()} />;
+}
 
+export default function NowPage() {
   return (
     <BackgroundLayout>
       <Navbar />
-      <NowExperience nextRace={nextRace} />
+      <NowExperience
+        raceCard={
+          <Suspense fallback={<NowRaceCard loading />}>
+            <NextRaceCard />
+          </Suspense>
+        }
+      />
       <div className={portalStyles.ending}>
         <SiteFooter />
         <PortalRadio />

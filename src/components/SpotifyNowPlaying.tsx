@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { LiquidGlass } from "@vepando/liquid-glass-react";
 import { useAlbumAtmosphere } from "@/components/portfolio/AlbumAtmosphere";
+import { FaSpotify } from "react-icons/fa";
 
 function formatTime(ms: number) {
   const seconds = Math.floor(Math.max(0, ms) / 1000);
@@ -27,45 +28,54 @@ export default function SpotifyNowPlaying() {
   const duration = data?.durationMs ?? 0;
   const position = Math.max(0, Math.min(duration, (data?.progressMs ?? 0) + elapsed));
   const key = data?.trackId ?? data?.songUrl ?? data?.title ?? "empty";
+  const showProgress = Boolean(data?.isPlaying && duration > 0);
+  const status = !loaded
+    ? "Loading Spotify…"
+    : data?.stale
+      ? "Last known track"
+      : data?.isPlaying
+        ? "Listening now"
+        : "Last listened";
   return (
     <LiquidGlass radius={22} tint="dark" blur={4} specular={0.8} className="spotify-glass">
       <div className="spotify-widget" aria-label="Spotify activity">
-        <div className="spotify-widget-row">
-          <div className="spotify-widget-cover">
-            <AnimatePresence initial={false}>
-              <motion.div
-                key={key}
-                className="absolute inset-0"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: reducedMotion ? 0 : 0.22 }}
-              >
+        <div className="spotify-widget-track">
+          <AnimatePresence initial={false} mode="wait">
+            <motion.div
+              key={key}
+              className="spotify-widget-row"
+              initial={{ opacity: 0, y: reducedMotion ? 0 : 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: reducedMotion ? 0 : -6 }}
+              transition={{ duration: reducedMotion ? 0 : 0.2, ease: "easeInOut" }}
+            >
+              <div className="spotify-widget-cover">
                 {data?.albumImageUrl && (
                   <img src={data.albumImageUrl} alt="" className="size-full object-cover" />
                 )}
-              </motion.div>
-            </AnimatePresence>
-          </div>
-          <div className="min-w-0 flex-1">
-            <div className="spotify-widget-status">
-              <span data-playing={data?.isPlaying || undefined} />
-              {!loaded
-                ? "Loading Spotify…"
-                : data?.stale
-                  ? "Last known track"
-                  : data?.isPlaying
-                    ? "Listening now"
-                    : "Last listened"}
-            </div>
-            <AnimatePresence initial={false} mode="wait">
-              <motion.div
-                key={key}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: reducedMotion ? 0 : 0.18 }}
-              >
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="spotify-widget-status">
+                  <motion.span
+                    className="spotify-status-dot"
+                    animate={{ backgroundColor: data?.isPlaying ? "#45d479" : "#888888" }}
+                    transition={{ duration: reducedMotion ? 0 : 0.35 }}
+                    aria-hidden="true"
+                  />
+                  <span className="spotify-status-label" aria-live="polite">
+                    <AnimatePresence initial={false} mode="wait">
+                      <motion.span
+                        key={status}
+                        initial={{ opacity: 0, y: reducedMotion ? 0 : 3 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: reducedMotion ? 0 : -3 }}
+                        transition={{ duration: reducedMotion ? 0 : 0.16, ease: "easeInOut" }}
+                      >
+                        {status}
+                      </motion.span>
+                    </AnimatePresence>
+                  </span>
+                </div>
                 {data?.songUrl ? (
                   <a
                     className="spotify-widget-title"
@@ -81,19 +91,32 @@ export default function SpotifyNowPlaying() {
                   </p>
                 )}
                 <p className="spotify-widget-artist">{data?.artist}</p>
-              </motion.div>
-            </AnimatePresence>
-          </div>
+                {data?.album && data.album !== data.title && (
+                  <p className="spotify-widget-album">{data.album}</p>
+                )}
+              </div>
+              <FaSpotify className="spotify-widget-service" aria-label="Spotify" />
+            </motion.div>
+          </AnimatePresence>
         </div>
-        {data?.isPlaying && duration > 0 && (
-          <div className="spotify-widget-progress">
-            <progress max={duration} value={position} aria-label="Song progress" />
-            <div>
-              <span>{formatTime(position)}</span>
-              <span>{formatTime(duration)}</span>
-            </div>
+        <motion.div
+          className="spotify-widget-progress"
+          initial={false}
+          animate={{
+            opacity: showProgress ? 1 : 0,
+            height: showProgress ? "auto" : 0,
+            marginTop: showProgress ? 14 : 0,
+            y: showProgress || reducedMotion ? 0 : 4,
+          }}
+          transition={{ duration: reducedMotion ? 0 : 0.3, ease: "easeInOut" }}
+          aria-hidden={!showProgress}
+        >
+          <progress max={duration || 1} value={position} aria-label="Song progress" />
+          <div>
+            <span>{formatTime(position)}</span>
+            <span>{formatTime(duration)}</span>
           </div>
-        )}
+        </motion.div>
       </div>
     </LiquidGlass>
   );

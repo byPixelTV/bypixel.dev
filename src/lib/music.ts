@@ -38,7 +38,12 @@ function required(name: string): string {
   return value;
 }
 
-async function cached<T>(key: string, ttlMs: number, load: () => Promise<T>): Promise<T> {
+async function cached<T>(
+  key: string,
+  ttlMs: number,
+  load: () => Promise<T>,
+  allowStale = true,
+): Promise<T> {
   const previous = memory.get(key);
   if (previous && previous.until > Date.now()) return previous.value as T;
   const inFlight = pending.get(key);
@@ -50,7 +55,7 @@ async function cached<T>(key: string, ttlMs: number, load: () => Promise<T>): Pr
       return value;
     } catch (error) {
       // Prefer slightly stale content during transient upstream failures.
-      if (previous) return previous.value as T;
+      if (allowStale && previous) return previous.value as T;
       throw error;
     } finally {
       pending.delete(key);
@@ -131,34 +136,40 @@ type SpotifyItem = {
 };
 
 export async function getCurrentlyPlaying(): Promise<NowPlaying> {
-  return cached("spotify:now", 2_000, async () => {
-    const fetchedAt = Date.now();
-    const response = await spotifyGet("/me/player/currently-playing");
-    if (response.status === 204) return { isPlaying: false, track: null, progressMs: 0, fetchedAt };
-    if (!response.ok) throw new Error(`Spotify playback failed (${response.status})`);
-    const data = (await response.json()) as {
-      is_playing?: boolean;
-      progress_ms?: number;
-      item?: SpotifyItem;
-      currently_playing_type?: string;
-    };
-    const item = data.item;
-    if (!item || item.type !== "track")
-      return { isPlaying: false, track: null, progressMs: 0, fetchedAt };
-    return {
-      isPlaying: Boolean(data.is_playing),
-      progressMs: data.progress_ms ?? 0,
-      fetchedAt,
-      track: {
-        name: item.name,
-        artists: item.artists?.map((a) => a.name) ?? [],
-        album: item.album?.name ?? null,
-        image: item.album?.images?.[0]?.url ?? null,
-        url: item.external_urls?.spotify ?? null,
-        durationMs: item.duration_ms,
-      },
-    };
-  });
+  return cached(
+    "spotify:now",
+    2_000,
+    async () => {
+      const fetchedAt = Date.now();
+      const response = await spotifyGet("/me/player/currently-playing");
+      if (response.status === 204)
+        return { isPlaying: false, track: null, progressMs: 0, fetchedAt };
+      if (!response.ok) throw new Error(`Spotify playback failed (${response.status})`);
+      const data = (await response.json()) as {
+        is_playing?: boolean;
+        progress_ms?: number;
+        item?: SpotifyItem;
+        currently_playing_type?: string;
+      };
+      const item = data.item;
+      if (!item || item.type !== "track")
+        return { isPlaying: false, track: null, progressMs: 0, fetchedAt };
+      return {
+        isPlaying: Boolean(data.is_playing),
+        progressMs: data.progress_ms ?? 0,
+        fetchedAt,
+        track: {
+          name: item.name,
+          artists: item.artists?.map((a) => a.name) ?? [],
+          album: item.album?.name ?? null,
+          image: item.album?.images?.[0]?.url ?? null,
+          url: item.external_urls?.spotify ?? null,
+          durationMs: item.duration_ms,
+        },
+      };
+    },
+    false,
+  );
 }
 
 type LastfmImage = { "#text": string; size: string };

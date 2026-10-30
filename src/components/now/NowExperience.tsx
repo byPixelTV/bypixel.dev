@@ -1,5 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
+import { LiquidGlass } from "@vepando/liquid-glass-react";
+import type { ReactNode } from "react";
+import { FaJava } from "react-icons/fa";
+import { SiGo, SiKotlin, SiTypescript } from "react-icons/si";
 import NowListening from "@/components/now/NowListening";
 import NowArtists from "@/components/now/NowArtists";
 
@@ -11,18 +15,7 @@ export interface NextRace {
   trackImage?: string;
 }
 
-function formatRaceDate(date: string) {
-  return new Intl.DateTimeFormat("en-GB", {
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    timeZone: "Europe/Berlin",
-    timeZoneName: "short",
-  }).format(new Date(date));
-}
-
-export default function NowExperience({ nextRace }: { nextRace: NextRace | null }) {
+export default function NowExperience({ raceCard }: { raceCard: ReactNode }) {
   return (
     <main className="personal-now">
       <header className="personal-now-header">
@@ -59,59 +52,40 @@ export default function NowExperience({ nextRace }: { nextRace: NextRace | null 
           <p>Games, race weekends and everyday tech.</p>
         </div>
         <div className="personal-tiles">
+          {raceCard}
           <article className="personal-tile">
-            <p className="simple-label">FORMULA 1</p>
-            <h3>{nextRace?.name ?? "Race weekends"}</h3>
-            {nextRace ? (
-              <p>
-                {nextRace.location} ·{" "}
-                <time dateTime={nextRace.date}>{formatRaceDate(nextRace.date)}</time>
-              </p>
-            ) : (
-              <p>The next race is currently unavailable.</p>
-            )}
-            {nextRace?.trackImage && (
+            <LiquidGlass
+              radius={20}
+              tint="dark"
+              blur={4}
+              specular={0.8}
+              className="personal-tile-glass"
+            >
+              <p className="simple-label">MINECRAFT</p>
               <Image
-                className="personal-track"
-                src={nextRace.trackImage}
-                alt={`${nextRace.name} circuit`}
-                width={180}
-                height={110}
+                src="/assets/logo/minecraft.svg"
+                alt=""
+                width={44}
+                height={44}
+                className="personal-logo"
               />
-            )}
-            <a href="https://www.formula1.com/en/racing" target="_blank" rel="noopener noreferrer">
-              Season calendar ↗
-            </a>
-            <details className="personal-easter">
-              <summary>Radio check</summary>
-              <p>Copy. The next lap starts after this one. 🏁</p>
-            </details>
+              <h3>Still playing. Still building.</h3>
+              <p>Servers, plugins and the occasional reason to stay up too late.</p>
+              <Link href="/#projects">See the projects ↗</Link>
+            </LiquidGlass>
           </article>
           <article className="personal-tile">
-            <p className="simple-label">MINECRAFT</p>
-            <Image
-              src="/assets/logo/minecraft.svg"
-              alt=""
-              width={44}
-              height={44}
-              className="personal-logo"
-            />
-            <h3>Still playing. Still building.</h3>
-            <p>Servers, plugins and the occasional reason to stay up too late.</p>
-            <Link href="/#projects">See the projects ↗</Link>
-            <details className="personal-easter">
-              <summary>One more block</summary>
-              <p>Just one more. Then it’s definitely finished. ⛏</p>
-            </details>
-          </article>
-          <article className="personal-tile">
-            <p className="simple-label">EVERYDAY TECH</p>
-            <h3>Nothing Phone & Windows</h3>
-            <p>My daily setup for coding, games and everything in between.</p>
-            <details className="personal-easter">
-              <summary>A small detail</summary>
-              <p>The desktop cleanup is temporary. The tabs are forever.</p>
-            </details>
+            <LiquidGlass
+              radius={20}
+              tint="dark"
+              blur={4}
+              specular={0.8}
+              className="personal-tile-glass"
+            >
+              <p className="simple-label">EVERYDAY TECH</p>
+              <h3>Nothing Phone & Windows</h3>
+              <p>My daily setup for coding, games and everything in between.</p>
+            </LiquidGlass>
           </article>
         </div>
       </section>
@@ -125,18 +99,22 @@ export default function NowExperience({ nextRace }: { nextRace: NextRace | null 
         </div>
         <ul>
           <li>
+            <SiKotlin aria-hidden="true" className="toolkit-icon toolkit-kotlin" />
             <strong>Kotlin</strong>
             <span>JVM backends</span>
           </li>
           <li>
+            <FaJava aria-hidden="true" className="toolkit-icon toolkit-java" />
             <strong>Java</strong>
             <span>Minecraft systems</span>
           </li>
           <li>
+            <SiGo aria-hidden="true" className="toolkit-icon toolkit-go" />
             <strong>Go</strong>
             <span>Services</span>
           </li>
           <li>
+            <SiTypescript aria-hidden="true" className="toolkit-icon toolkit-typescript" />
             <strong>TypeScript</strong>
             <span>Web apps</span>
           </li>

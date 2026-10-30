@@ -13,13 +13,14 @@ uniform vec3 tertiary;
 void main() {
   vec2 uv = gl_FragCoord.xy / resolution;
   vec2 p = (uv - .5) * vec2(resolution.x / resolution.y, 1.0);
-  float t = time * .055;
+  float t = time * .11;
   float bend = sin(p.x * 1.8 + t) * .18 + sin(p.x * 2.7 - t * .6) * .06;
   float d = p.y - bend;
   float light = exp(-d * d * 9.0);
   float foldDistance = (d + .16 + sin(p.x * 1.4 + t * .7) * .08) * 8.0;
   float fold = exp(-foldDistance * foldDistance);
-  float glow = exp(-dot(p - vec2(-.45, .15), p - vec2(-.45, .15)) * 1.4);
+  vec2 glowCenter = vec2(-.45 + sin(t * .65) * .15, .15 + cos(t * .5) * .08);
+  float glow = exp(-dot(p - glowCenter, p - glowCenter) * 1.4);
   vec3 color = mix(primary, secondary, smoothstep(-.8, .9, p.x));
   color *= light * .16 + fold * .065;
   color += tertiary * glow * .05;
