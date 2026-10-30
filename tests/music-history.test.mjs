@@ -19,6 +19,7 @@ test("cold visits use the previous Last.fm track when the first item is still ma
   setSystemTime(new Date("2020-01-01T00:00:00Z"));
   let playbackFailed = false;
   let lastfmFailed = false;
+  let spotifyHistoryFailed = false;
   globalThis.fetch = mock(async (url) => {
     const value = String(url);
     if (value.includes("/api/token"))
@@ -42,6 +43,7 @@ test("cold visits use the previous Last.fm track when the first item is still ma
       });
     }
     if (value.includes("recently-played")) {
+      if (spotifyHistoryFailed) return new Response(null, { status: 403 });
       return Response.json({
         items: [
           {
@@ -71,6 +73,12 @@ test("cold visits use the previous Last.fm track when the first item is still ma
     setSystemTime(new Date("2020-01-01T00:01:02Z"));
     process.env.LASTFM_USERNAME = "another-test-user";
     lastfmFailed = true;
+    spotifyHistoryFailed = true;
+    playbackFailed = false;
+    await expect(getMusicSnapshot()).rejects.toThrow("Music activity unavailable");
+    setSystemTime(new Date("2020-01-01T00:02:03Z"));
+    spotifyHistoryFailed = false;
+    playbackFailed = true;
     const spotifyFallback = await getMusicSnapshot();
     expect(spotifyFallback.track?.name).toBe("Spotify fallback");
     expect(spotifyFallback.stale).toBe(true);

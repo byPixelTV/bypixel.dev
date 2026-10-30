@@ -19,6 +19,7 @@ export async function getMusicSnapshot(): Promise<MusicSnapshot> {
     if (live.track) return live;
   } catch {
     playbackFailed = true;
+    console.warn("[Music] Spotify playback unavailable; checking listening history.");
   }
 
   let historyFailed = false;
@@ -34,8 +35,15 @@ export async function getMusicSnapshot(): Promise<MusicSnapshot> {
         stale: playbackFailed,
       };
     }
-  } catch {
+    console.warn("[Music] Last.fm returned no completed tracks; checking Spotify history.");
+  } catch (error) {
     historyFailed = true;
+    const reason = error instanceof Error ? error.message.match(/^Last\.fm (?:HTTP )?\d+/)?.[0] : null;
+    console.warn(
+      process.env.LASTFM_USERNAME && process.env.LASTFM_API_KEY
+        ? `[Music] Last.fm history unavailable${reason ? ` (${reason})` : " (request or response error)"}; checking Spotify history.`
+        : "[Music] Last.fm is not configured (LASTFM_USERNAME or LASTFM_API_KEY missing); checking Spotify history.",
+    );
   }
 
   // Keep Spotify's existing cached history as a fallback if Last.fm has no usable track.
@@ -58,8 +66,10 @@ export async function getMusicSnapshot(): Promise<MusicSnapshot> {
       stale: playbackFailed || history.stale,
     };
   }
-  if (playbackFailed && (historyFailed || history.stale))
+  if (historyFailed || history.stale) {
+    console.warn("[Music] No last-played track available from listening history.");
     throw new Error("Music activity unavailable");
+  }
   return {
     isPlaying: false,
     track: null,
