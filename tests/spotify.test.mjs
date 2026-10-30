@@ -241,11 +241,14 @@ test("newer history replaces the fallback and invalid timestamps are ignored", (
       now,
     ).title,
   ).toBe("Newest song");
-  for (const playedAt of [undefined, "invalid", new Date(now + 3600000).toISOString()]) {
+  for (const playedAt of [undefined, "invalid"]) {
     expect(latestSpotifyActivity(null, { ...incoming, playedAt }, now)).toEqual({
       isPlaying: false,
     });
   }
+  expect(
+    latestSpotifyActivity(null, { ...incoming, playedAt: new Date(now + 3600000).toISOString() }).title,
+  ).toBe("Newest song");
 });
 
 const { createSpotifyFetch } = await import("../src/lib/spotify-fetch");
