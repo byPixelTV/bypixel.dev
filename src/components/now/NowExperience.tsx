@@ -3,7 +3,7 @@ import Link from "next/link";
 import { LiquidGlass } from "@vepando/liquid-glass-react";
 import type { ReactNode } from "react";
 import { FaJava } from "react-icons/fa";
-import { SiGo, SiKotlin, SiTypescript } from "react-icons/si";
+import { SiGo, SiKotlin, SiNextdotjs, SiReact, SiRust, SiTypescript } from "react-icons/si";
 import NowListening from "@/components/now/NowListening";
 import NowArtists from "@/components/now/NowArtists";
 
@@ -84,7 +84,12 @@ export default function NowExperience({ raceCard }: { raceCard: ReactNode }) {
             >
               <p className="simple-label">EVERYDAY TECH</p>
               <h3>Nothing Phone & Windows</h3>
-              <p>My daily setup for coding, games and everything in between.</p>
+              <p>My daily setup for coding, games and everything in between. Sometimes I also switch to Linux for a change. I use CachyOS, which is based on Arch btw.</p>
+              <div className="personal-tech-logos" aria-hidden="true">
+                <Image src="/assets/logo/nothing.png" alt="" width={88} height={16} />
+                <Image src="/assets/logo/windows.webp" alt="" width={26} height={26} />
+                <Image src="/assets/logo/cachyos.svg" alt="" width={30} height={30} />
+              </div>
             </LiquidGlass>
           </article>
         </div>
@@ -101,12 +106,12 @@ export default function NowExperience({ raceCard }: { raceCard: ReactNode }) {
           <li>
             <SiKotlin aria-hidden="true" className="toolkit-icon toolkit-kotlin" />
             <strong>Kotlin</strong>
-            <span>JVM backends</span>
+            <span>JVM backends & Minecraft development</span>
           </li>
           <li>
             <FaJava aria-hidden="true" className="toolkit-icon toolkit-java" />
             <strong>Java</strong>
-            <span>Minecraft systems</span>
+            <span>Minecraft and other projects that don't use Kotlin</span>
           </li>
           <li>
             <SiGo aria-hidden="true" className="toolkit-icon toolkit-go" />
@@ -117,6 +122,26 @@ export default function NowExperience({ raceCard }: { raceCard: ReactNode }) {
             <SiTypescript aria-hidden="true" className="toolkit-icon toolkit-typescript" />
             <strong>TypeScript</strong>
             <span>Web apps</span>
+          </li>
+          <li>
+            <SiReact aria-hidden="true" className="toolkit-icon toolkit-react" />
+            <strong>React</strong>
+            <span>Frontend development</span>
+          </li>
+          <li>
+            <SiReact aria-hidden="true" className="toolkit-icon toolkit-react" />
+            <strong>React</strong>
+            <span>Frontend development</span>
+          </li>
+          <li>
+            <SiNextdotjs aria-hidden="true" className="toolkit-icon toolkit-nextjs" />
+            <strong>Next.js</strong>
+            <span>Fullstack web development</span>
+          </li>
+          <li>
+            <SiRust aria-hidden="true" className="toolkit-icon toolkit-rust" />
+            <strong>Rust</strong>
+            <span>Systems programming - still learning and tbf I have a lot to learn</span>
           </li>
         </ul>
         <Link href="/blog" className="personal-blog-link">

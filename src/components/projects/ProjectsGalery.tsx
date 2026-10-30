@@ -32,12 +32,11 @@ const projects: Project[] = [
     imagePath: "/projects/betterattack.webp",
     role: "Sys Admin, Developer & Administrator",
     description:
-      "Minecraft CraftAttack like survival server — plugin development, micro-services, infrastructure setup and full administration.",
+      "BetterAttack is a Minecraft survival server with a focus on community. It is based on the popular CraftAttack project and I am responsible for the server's administration, moderation, and development. I have built custom plugins, microservices, discord bots and the full server infrastructure from scratch.",
     tags: [
       "Minecraft",
       "Backend",
       "Linux",
-      "Moderation",
       "Administration",
       "Go",
       "Kotlin",
@@ -52,7 +51,7 @@ const projects: Project[] = [
     imagePath: "/projects/datbot.png",
     role: "Web Developer",
     description:
-      "Feature-rich Discord bot paired with a Next.js web dashboard — moderation, stats and integrations.",
+      "A feature-rich Discord bot written in Kotlin with JDA, providing a variety of commands and functionalities for Discord servers and communities. I am responsible for the bot's web dashboard, website and a big part of the bot itself. We try to make the bot as user-friendly and accessible as possible, while also providing a lot of features for advanced users.",
     tags: ["TypeScript", "Next.js", "Discord.js", "Web", "Kotlin", "Active", "JDA"],
     startAt: "October 2024",
     endAt: "now",
@@ -63,7 +62,7 @@ const projects: Project[] = [
     imagePath: "/projects/eramc.png",
     role: "Founder, Developer & Sys Admin",
     description:
-      "Custom Minecraft smp server, pvp server and more coming soon — built bespoke plugins, a web dashboard and the full server infrastructure from scratch.",
+      "EraMC was supposed to be the next era of Minecraft smps, pvp servers and minigames. I was responsible for the server's administration, moderation, and development. I built custom plugins, microservices, discord bots, databases and the full server infrastructure from scratch. The project was discontinued due to lack of time and interest, also because there was a small beef between me and the other founder, so we decided to shut down the project.",
     tags: ["Minecraft", "Backend", "Web", "Linux", "Kotlin", "Go"],
     startAt: "May 2025",
     endAt: "July 2026",
@@ -73,7 +72,7 @@ const projects: Project[] = [
     imagePath: "/projects/danismp.png",
     role: "Sys Admin, Developer & Administrator",
     description:
-      "One of the biggest german Minecraft sword SMP servers — plugin development, infrastructure setup and full administration.",
+      "One of the biggest german Minecraft sword SMP servers at the time. I was responsible for the server's administration, moderation, and development. I also provided a lot of support for the community and helped with the server's growth. I built custom plugins and managed the full server infrastructure. I left the project because I wanted to focus on my own projects and because me and the owner had different visions for the server.",
     tags: ["Minecraft", "Backend", "Linux"],
     startAt: "February 2025",
     endAt: "May 2025",
@@ -308,7 +307,7 @@ function ProjectCardItem({
   const content = (
     <div
       data-active={item.active}
-      style={{ width: item.width, height: item.height }}
+      style={{ width: item.width, minHeight: item.height }}
       className="project-surface group relative overflow-hidden rounded-4xl sm:rounded-[2.5rem] border"
     >
       {item.active && (
@@ -316,7 +315,7 @@ function ProjectCardItem({
       )}
       <div className="relative flex h-full flex-col overflow-hidden">
         <div
-          className={`relative ${isMobile ? "h-[40%]" : "h-[46%]"} min-h-48 sm:min-h-55 overflow-hidden`}
+          className="relative h-48 sm:h-55 shrink-0 overflow-hidden"
         >
           <div className="absolute -inset-x-6 -inset-y-3">
             <Image
@@ -369,7 +368,7 @@ function ProjectCardItem({
               </span>
             </div>
 
-            <p className="max-w-prose text-xs sm:text-sm leading-5 sm:leading-6 text-white/78 line-clamp-3 sm:line-clamp-none">
+            <p className="max-w-prose text-xs sm:text-sm leading-5 sm:leading-6 text-white/78 break-words">
               {item.description}
             </p>
           </div>

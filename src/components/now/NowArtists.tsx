@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { LiquidGlass } from "@vepando/liquid-glass-react";
 import NowImage from "@/components/now/NowImage";
 import {
   getTopArtists,
@@ -83,67 +84,69 @@ export default function NowArtists() {
   }, []);
   return (
     <div className="now-artists min-w-0">
-      <div className="now-artists-label min-h-[54px] flex justify-between items-center flex-wrap gap-2 pb-4">
-        <h3>{!settled ? "Artists" : live ? "My top artists" : "Personal favorites"}</h3>
-        <span className="eyebrow font-medium tracking-[0.13em] uppercase">
-          {!settled ? "Loading" : live ? "Recent listening" : "Regular rotation"}
-        </span>
-      </div>
-      {!settled ? (
-        <ol className="now-artist-skeletons" aria-label="Loading artists" aria-busy="true">
-          {favoriteArtists.map((artist) => (
-            <li key={artist.id}>
-              <div aria-hidden="true">
-                <span className="now-skeleton now-skeleton-number" />
-                <span className="now-skeleton now-skeleton-avatar" />
-                <span className="now-skeleton-copy">
-                  <span className="now-skeleton" />
-                  <span className="now-skeleton" />
-                </span>
-              </div>
-            </li>
-          ))}
-        </ol>
-      ) : (
-        <ol>
-          {artists.map((artist, index) => {
-            const content = (
-              <>
-                <span className="now-artist-number text-[11px]">0{index + 1}</span>
-                <span className="now-artist-image shrink-0 grid place-items-center overflow-hidden rounded-full text-[28px]">
-                  {artist.imageUrl ? (
-                    <NowImage
-                      key={artist.imageUrl}
-                      src={artist.imageUrl}
-                      alt=""
-                      fallback={artist.name.slice(0, 1)}
-                      sizes="64px"
-                    />
-                  ) : (
-                    <span aria-hidden="true">{artist.name.slice(0, 1)}</span>
-                  )}
-                </span>
-                <span className="now-artist-name min-w-0">
-                  <strong>{artist.name}</strong>
-                  <small>{artist.genres.slice(0, 2).join(" / ") || "On repeat"}</small>
-                </span>
-                {artist.spotifyUrl && <span aria-hidden="true">↗</span>}
-              </>
-            );
-            return (
+      <LiquidGlass radius={20} tint="dark" blur={4} specular={0.8} className="now-artists-glass">
+        <div className="now-artists-label min-h-[54px] flex justify-between items-center flex-wrap gap-2 pb-4">
+          <h3>{!settled ? "Artists" : live ? "My top artists" : "Personal favorites"}</h3>
+          <span className="eyebrow font-medium tracking-[0.13em] uppercase">
+            {!settled ? "Loading" : live ? "Recent listening" : "Regular rotation"}
+          </span>
+        </div>
+        {!settled ? (
+          <ol className="now-artist-skeletons" aria-label="Loading artists" aria-busy="true">
+            {favoriteArtists.map((artist) => (
               <li key={artist.id}>
-                {artist.spotifyUrl ? (
-                  <a href={artist.spotifyUrl} target="_blank" rel="noopener noreferrer">
-                    {content}
-                  </a>
-                ) : (
-                  <div>{content}</div>
-                )}
+                <div aria-hidden="true">
+                  <span className="now-skeleton now-skeleton-number" />
+                  <span className="now-skeleton now-skeleton-avatar" />
+                  <span className="now-skeleton-copy">
+                    <span className="now-skeleton" />
+                    <span className="now-skeleton" />
+                  </span>
+                </div>
               </li>
-            );
-          })}
-        </ol>
-      )}
+            ))}
+          </ol>
+        ) : (
+          <ol>
+            {artists.map((artist, index) => {
+              const content = (
+                <>
+                  <span className="now-artist-number text-[11px]">0{index + 1}</span>
+                  <span className="now-artist-image shrink-0 grid place-items-center overflow-hidden rounded-full text-[28px]">
+                    {artist.imageUrl ? (
+                      <NowImage
+                        key={artist.imageUrl}
+                        src={artist.imageUrl}
+                        alt=""
+                        fallback={artist.name.slice(0, 1)}
+                        sizes="64px"
+                      />
+                    ) : (
+                      <span aria-hidden="true">{artist.name.slice(0, 1)}</span>
+                    )}
+                  </span>
+                  <span className="now-artist-name min-w-0">
+                    <strong>{artist.name}</strong>
+                    <small>{artist.genres.slice(0, 2).join(" / ") || "On repeat"}</small>
+                  </span>
+                  {artist.spotifyUrl && <span aria-hidden="true">↗</span>}
+                </>
+              );
+              return (
+                <li key={artist.id}>
+                  {artist.spotifyUrl ? (
+                    <a href={artist.spotifyUrl} target="_blank" rel="noopener noreferrer">
+                      {content}
+                    </a>
+                  ) : (
+                    <div>{content}</div>
+                  )}
+                </li>
+              );
+            })}
+          </ol>
+        )}
+      </LiquidGlass>
     </div>
   );
 }

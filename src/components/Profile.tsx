@@ -27,12 +27,21 @@ const Profile = () => {
         <div className="relative z-10 flex min-h-[calc(100svh-8.25rem)] items-center justify-center px-6 py-14 sm:px-8 lg:px-10">
           <div className="w-full max-w-300 text-center text-white">
             <motion.p
-              className="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/72 sm:text-xs"
+              className="flex items-center justify-center gap-3 text-left text-[11px] font-semibold uppercase tracking-[0.2em] text-white/72 sm:text-xs"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.45 }}
             >
-              byPixelTV / Fullstack developer / Germany
+              <Image
+                src="/assets/logo/370x.gif"
+                alt=""
+                width={40}
+                height={40}
+                unoptimized
+                priority
+                className="h-10 w-10 shrink-0 rounded-full border border-white/25 object-cover"
+              />
+              <span>byPixelTV / Fullstack developer / Germany</span>
             </motion.p>
 
             <motion.h1
@@ -41,7 +50,7 @@ const Profile = () => {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.1 }}
             >
-              MADE OF CODE.
+              Hey, I’m byPixelTV.
               <span
                 className="block bg-clip-text text-transparent"
                 style={{
@@ -49,7 +58,7 @@ const Profile = () => {
                   textShadow: "0 0 26px rgba(255,255,255,0.12)",
                 }}
               >
-                DRIVEN BY CURIOSITY.
+                I build cool stuff.
               </span>
             </motion.h1>
 

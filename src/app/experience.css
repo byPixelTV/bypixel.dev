@@ -1751,22 +1751,21 @@ html {
   }
 }
 
-/* Project cards use painted gradients, with no moving blur/backdrop surfaces. */
+/* Glass surfaces keep the project imagery and text readable. */
 .project-stage {
   contain: layout paint;
 }
 .project-surface {
   background:
-    radial-gradient(ellipse at 30% 25%, #6ee7b72b, transparent 60%),
-    radial-gradient(ellipse at 78% 78%, #67e8f90d, transparent 55%), #0c1120;
-  border-color: #ffffff14;
-  box-shadow: 0 14px 32px #02061755;
+    linear-gradient(135deg, #ffffff1c, #ffffff08 65%, #b4dfe70c),
+    #11151dcc;
+  border-color: #ffffff38;
+  box-shadow: inset 0 1px 0 #ffffff2b, 0 14px 32px #02061755;
   contain: layout paint;
 }
 .project-surface[data-active="true"] {
   background:
-    radial-gradient(ellipse at 30% 25%, #a78bfa40, transparent 60%),
-    radial-gradient(ellipse at 78% 78%, #e879f910, transparent 55%), #100f20;
+    linear-gradient(135deg, #d6c0ff25, #ffffff0a 65%, #e879f910), #15121fcc;
   border-color: #c4b5fd59;
   box-shadow:
     0 14px 32px #02061755,
@@ -2338,6 +2337,15 @@ a.spotify-widget-title:hover {
 .personal-music-grid .now-album-art {
   max-width: 260px;
 }
+.now-artists-glass {
+  border: 1px solid #ffffff2a;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #ffffff1a, #ffffff06 65%, #d4b4e70c);
+  box-shadow: inset 0 1px 0 #ffffff20, 0 12px 30px #0000001a;
+}
+.now-artists-glass > .lg__content {
+  padding: 24px;
+}
 .personal-tiles {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -2393,6 +2401,16 @@ a.spotify-widget-title:hover {
 .personal-logo {
   object-fit: contain;
   margin-top: 18px;
+}
+.personal-tech-logos {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-top: auto;
+  padding-top: 24px;
+}
+.personal-tech-logos img {
+  object-fit: contain;
 }
 .personal-tile-glass .lg__content > a {
   margin-top: auto;
