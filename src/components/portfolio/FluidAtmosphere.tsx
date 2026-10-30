@@ -22,10 +22,12 @@ void main() {
   vec2 glowCenter = vec2(-.45 + sin(t * .65) * .15, .15 + cos(t * .5) * .08);
   float glow = exp(-dot(p - glowCenter, p - glowCenter) * 1.4);
   vec3 color = mix(primary, secondary, smoothstep(-.8, .9, p.x));
-  color *= light * .16 + fold * .065;
-  color += tertiary * glow * .05;
+  color *= light * .22 + fold * .075;
+  color += tertiary * glow * .075;
+  // Remove some shared grey light so album colors stay rich over the dark base.
+  color -= vec3(min(color.r, min(color.g, color.b)) * .65);
   color *= exp(-dot(p * .5, p * .5));
-  gl_FragColor = vec4(vec3(.090196) + color, 1.0);
+  gl_FragColor = vec4(vec3(.031373) + color, 1.0);
 }`;
 const fallback = [
   [0.64, 0.64, 0.66],

@@ -356,7 +356,7 @@
   initial-value: rgb(120 80 205);
 }
 .album-atmosphere {
-  background: #171717;
+  background: #080808;
   transition:
     --album-1 1.4s,
     --album-2 1.4s,
@@ -1884,15 +1884,15 @@ html {
   background:
     radial-gradient(
       ellipse at 25% 45%,
-      color-mix(in srgb, var(--album-1, #a9a9a9) 22%, transparent),
+      color-mix(in srgb, var(--album-1, #a9a9a9) 28%, transparent),
       transparent 65%
     ),
     radial-gradient(
       ellipse at 80% 65%,
-      color-mix(in srgb, var(--album-2, #c0c0c0) 16%, transparent),
+      color-mix(in srgb, var(--album-2, #c0c0c0) 22%, transparent),
       transparent 60%
     ),
-    #171717;
+    #080808;
 }
 
 /* One scroll sequence: hero yields, projects cross the stage, chapters arrive. */
