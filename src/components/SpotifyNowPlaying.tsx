@@ -87,7 +87,12 @@ export default function SpotifyNowPlaying() {
                   </a>
                 ) : (
                   <p className="spotify-widget-title">
-                    {data?.title ?? (loaded ? "No recent listening activity" : " ")}
+                    {data?.title ??
+                      (loaded
+                        ? data?.stale
+                          ? "Music activity temporarily unavailable"
+                          : "No recent listening activity"
+                        : " ")}
                   </p>
                 )}
                 <p className="spotify-widget-artist">{data?.artist}</p>

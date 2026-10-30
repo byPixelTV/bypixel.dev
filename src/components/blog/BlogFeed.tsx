@@ -16,7 +16,7 @@ export default async function BlogFeed() {
         <span>{posts.length - drafts} published</span>
       </div>
       {posts.length ? (
-        <div>
+        <div className="simple-post-grid">
           {posts.map((post) => (
             <BlogPostCard key={post._id} post={post} authorName={post.authorName} />
           ))}

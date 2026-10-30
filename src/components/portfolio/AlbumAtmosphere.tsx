@@ -77,6 +77,7 @@ export default function AlbumAtmosphere({ children }: { children: ReactNode }) {
         const result: NowPlayingResult = {
           isPlaying: snapshot.isPlaying,
           isRecent: !snapshot.isPlaying,
+          stale: snapshot.stale,
           title: track?.name,
           artist: track?.artists.join(", "),
           album: track?.album ?? undefined,

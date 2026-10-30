@@ -2179,15 +2179,40 @@ a.spotify-widget-title:hover {
   font-size: 12px;
   color: #aaa0b1;
 }
-.simple-post {
-  border-bottom: 1px solid #ffffff16;
+.simple-post-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 22px;
 }
-.simple-post > a {
+.simple-post {
+  min-width: 0;
+}
+.blog-post-glass {
+  height: 100%;
+  border: 1px solid #ffffff2a;
+  background: linear-gradient(135deg, #ffffff1a, #ffffff06 65%, #d4b4e70c);
+  box-shadow:
+    inset 0 1px 0 #ffffff2b,
+    0 12px 30px #0000001a;
+}
+.blog-post-glass > .lg__content {
+  height: 100%;
+}
+.simple-post-link {
+  position: relative;
   display: flex;
   gap: 24px;
   justify-content: space-between;
-  align-items: center;
-  padding: 25px 0;
+  align-items: flex-start;
+  height: 100%;
+  min-height: 170px;
+  padding: 24px 24px 56px;
+  border-radius: 20px;
+}
+.simple-post-link:focus-visible {
+  outline: 2px solid #d4b1eb;
+  outline-offset: -4px;
 }
 .simple-post-copy {
   min-width: 0;
@@ -2204,9 +2229,17 @@ a.spotify-widget-title:hover {
   margin: 9px 0 6px;
   letter-spacing: -0.025em;
 }
-.simple-post h3 span {
-  color: #bba0ca;
-  font-size: 15px;
+.simple-post-arrow {
+  position: absolute;
+  right: 24px;
+  bottom: 22px;
+  display: grid;
+  place-items: center;
+  color: #d6b7e7;
+  transition: transform 0.2s ease;
+}
+.simple-post-link:hover .simple-post-arrow {
+  transform: translate(3px, -3px);
 }
 .simple-post a:hover h3 {
   color: #d6b7e7;
@@ -2238,9 +2271,13 @@ a.spotify-widget-title:hover {
   font-size: 13px;
 }
 .simple-post-placeholder {
-  padding: 26px 0;
-  border-bottom: 1px solid #ffffff16;
+  min-height: 170px;
+  padding: 24px;
+  border: 1px solid #ffffff1b;
+  border-radius: 20px;
+  background: #ffffff08;
   display: grid;
+  align-content: start;
   gap: 10px;
 }
 .simple-post-placeholder span {
@@ -2417,6 +2454,9 @@ a.spotify-widget-title:hover {
   }
   .personal-music-grid,
   .personal-tiles {
+    grid-template-columns: 1fr;
+  }
+  .simple-post-grid {
     grid-template-columns: 1fr;
   }
   .personal-toolkit ul {
