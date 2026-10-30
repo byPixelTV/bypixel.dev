@@ -190,7 +190,7 @@ export default function CustomVideoPlayer({
       ref={containerRef}
       {...wrapperProps}
       className={[
-        "relative overflow-hidden rounded-2xl border border-violet-300/25 bg-[#0b0715] shadow-[0_24px_80px_rgba(30,10,56,0.55)]",
+        "relative overflow-hidden rounded-2xl border border-neutral-300/25 bg-[#171717] shadow-[0_24px_80px_rgba(30,10,56,0.55)]",
         className ?? "",
         wrapperProps?.className ?? "",
       ].join(" ")}
@@ -210,7 +210,7 @@ export default function CustomVideoPlayer({
         Your browser does not support this video.
       </video>
 
-      <div className="absolute inset-x-0 bottom-0 border-t border-violet-300/20 bg-linear-to-t from-[#0b0715]/95 via-[#120a24]/80 to-transparent px-3 py-3 sm:px-4 sm:py-4">
+      <div className="absolute inset-x-0 bottom-0 border-t border-neutral-300/20 bg-linear-to-t from-[#171717]/95 via-[#171717]/80 to-transparent px-3 py-3 sm:px-4 sm:py-4">
         <input
           type="range"
           min={0}
@@ -218,7 +218,7 @@ export default function CustomVideoPlayer({
           step={0.1}
           value={Math.min(currentTime, duration || 0)}
           onChange={(event) => handleSeek(Number(event.target.value))}
-          className="mb-3 h-1.5 w-full cursor-pointer appearance-none rounded-full bg-violet-200/20 accent-violet-400"
+          className="mb-3 h-1.5 w-full cursor-pointer appearance-none rounded-full bg-neutral-200/20 accent-neutral-400"
           aria-label="Video progress"
         />
 
@@ -229,7 +229,7 @@ export default function CustomVideoPlayer({
               event.stopPropagation();
               void togglePlay();
             }}
-            className="rounded-md border border-violet-300/25 bg-violet-500/15 p-2 transition-colors hover:bg-violet-500/25 cursor-pointer"
+            className="rounded-md border border-neutral-300/25 bg-neutral-500/15 p-2 transition-colors hover:bg-neutral-500/25 cursor-pointer"
             aria-label={isPlaying ? "Pause video" : "Play video"}
           >
             {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
@@ -245,7 +245,7 @@ export default function CustomVideoPlayer({
               event.stopPropagation();
               toggleMute();
             }}
-            className="rounded-md border border-violet-300/25 bg-violet-500/15 p-2 transition-colors hover:bg-violet-500/25 cursor-pointer"
+            className="rounded-md border border-neutral-300/25 bg-neutral-500/15 p-2 transition-colors hover:bg-neutral-500/25 cursor-pointer"
             aria-label={isMuted ? "Unmute video" : "Mute video"}
           >
             {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
@@ -258,7 +258,7 @@ export default function CustomVideoPlayer({
             step={0.01}
             value={isMuted ? 0 : volume}
             onChange={(event) => handleVolume(Number(event.target.value))}
-            className="h-1.5 w-16 cursor-pointer appearance-none rounded-full bg-violet-200/20 accent-violet-400 sm:w-24"
+            className="h-1.5 w-16 cursor-pointer appearance-none rounded-full bg-neutral-200/20 accent-neutral-400 sm:w-24"
             aria-label="Video volume"
           />
 
@@ -271,7 +271,7 @@ export default function CustomVideoPlayer({
                 event.stopPropagation();
                 setSpeedMenuOpen((open) => !open);
               }}
-              className="inline-flex h-9 items-center gap-1.5 rounded-md border border-violet-300/25 bg-violet-500/15 px-2.5 text-xs text-white transition-colors hover:bg-violet-500/25 sm:text-sm"
+              className="inline-flex h-9 items-center gap-1.5 rounded-md border border-neutral-300/25 bg-neutral-500/15 px-2.5 text-xs text-white transition-colors hover:bg-neutral-500/25 sm:text-sm"
               aria-haspopup="menu"
               aria-expanded={speedMenuOpen}
               aria-label="Playback speed"
@@ -284,7 +284,7 @@ export default function CustomVideoPlayer({
 
             {speedMenuOpen && (
               <div
-                className="absolute bottom-11 right-0 z-30 min-w-24 overflow-hidden rounded-lg border border-violet-300/20 bg-[#110a22] shadow-[0_12px_36px_rgba(18,8,35,0.65)]"
+                className="absolute bottom-11 right-0 z-30 min-w-24 overflow-hidden rounded-lg border border-neutral-300/20 bg-[#171717] shadow-[0_12px_36px_rgba(18,8,35,0.65)]"
                 role="menu"
                 onClick={(event) => event.stopPropagation()}
               >
@@ -297,8 +297,8 @@ export default function CustomVideoPlayer({
                       onClick={() => handlePlaybackRate(rate)}
                       className={`flex w-full items-center justify-between px-3 py-2 text-left text-sm transition-colors cursor-pointer ${
                         selected
-                          ? "bg-violet-500/25 text-white"
-                          : "text-violet-100 hover:bg-violet-400/15"
+                          ? "bg-neutral-500/25 text-white"
+                          : "text-neutral-100 hover:bg-neutral-400/15"
                       }`}
                       role="menuitemradio"
                       aria-checked={selected}
@@ -318,7 +318,7 @@ export default function CustomVideoPlayer({
               event.stopPropagation();
               void toggleFullscreen();
             }}
-            className="rounded-md border border-violet-300/25 bg-violet-500/15 p-2 transition-colors hover:bg-violet-500/25 cursor-pointer"
+            className="rounded-md border border-neutral-300/25 bg-neutral-500/15 p-2 transition-colors hover:bg-neutral-500/25 cursor-pointer"
             aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
           >
             {isFullscreen ? <Minimize className="h-4 w-4" /> : <Maximize className="h-4 w-4" />}

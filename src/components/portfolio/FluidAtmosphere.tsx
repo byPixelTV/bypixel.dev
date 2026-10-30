@@ -25,12 +25,12 @@ void main() {
   color *= light * .16 + fold * .065;
   color += tertiary * glow * .05;
   color *= exp(-dot(p * .5, p * .5));
-  gl_FragColor = vec4(vec3(.024, .020, .037) + color, 1.0);
+  gl_FragColor = vec4(vec3(.090196) + color, 1.0);
 }`;
 const fallback = [
-  [0.55, 0.36, 0.96],
-  [0.75, 0.52, 0.99],
-  [0.47, 0.31, 0.8],
+  [0.64, 0.64, 0.66],
+  [0.85, 0.85, 0.87],
+  [0.43, 0.43, 0.45],
 ];
 
 /** Fixed scenery: neither page scroll nor the pointer changes its geometry. */

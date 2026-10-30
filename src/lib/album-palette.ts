@@ -1,5 +1,5 @@
 /** Prefer colorful accents, with light neutrals for otherwise monochrome covers. */
-export const albumFallback = ["rgb(139 92 246)", "rgb(192 132 252)", "rgb(120 80 205)"];
+export const albumFallback = ["rgb(164 164 168)", "rgb(218 218 222)", "rgb(110 110 116)"];
 
 type Swatch = { count: number; rgb: number[]; saturation: number; chroma: number; hue: number };
 const hueDistance = (a: number, b: number) => Math.min(Math.abs(a - b), 360 - Math.abs(a - b));

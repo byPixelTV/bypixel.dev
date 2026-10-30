@@ -303,7 +303,7 @@ function ProjectCardItem({
       className="project-surface group relative overflow-hidden rounded-4xl sm:rounded-[2.5rem] border"
     >
       {item.active && (
-        <div className="pointer-events-none absolute inset-x-12 top-0 z-30 h-px bg-linear-to-r from-transparent via-violet-300/90 to-transparent" />
+        <div className="pointer-events-none absolute inset-x-12 top-0 z-30 h-px bg-linear-to-r from-transparent via-violet-200/80 to-transparent" />
       )}
       <div className="relative flex h-full flex-col overflow-hidden">
         <div className="relative h-48 sm:h-55 shrink-0 overflow-hidden">
@@ -324,7 +324,7 @@ function ProjectCardItem({
             {item.startAt} - {item.endAt ?? "now"}
           </div>
           {item.active && (
-            <div className="project-active-badge absolute right-4 top-4 sm:right-5 sm:top-5 flex items-center gap-2 rounded-full border border-violet-300/30 bg-violet-950/90 px-2.5 py-1 sm:px-3 sm:py-1 text-[9px] sm:text-[11px] font-semibold uppercase tracking-[0.16em] text-violet-100">
+            <div className="project-active-badge absolute right-4 top-4 sm:right-5 sm:top-5 flex items-center gap-2 rounded-full border border-violet-300/30 bg-[#171717]/90 px-2.5 py-1 sm:px-3 sm:py-1 text-[9px] sm:text-[11px] font-semibold uppercase tracking-[0.16em] text-violet-100">
               <span
                 className="project-active-dot size-1.5 rounded-full bg-violet-300"
                 aria-hidden="true"

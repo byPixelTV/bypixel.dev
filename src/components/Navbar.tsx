@@ -279,7 +279,7 @@ const Navbar = () => {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: -6, scale: 0.98 }}
                         transition={{ duration: 0.16, ease: "easeOut" }}
-                        className="absolute right-0 top-full z-30 mt-2 w-44 rounded-2xl border border-white/12 bg-[#120a22]/95 p-2 shadow-2xl backdrop-blur-xl"
+                        className="absolute right-0 top-full z-30 mt-2 w-44 rounded-2xl border border-white/12 bg-[#171717]/95 p-2 shadow-2xl backdrop-blur-xl"
                       >
                         {sectionLinks.map((section) => (
                           <Link
@@ -304,7 +304,7 @@ const Navbar = () => {
       <div className="fixed right-4 top-5 z-[60] md:hidden">
         <motion.button
           onClick={() => setIsMobileMenuOpen((prev) => !prev)}
-          className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-[#0c0618]/90 text-[#F4F0E6] shadow-xl backdrop-blur-md focus:outline-none"
+          className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-[#171717]/90 text-[#F4F0E6] shadow-xl backdrop-blur-md focus:outline-none"
           whileTap={{ scale: 0.94 }}
           aria-label={isMobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
           aria-expanded={isMobileMenuOpen}
@@ -332,7 +332,7 @@ const Navbar = () => {
         {isMobileMenuOpen && (
           <motion.div
             id="mobile-nav-drawer"
-            className="fixed inset-y-0 left-0 z-50 w-full sm:w-72 bg-[#0c0618] shadow-2xl overflow-hidden"
+            className="fixed inset-y-0 left-0 z-50 w-full sm:w-72 bg-[#171717] shadow-2xl overflow-hidden"
             variants={mobileMenuVariants}
             initial="closed"
             animate="open"
