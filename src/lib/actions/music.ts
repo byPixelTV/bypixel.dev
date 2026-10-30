@@ -38,7 +38,8 @@ export async function getMusicSnapshot(): Promise<MusicSnapshot> {
     console.warn("[Music] Last.fm returned no completed tracks; checking Spotify history.");
   } catch (error) {
     historyFailed = true;
-    const reason = error instanceof Error ? error.message.match(/^Last\.fm (?:HTTP )?\d+/)?.[0] : null;
+    const reason =
+      error instanceof Error ? error.message.match(/^Last\.fm (?:HTTP )?\d+/)?.[0] : null;
     console.warn(
       process.env.LASTFM_USERNAME && process.env.LASTFM_API_KEY
         ? `[Music] Last.fm history unavailable${reason ? ` (${reason})` : " (request or response error)"}; checking Spotify history.`

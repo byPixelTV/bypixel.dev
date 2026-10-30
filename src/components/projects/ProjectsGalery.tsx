@@ -33,15 +33,7 @@ const projects: Project[] = [
     role: "Sys Admin, Developer & Administrator",
     description:
       "BetterAttack is a Minecraft survival server with a focus on community. It is based on the popular CraftAttack project and I am responsible for the server's administration, moderation, and development. I have built custom plugins, microservices, discord bots and the full server infrastructure from scratch.",
-    tags: [
-      "Minecraft",
-      "Backend",
-      "Linux",
-      "Administration",
-      "Go",
-      "Kotlin",
-      "Active",
-    ],
+    tags: ["Minecraft", "Backend", "Linux", "Administration", "Go", "Kotlin", "Active"],
     startAt: "October 2025",
     endAt: "now",
     url: "https://discord.gg/betterattack",
@@ -314,9 +306,7 @@ function ProjectCardItem({
         <div className="pointer-events-none absolute inset-x-12 top-0 z-30 h-px bg-linear-to-r from-transparent via-violet-300/90 to-transparent" />
       )}
       <div className="relative flex h-full flex-col overflow-hidden">
-        <div
-          className="relative h-48 sm:h-55 shrink-0 overflow-hidden"
-        >
+        <div className="relative h-48 sm:h-55 shrink-0 overflow-hidden">
           <div className="absolute -inset-x-6 -inset-y-3">
             <Image
               src={item.imagePath}
@@ -368,7 +358,7 @@ function ProjectCardItem({
               </span>
             </div>
 
-            <p className="max-w-prose text-xs sm:text-sm leading-5 sm:leading-6 text-white/78 break-words">
+            <p className="max-w-prose text-xs sm:text-sm leading-5 sm:leading-6 text-white/78 wrap-break-word">
               {item.description}
             </p>
           </div>

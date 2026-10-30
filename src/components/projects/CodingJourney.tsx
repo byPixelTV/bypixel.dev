@@ -112,7 +112,7 @@ function StoryMoment({
         <p className="eyebrow font-medium tracking-[0.13em] uppercase">
           {milestone.year} / {milestone.isCurrent ? "Still unfolding" : `Chapter 0${index + 1}`}
         </p>
-        <div className="story-detail flex items-center gap-[18px]" aria-hidden="true">
+        <div className="story-detail flex items-center gap-4.5" aria-hidden="true">
           <Icon icon={milestone.icon} width={28} height={28} />
           <svg viewBox="0 0 160 42">
             <motion.path
@@ -140,7 +140,7 @@ function StoryMoment({
           ))}
         </ul>
       </motion.div>
-      <span className="story-moment-index absolute bottom-[18px] left-[18px]" aria-hidden="true">
+      <span className="story-moment-index absolute bottom-4.5 left-4.5" aria-hidden="true">
         0{index + 1}
       </span>
     </li>

@@ -247,7 +247,8 @@ test("newer history replaces the fallback and invalid timestamps are ignored", (
     });
   }
   expect(
-    latestSpotifyActivity(null, { ...incoming, playedAt: new Date(now + 3600000).toISOString() }).title,
+    latestSpotifyActivity(null, { ...incoming, playedAt: new Date(now + 3600000).toISOString() })
+      .title,
   ).toBe("Newest song");
 });
 

@@ -84,7 +84,10 @@ export default function NowExperience({ raceCard }: { raceCard: ReactNode }) {
             >
               <p className="simple-label">EVERYDAY TECH</p>
               <h3>Nothing Phone & Windows</h3>
-              <p>My daily setup for coding, games and everything in between. Sometimes I also switch to Linux for a change. I use CachyOS, which is based on Arch btw.</p>
+              <p>
+                My daily setup for coding, games and everything in between. Sometimes I also switch
+                to Linux for a change. I use CachyOS, which is based on Arch btw.
+              </p>
               <div className="personal-tech-logos" aria-hidden="true">
                 <Image src="/assets/logo/nothing.png" alt="" width={88} height={16} />
                 <Image src="/assets/logo/windows.webp" alt="" width={26} height={26} />
