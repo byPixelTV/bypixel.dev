@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useRef, useSyncExternalStore } from "react";
-import { motion, useReducedMotion, useScroll, useTransform, type MotionValue } from "framer-motion";
+import { motion, useReducedMotion, useScroll, useTransform, type MotionValue } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight, Clock3, Sparkles } from "lucide-react";

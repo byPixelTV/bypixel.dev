@@ -11,9 +11,9 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "motion/react";
 import { LuEqual, LuBook, LuClock, LuUser, LuX } from "react-icons/lu";
-import type { Variants } from "framer-motion";
+import type { Variants } from "motion/react";
 
 const headerNavLinks = [
   { title: "About", url: "/", icon: <LuUser color="#FFFFFF" /> },
