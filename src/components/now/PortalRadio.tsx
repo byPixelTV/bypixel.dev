@@ -184,11 +184,11 @@ export default function PortalRadio() {
     <div className="pt-[420svh] pb-[120px] [background:linear-gradient(to_bottom,#a2acdf_0,#97afda_30svh,#8db1d6_65svh,#87b2d3_100svh)]">
       <section
         ref={section}
-        className="group/portal relative mx-auto w-[min(420px,calc(100%_-_48px))] text-[#152f43]"
+        className="group/portal relative mx-auto flex w-[min(420px,calc(100%_-_48px))] flex-col text-[#152f43]"
         data-discovered={discovered}
         aria-label="Portal radio"
       >
-        <div className="translate-y-5 opacity-0 transition-[opacity,translate] duration-1000 ease-[ease] group-data-[discovered=true]/portal:translate-y-0 group-data-[discovered=true]/portal:opacity-100 motion-reduce:translate-y-0 motion-reduce:transition-none">
+        <div className="w-full translate-y-5 opacity-0 transition-[opacity,translate] duration-1000 ease-[ease] group-data-[discovered=true]/portal:translate-y-0 group-data-[discovered=true]/portal:opacity-100 motion-reduce:translate-y-0 motion-reduce:transition-none">
           <Image
             className="block aspect-video h-auto w-full rounded-none"
             src="/portal.jpeg"
@@ -198,21 +198,10 @@ export default function PortalRadio() {
             sizes="(max-width: 468px) calc(100vw - 48px), 420px"
           />
         </div>
-        <div className="flex items-center justify-between gap-4 pt-[18px] [&_p]:mt-[6px] [&_p]:text-[14px] [&_p]:text-[#244459] [&_.eyebrow]:text-[#244459]! [&_:is(button,a):focus-visible]:outline-2 [&_:is(button,a):focus-visible]:outline-[#152f43] [&_:is(button,a):focus-visible]:outline-offset-[5px] translate-y-5 opacity-0 transition-[opacity,translate] duration-1000 ease-[ease] group-data-[discovered=true]/portal:translate-y-0 group-data-[discovered=true]/portal:opacity-100 motion-reduce:translate-y-0 motion-reduce:transition-none">
-          <div>
-            <span className="eyebrow font-medium tracking-[0.13em] uppercase">
-              Aperture Science / 85.2 FM
-            </span>
-            <p>
-              I played Portal and Portal 2 for the first time in 2026. Portal 2 was a recent
-              discovery, and I still find it wild that a game like this came out in 2011. Both feel
-              timeless.
-            </p>
-            <p>The Source Engine behind them is just as fascinating to me.</p>
-          </div>
+        <div className="flex w-full -translate-x-4 justify-center pt-[18px] [&_:is(button,a):focus-visible]:outline-2 [&_:is(button,a):focus-visible]:outline-[#152f43] [&_:is(button,a):focus-visible]:outline-offset-[5px] translate-y-5 opacity-0 transition-[opacity,translate] duration-1000 ease-[ease] group-data-[discovered=true]/portal:translate-y-0 group-data-[discovered=true]/portal:opacity-100 motion-reduce:translate-y-0 motion-reduce:transition-none">
           {failed ? (
             <a
-              className="text-[13px] text-[#152f43]"
+              className="inline-flex h-11 min-w-36 items-center justify-center rounded-full border border-[#152f435c] bg-[#dbe7f055] px-5 text-[13px] text-[#152f43] shadow-[0_8px_24px_#385a7a26] backdrop-blur-md transition-[background-color,transform] duration-200 hover:-translate-y-0.5 hover:bg-[#dbe7f080] active:translate-y-0"
               href="https://youtu.be/Ffx56ZqZoIM"
               target="_blank"
               rel="noopener noreferrer"
@@ -221,7 +210,7 @@ export default function PortalRadio() {
             </a>
           ) : (
             <button
-              className="grid size-11 flex-[0_0_44px] cursor-pointer place-items-center rounded-full border border-[#152f4350] bg-[#ffffff08] text-[#152f43] hover:bg-[#ffffff18] disabled:cursor-wait disabled:opacity-40"
+              className="inline-flex h-11 min-w-36 cursor-pointer items-center justify-center gap-2 rounded-full border border-[#152f435c] bg-[#dbe7f055] px-5 text-[13px] text-[#152f43] shadow-[0_8px_24px_#385a7a26] backdrop-blur-md transition-[background-color,transform] duration-200 hover:-translate-y-0.5 hover:bg-[#dbe7f080] active:translate-y-0 active:scale-95 disabled:cursor-wait disabled:opacity-40"
               type="button"
               disabled={!ready}
               title={label}
@@ -233,13 +222,14 @@ export default function PortalRadio() {
                 else player.current?.playVideo();
               }}
             >
-              {playing ? <Pause size={18} /> : <Play size={18} />}
+              {playing ? <Pause size={17} /> : <Play className="translate-x-px" size={17} />}
+              <span>{playing ? "Pause radio" : "Play radio"}</span>
             </button>
           )}
         </div>
         <div
           ref={host}
-          className="pointer-events-none absolute size-px overflow-hidden opacity-0 [&_iframe]:size-[200px] [&_iframe]:border-0"
+          className="pointer-events-none absolute left-0 top-0 size-px overflow-hidden opacity-0 [&_iframe]:!size-px [&_iframe]:!border-0"
           aria-hidden="true"
           inert
         />
