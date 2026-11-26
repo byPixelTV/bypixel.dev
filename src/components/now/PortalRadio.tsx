@@ -229,7 +229,7 @@ export default function PortalRadio() {
         </div>
         <div
           ref={host}
-          className="pointer-events-none absolute left-0 top-0 size-px overflow-hidden opacity-0 [&_iframe]:!size-px [&_iframe]:!border-0"
+          className="pointer-events-none absolute left-0 top-0 size-px overflow-hidden opacity-0 [&_iframe]:size-px! [&_iframe]:border-0!"
           aria-hidden="true"
           inert
         />

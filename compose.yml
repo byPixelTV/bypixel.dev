@@ -1,0 +1,36 @@
+services:
+  bypixel:
+    image: ghcr.io/bypixeltv/bypixel.dev:${IMAGE_TAG:-latest}
+    container_name: bypixel-web
+    restart: unless-stopped
+    init: true
+
+    env_file:
+      - .env
+
+    networks:
+      - proxy
+
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+    security_opt:
+      - no-new-privileges:true
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  proxy:
+    external: true

@@ -1,0 +1,10 @@
+node_modules
+.next
+.git
+.github
+.env
+.env.*
+coverage
+*.log
+.codex
+.vscode
