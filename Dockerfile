@@ -1,3 +1,4 @@
+
 FROM oven/bun:1 AS bun
 
 FROM node:26-trixie-slim AS builder
@@ -28,6 +29,9 @@ ENV PORT=3000
 COPY --from=builder --chown=node:node /app/public ./public
 COPY --from=builder --chown=node:node /app/.next/standalone ./
 COPY --from=builder --chown=node:node /app/.next/static ./.next/static
+
+RUN mkdir -p /app/.next/cache \
+    && chown -R node:node /app/.next
 
 USER node
 

@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import BlogFeed from "@/components/blog/BlogFeed";
 import BlogFeedSkeleton from "@/components/blog/BlogFeedSkeleton";
+export const dynamic = "force-dynamic";
 
 export default function BlogPage() {
   return (

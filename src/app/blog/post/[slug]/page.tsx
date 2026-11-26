@@ -3,8 +3,7 @@ import { getReadablePost } from "@/lib/blog-post-data";
 import { Metadata } from "next";
 import { Suspense } from "react";
 import { BlogPostContent } from "./content";
-
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
 
 interface PageProps {
   params: Promise<{
