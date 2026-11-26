@@ -17,7 +17,7 @@ COPY . .
 
 RUN bun run build
 
-FROM node:24-bookworm-slim AS runner
+FROM node:26-bookworm-slim AS runner
 
 WORKDIR /app
 
