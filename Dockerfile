@@ -1,23 +1,22 @@
-FROM oven/bun:1 AS deps
+FROM oven/bun:1 AS bun
+
+FROM node:26-trixie-slim AS builder
 
 WORKDIR /app
+
+COPY --from=bun /usr/local/bin/bun /usr/local/bin/bun
+
+ENV NEXT_TELEMETRY_DISABLED=1
 
 COPY package.json bun.lock ./
 
 RUN bun install --frozen-lockfile
 
-FROM oven/bun:1 AS builder
-
-WORKDIR /app
-
-ENV NEXT_TELEMETRY_DISABLED=1
-
-COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 RUN bun run build
 
-FROM node:24-bookworm-slim AS runner
+FROM node:26-trixie-slim AS runner
 
 WORKDIR /app
 
